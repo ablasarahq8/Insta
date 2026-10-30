@@ -10,7 +10,9 @@ import * as instagram from "./lib/instagram.js";
 import { strategyWeek } from "./public/planutil.js";
 
 const PORT = process.env.PORT || 3000;
-const UPLOAD_DIR = path.resolve("data/uploads");
+const UPLOAD_DIR = path.join(store.DATA_DIR, "uploads");
+// Render يعطي رابط الموقع تلقائياً بـ RENDER_EXTERNAL_URL
+const PUBLIC_BASE_URL = process.env.PUBLIC_BASE_URL || process.env.RENDER_EXTERNAL_URL || "";
 fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
 const app = express();
@@ -18,6 +20,9 @@ app.use(express.json({ limit: "1mb" }));
 
 // الملفات المرفوعة لازم تكون عامة عشان إنستغرام يقدر يسحبها وقت النشر
 app.use("/uploads", express.static(UPLOAD_DIR));
+
+// فحص صحة السيرفر لـ Render (قبل كلمة السر)
+app.get("/healthz", (req, res) => res.send("ok"));
 
 // حماية بسيطة بكلمة سر (اختيارية) لباقي الموقع
 if (process.env.APP_PASSWORD) {
@@ -52,7 +57,7 @@ const wrap = (fn) => (req, res) =>
 app.get("/api/status", (req, res) =>
   res.json({
     instagram: instagram.isConfigured(),
-    publicUrl: Boolean(process.env.PUBLIC_BASE_URL),
+    publicUrl: Boolean(PUBLIC_BASE_URL),
   }),
 );
 
@@ -171,7 +176,7 @@ async function publishIdea(idea) {
   if (publishing.has(idea.id)) throw new Error("النشر شغال على هذي الفكرة");
   publishing.add(idea.id);
   try {
-    const base = (process.env.PUBLIC_BASE_URL || "").replace(/\/$/, "");
+    const base = PUBLIC_BASE_URL.replace(/\/$/, "");
     const media = idea.media.map((m) => {
       if (/^https?:\/\//.test(m.url)) return m;
       if (!base) throw new Error("لازم تحدد PUBLIC_BASE_URL عشان إنستغرام يوصل للملفات المرفوعة");

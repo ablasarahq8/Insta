@@ -49,6 +49,18 @@ npm start              # http://localhost:3000
 
 > ملاحظة: الـ Access Token العادي ينتهي، استخدم توكن طويل المدة (60 يوم) وجدده.
 
+## النشر على Render
+
+1. ادخل [render.com](https://render.com) وسجّل بحساب GitHub.
+2. **New** ← **Blueprint** ← اختار هالـ repo والفرع.
+3. Render يقرا `render.yaml` ويطلب منك القيم: `ANTHROPIC_API_KEY`، `APP_PASSWORD` (كلمة سر الموقع)، و `IG_USER_ID` / `IG_ACCESS_TOKEN` (تقدر تخليها فاضية لين تربط إنستغرام).
+4. **Apply** وانطر لين يخلص. الموقع يطلع على رابط مثل `https://insta-ideas.onrender.com`.
+
+- البيانات والصور تنحفظ على Disk دائم (`/var/data`) فما تضيع مع التحديثات.
+- `PUBLIC_BASE_URL` ما يحتاج تحطه، ياخذ رابط Render تلقائياً.
+- لازم خطة **Starter** (المجانية ما فيها Disk والسيرفر ينام، فالجدولة ما تشتغل).
+- أي تحديث ينرفع على الفرع، Render ينشره تلقائياً.
+
 ## التقنية
 
-Node.js + Express، والواجهة HTML/JS بدون frameworks. البيانات تنحفظ في `data/db.json` والملفات المرفوعة في `data/uploads/`.
+Node.js + Express، والواجهة HTML/JS بدون frameworks. البيانات تنحفظ في `data/db.json` والملفات المرفوعة في `data/uploads/` (أو بمسار `DATA_DIR` إذا محدد).

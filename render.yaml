@@ -1,0 +1,28 @@
+# إعداد النشر على Render — من لوحة Render: New ← Blueprint ← اختار هالـ repo
+services:
+  - type: web
+    name: insta-ideas
+    runtime: node
+    plan: starter # الخطة المجانية ما فيها Disk والسيرفر ينام، فالجدولة ما تشتغل
+    region: frankfurt
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /healthz
+    disk:
+      name: data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: DATA_DIR
+        value: /var/data
+      # هذي تنطلب منك وقت الإنشاء (ما تنحفظ بالكود)
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: APP_PASSWORD
+        sync: false
+      - key: IG_USER_ID
+        sync: false
+      - key: IG_ACCESS_TOKEN
+        sync: false

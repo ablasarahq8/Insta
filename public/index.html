@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>دفتر أفكار إنستغرام</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>دفتر أفكار إنستغرام</h1>
+    <nav>
+      <button class="tab active" data-view="ideas">أفكاري</button>
+      <button class="tab" data-view="suggest">اقتراحات</button>
+      <button class="tab" data-view="profile">ملف الحساب</button>
+    </nav>
+  </header>
+
+  <div id="banner" class="banner" hidden></div>
+
+  <main>
+    <!-- أفكاري -->
+    <section id="view-ideas" class="view">
+      <form id="quick" class="card quick">
+        <input name="title" placeholder="فكرة جديدة؟ اكتبها بسرعة..." required autocomplete="off">
+        <select name="format">
+          <option value="post">بوست</option>
+          <option value="carousel">كاروسيل</option>
+          <option value="reel">ريل</option>
+        </select>
+        <button class="primary">حفظ</button>
+      </form>
+      <div class="filters">
+        <button class="chip active" data-status="all">الكل</button>
+        <button class="chip" data-status="idea">أفكار</button>
+        <button class="chip" data-status="draft">مسودات</button>
+        <button class="chip" data-status="scheduled">مجدولة</button>
+        <button class="chip" data-status="published">منشورة</button>
+        <button class="chip" data-status="failed">فشلت</button>
+      </div>
+      <div id="ideas" class="grid"></div>
+    </section>
+
+    <!-- اقتراحات -->
+    <section id="view-suggest" class="view" hidden>
+      <form id="suggest-form" class="card quick">
+        <input name="topic" placeholder="موضوع معين؟ (اختياري) مثلاً: رمضان، العودة للمدارس..." autocomplete="off">
+        <select name="count">
+          <option>3</option><option selected>5</option><option>8</option><option>10</option>
+        </select>
+        <button class="primary">اقترح علي</button>
+      </form>
+      <p class="hint">الاقتراحات تعتمد على <a href="#" data-goto="profile">ملف الحساب</a> — كل ما عبيته أكثر، طلعت الأفكار أدق.</p>
+      <div id="suggestions" class="grid"></div>
+    </section>
+
+    <!-- ملف الحساب -->
+    <section id="view-profile" class="view" hidden>
+      <form id="profile-form" class="card form">
+        <label>اسم الحساب <input name="handle" placeholder="@myaccount"></label>
+        <label>المجال <input name="niche" placeholder="مثلاً: طبخ كويتي، تعليم، لايف ستايل..."></label>
+        <label>الجمهور <textarea name="audience" rows="2" placeholder="منو يتابعك؟ أعمارهم، اهتماماتهم..."></textarea></label>
+        <label>الأسلوب <input name="tone" placeholder="مثلاً: خفيف وعفوي، رسمي، تعليمي..."></label>
+        <label>اللغة واللهجة <input name="language"></label>
+        <label>الأهداف <textarea name="goals" rows="2" placeholder="زيادة متابعين، مبيعات، وعي بالبراند..."></textarea></label>
+        <label>محاور المحتوى <textarea name="pillars" rows="2" placeholder="المواضيع الأساسية اللي تتكلم عنها"></textarea></label>
+        <label>أمثلة من منشوراتك <textarea name="examples" rows="4" placeholder="الصق كابشنات سابقة نجحت عشان نفس الأسلوب"></textarea></label>
+        <button class="primary">حفظ الملف</button>
+      </form>
+    </section>
+  </main>
+
+  <!-- محرر الفكرة -->
+  <dialog id="editor">
+    <form id="editor-form" method="dialog" class="form">
+      <div class="row between">
+        <h2>تعديل الفكرة</h2>
+        <button type="button" class="ghost" data-close>✕</button>
+      </div>
+      <label>العنوان <input name="title" required></label>
+      <div class="row">
+        <label>النوع
+          <select name="format">
+            <option value="post">بوست</option>
+            <option value="carousel">كاروسيل</option>
+            <option value="reel">ريل</option>
+          </select>
+        </label>
+        <label>الحالة
+          <select name="status">
+            <option value="idea">فكرة</option>
+            <option value="draft">مسودة</option>
+            <option value="scheduled">مجدولة</option>
+            <option value="published">منشورة</option>
+            <option value="failed">فشلت</option>
+          </select>
+        </label>
+        <label>موعد النشر <input type="datetime-local" name="scheduledAt"></label>
+      </div>
+      <label>ملاحظات وتفاصيل التنفيذ <textarea name="notes" rows="3"></textarea></label>
+      <label>
+        <span class="row between">الكابشن <button type="button" id="ai-caption" class="ghost small">✨ اكتبه لي</button></span>
+        <textarea name="caption" rows="5"></textarea>
+      </label>
+      <label>الهاشتاقات <input name="hashtags"></label>
+      <div>
+        <div class="row between">
+          <span>الصور / الفيديو</span>
+          <label class="ghost small file-btn">+ رفع ملفات<input type="file" id="files" accept="image/jpeg,image/png,video/mp4,video/quicktime" multiple hidden></label>
+        </div>
+        <div id="media" class="media"></div>
+        <input id="media-url" placeholder="أو الصق رابط صورة عام واضغط Enter" autocomplete="off">
+      </div>
+      <p id="editor-error" class="error" hidden></p>
+      <div class="row between">
+        <button type="button" id="delete" class="danger">حذف</button>
+        <div class="row">
+          <button type="button" id="publish" class="secondary">انشر الحين</button>
+          <button type="submit" class="primary">حفظ</button>
+        </div>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" hidden></div>
+  <script src="app.js" type="module"></script>
+</body>
+</html>

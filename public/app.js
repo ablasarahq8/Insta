@@ -1,71 +1,20 @@
 import { FUNNEL, FUNNEL_TARGET, GOALS, FORMATS } from "./taxonomy.js";
-
-const $ = (sel, root = document) => root.querySelector(sel);
-const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
-
-const STATUSES = { idea: "فكرة", draft: "مسودة", scheduled: "مجدولة", published: "منشورة", failed: "فشلت" };
+import {
+  $, $$, esc, api, toast, busy, show, STATUSES, funnelBadge, goalBadge,
+  localDateStr, fromDateStr, fmtDate, uploadFiles,
+} from "./common.js";
+import { strategyWeek } from "./planutil.js";
 
 let ideas = [];
 let filter = "all";
 let editing = null; // نسخة من الفكرة اللي نعدلها
-
-const esc = (s = "") =>
-  String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-
-async function api(url, { method = "GET", body } = {}) {
-  const isForm = body instanceof FormData;
-  const res = await fetch(url, {
-    method,
-    headers: body && !isForm ? { "Content-Type": "application/json" } : undefined,
-    body: body && !isForm ? JSON.stringify(body) : body,
-  });
-  if (res.status === 204) return null;
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || `خطأ ${res.status}`);
-  return data;
-}
-
-function toast(msg) {
-  const el = $("#toast");
-  el.textContent = msg;
-  el.hidden = false;
-  clearTimeout(toast.t);
-  toast.t = setTimeout(() => (el.hidden = true), 3000);
-}
-
-async function busy(btn, fn) {
-  const label = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = "لحظة...";
-  try { return await fn(); }
-  catch (err) { toast(err.message); }
-  finally { btn.disabled = false; btn.textContent = label; }
-}
-
-// تعبئة قوائم المرحلة والهدف
-$$("[data-options=funnel]").forEach((sel) =>
-  sel.insertAdjacentHTML("beforeend", Object.entries(FUNNEL)
-    .map(([k, f]) => `<option value="${k}">${f.label} — ${f.name}</option>`).join("")));
-$$("[data-options=goal]").forEach((sel) =>
-  sel.insertAdjacentHTML("beforeend", Object.entries(GOALS)
-    .map(([k, g]) => `<option value="${k}">${g.emoji} ${g.name}</option>`).join("")));
-
-const funnelBadge = (f) => FUNNEL[f] ? `<span class="badge ${f}" title="${FUNNEL[f].name}">${FUNNEL[f].label}</span>` : "";
-const goalBadge = (g) => GOALS[g] ? `<span class="badge">${GOALS[g].emoji} ${GOALS[g].name}</span>` : "";
-
-// ---------- التنقل ----------
-function show(view) {
-  $$(".tab").forEach((t) => t.classList.toggle("active", t.dataset.view === view));
-  $$(".view").forEach((v) => (v.hidden = v.id !== `view-${view}`));
-}
-$$(".tab").forEach((t) => t.addEventListener("click", () => show(t.dataset.view)));
-$$("[data-goto]").forEach((a) => a.addEventListener("click", (e) => { e.preventDefault(); show(a.dataset.goto); }));
 
 // ---------- الأفكار ----------
 async function loadIdeas() {
   ideas = await api("/api/ideas");
   renderIdeas();
   renderWeek();
+  window.dispatchEvent(new CustomEvent("ideas-changed", { detail: ideas }));
 }
 
 function renderIdeas() {
@@ -129,7 +78,7 @@ const toLocalInput = (iso) => {
 
 function openEditor(idea) {
   editing = structuredClone(idea);
-  for (const name of ["title", "format", "funnel", "goal", "status", "notes", "caption", "hashtags"]) {
+  for (const name of ["title", "format", "funnel", "goal", "status", "notes", "caption", "hashtags", "script"]) {
     editorForm.elements[name].value = editing[name] || "";
   }
   editorForm.elements.scheduledAt.value = toLocalInput(editing.scheduledAt);
@@ -137,8 +86,22 @@ function openEditor(idea) {
   $("#editor-error").textContent = editing.error ? `آخر محاولة نشر فشلت: ${editing.error}` : "";
   renderMedia();
   updateScheduleHint();
+  updateScriptBox();
   dialog.showModal();
 }
+
+// سكربت الفويس اوفر يطلع بس للريلز (أو إذا فيه سكربت محفوظ)
+function updateScriptBox() {
+  $("#script-box").hidden = editorForm.elements.format.value !== "reel" && !editorForm.elements.script.value;
+}
+editorForm.elements.format.addEventListener("change", updateScriptBox);
+
+$("#ai-voiceover").addEventListener("click", (e) => busy(e.target, async () => {
+  await saveEditor();
+  const { script } = await api(`/api/ideas/${editing.id}/voiceover`, { method: "POST" });
+  editorForm.elements.script.value = script;
+  toast("انكتب السكربت — 📁 لقطة من مكتبتك · 🆕 لقطة تحتاج تصورها");
+}));
 
 function updateScheduleHint() {
   const { status, scheduledAt } = editorForm.elements;
@@ -161,11 +124,10 @@ $("#media").addEventListener("click", (e) => {
 });
 
 $("#files").addEventListener("change", async (e) => {
-  const fd = new FormData();
-  [...e.target.files].forEach((f) => fd.append("files", f));
+  const files = [...e.target.files];
   e.target.value = "";
   try {
-    editing.media.push(...(await api("/api/upload", { method: "POST", body: fd })));
+    editing.media.push(...(await uploadFiles(files)));
     renderMedia();
   } catch (err) { toast(err.message); }
 });
@@ -296,11 +258,21 @@ function startOfWeek(date) {
 }
 const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
 const sameDay = (a, b) => a.toDateString() === b.toDateString();
-const fmtDate = (d, opts) => d.toLocaleDateString("ar-KW", opts);
 const fmtTime = (d) => d.toLocaleTimeString("ar-KW", { hour: "numeric", minute: "2-digit" });
 
 let weekStart = startOfWeek(new Date());
 let planDraft = null; // { posts, time, start }
+let strategy = null; // الخطة التسويقية (من strategy.js)
+
+const currentStrategyWeek = () => strategyWeek(strategy, localDateStr(weekStart));
+
+window.addEventListener("strategy-changed", (e) => { strategy = e.detail; renderWeek(); });
+window.addEventListener("goto-week", (e) => {
+  weekStart = startOfWeek(fromDateStr(e.detail));
+  renderWeek();
+  show("week");
+  window.scrollTo(0, 0);
+});
 
 const weekPosts = () => {
   const end = addDays(weekStart, 7);
@@ -332,7 +304,22 @@ function renderWeek() {
       </div>`;
   }).join("");
 
+  renderStrategyWeek();
   renderBalance(posts);
+}
+
+// ملخص هالأسبوع من الخطة التسويقية
+function renderStrategyWeek() {
+  const sw = currentStrategyWeek();
+  const el = $("#week-strategy");
+  el.hidden = !sw;
+  if (!sw) return;
+  el.innerHTML = `
+    <div class="row between"><b>📋 الأسبوع ${sw.week} من الخطة · ${esc(sw.phase)}</b><span class="badge">${sw.postsPerWeek} منشورات مقترحة</span></div>
+    <div><b>${esc(sw.theme)}</b> — ${esc(sw.focus)}</div>
+    <div class="hint">🎯 الدعوة للإجراء: ${esc(sw.cta)}</div>
+    ${sw.events.length ? `<ul class="events">${sw.events.map((ev) => `
+      <li class="${ev.isLaunchDay ? "launch-day" : ""}"><b>${fmtDate(fromDateStr(ev.date), { weekday: "long", day: "numeric", month: "short" })}</b> · 📢 ${esc(ev.launch)} — ${esc(ev.title)}</li>`).join("")}</ul>` : ""}`;
 }
 
 function renderBalance(posts) {
@@ -346,8 +333,10 @@ function renderBalance(posts) {
   const funnel = Object.fromEntries(Object.keys(FUNNEL).map((k) => [k, count("funnel", k)]));
   const unset = total - Object.values(funnel).reduce((a, b) => a + b, 0);
 
+  const sw = currentStrategyWeek();
+  const mix = sw ? { tof: sw.tof, mof: sw.mof, bof: sw.bof } : FUNNEL_TARGET;
   const tips = [];
-  for (const [k, target] of Object.entries(FUNNEL_TARGET)) {
+  for (const [k, target] of Object.entries(mix)) {
     const diff = pct(funnel[k]) - target;
     if (diff <= -15) tips.push(`${FUNNEL[k].label} (${FUNNEL[k].name}) قليل — المفروض حول ${target}%`);
     if (diff >= 20) tips.push(`${FUNNEL[k].label} (${FUNNEL[k].name}) وايد — المفروض حول ${target}%`);
@@ -362,7 +351,7 @@ function renderBalance(posts) {
       <div class="bar">${Object.keys(FUNNEL).map((k) => `<div class="${k}" style="width:${pct(funnel[k])}%"></div>`).join("")}</div>
       <div class="legend">
         <span><b>${total}</b> منشور</span>
-        ${Object.entries(FUNNEL).map(([k, f]) => `<span><i class="dot ${k}"></i>${f.label} <b>${funnel[k]}</b> (${pct(funnel[k])}% · الهدف ${FUNNEL_TARGET[k]}%)</span>`).join("")}
+        ${Object.entries(FUNNEL).map(([k, f]) => `<span><i class="dot ${k}"></i>${f.label} <b>${funnel[k]}</b> (${pct(funnel[k])}% · الهدف ${mix[k]}%)</span>`).join("")}
       </div>
       <div class="goals">${goalCounts.map(([k, n]) => `<span class="badge ${n ? "" : "zero"}">${GOALS[k].emoji} ${GOALS[k].name} ${n}</span>`).join("")}</div>
       ${tips.length ? `<ul class="tips">${tips.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>` : `<p class="hint">✓ الأسبوع متوازن</p>`}
@@ -433,7 +422,7 @@ $("#plan-form").addEventListener("submit", (e) => {
   busy($("button", e.target), async () => {
     const posts = await api("/api/ai/plan-week", {
       method: "POST",
-      body: { topic, count, start: start.toISOString(), end: addDays(start, 7).toISOString() },
+      body: { topic, count, start: start.toISOString(), end: addDays(start, 7).toISOString(), weekDate: localDateStr(start) },
     });
     planDraft = { posts, time, start };
     renderPlan();

@@ -12,9 +12,11 @@
   <header>
     <h1>دفتر أفكار إنستغرام</h1>
     <nav>
+      <button class="tab" data-view="strategy">الخطة</button>
       <button class="tab active" data-view="week">الأسبوع</button>
       <button class="tab" data-view="ideas">أفكاري</button>
       <button class="tab" data-view="suggest">اقتراحات</button>
+      <button class="tab" data-view="shots">اللقطات</button>
       <button class="tab" data-view="profile">ملف الحساب</button>
     </nav>
   </header>
@@ -22,6 +24,41 @@
   <div id="banner" class="banner" hidden></div>
 
   <main>
+    <!-- الخطة التسويقية -->
+    <section id="view-strategy" class="view" hidden>
+      <form id="strategy-form" class="card form">
+        <h2>الخطة التسويقية</h2>
+        <p class="hint">حدد شنو تبي تحقق وشنو بتطلق ومتى، والخطة تنبني على هالأساس أسبوع بأسبوع.</p>
+        <div class="row">
+          <label>تبدأ من <input type="date" name="startDate" required></label>
+          <label>المدة
+            <select name="weeks">
+              <option value="4">شهر</option>
+              <option value="8">شهرين</option>
+              <option value="13" selected>٣ شهور</option>
+              <option value="26">٦ شهور</option>
+            </select>
+          </label>
+        </div>
+        <fieldset>
+          <legend>شنو تبي تحقق؟</legend>
+          <div id="goal-list" class="goal-list"></div>
+        </fieldset>
+        <fieldset>
+          <legend>شنو بتطلق؟</legend>
+          <p class="hint">دورة، مجتمع، اشتراك... حط تاريخ الإطلاق والخطة تحدد لك متى تبدأ تعلن عنه.</p>
+          <div id="launch-list" class="launch-list"></div>
+          <button type="button" id="add-launch" class="ghost">+ ضيف إطلاق</button>
+        </fieldset>
+        <label>ملاحظات إضافية <textarea name="notes" rows="2" placeholder="مثلاً: ميزانية إعلانات، مناسبات، أشياء ما تبيها..."></textarea></label>
+        <div class="row">
+          <button type="submit" class="secondary">حفظ</button>
+          <button type="button" id="build-strategy" class="primary">✨ سو لي الخطة</button>
+        </div>
+      </form>
+      <div id="strategy-plan"></div>
+    </section>
+
     <!-- الأسبوع -->
     <section id="view-week" class="view">
       <div class="card week-head">
@@ -33,6 +70,7 @@
           </div>
           <button id="next-week" class="ghost">الجاي ←</button>
         </div>
+        <div id="week-strategy" class="week-strategy" hidden></div>
         <div id="balance"></div>
       </div>
 
@@ -101,6 +139,29 @@
       <div id="suggestions" class="grid"></div>
     </section>
 
+    <!-- مكتبة اللقطات -->
+    <section id="view-shots" class="view" hidden>
+      <div class="card quick">
+        <select id="shots-count">
+          <option value="10">١٠ لقطات</option>
+          <option value="15" selected>١٥ لقطة</option>
+          <option value="25">٢٥ لقطة</option>
+        </select>
+        <button id="suggest-shots" class="primary">✨ اقترح لقطات أصورها</button>
+        <button id="add-shot" class="secondary">+ لقطة</button>
+      </div>
+      <p class="hint">صوّر هاللقطات مرة وحدة وخلها عندك، وبعدين تركّب عليها ريلز فويس اوفر طول الخطة. من محرر أي ريل اضغط «🎙️ اكتبه من لقطاتي».</p>
+      <div class="row between">
+        <div class="filters">
+          <button class="chip shot-filter active" data-filter="all">الكل</button>
+          <button class="chip shot-filter" data-filter="todo">باقي أصورها</button>
+          <button class="chip shot-filter" data-filter="done">جاهزة</button>
+        </div>
+        <span id="shots-progress" class="hint"></span>
+      </div>
+      <div id="shots" class="grid"></div>
+    </section>
+
     <!-- ملف الحساب -->
     <section id="view-profile" class="view" hidden>
       <form id="profile-form" class="card form">
@@ -159,6 +220,10 @@
         <textarea name="caption" rows="5"></textarea>
       </label>
       <label>الهاشتاقات <input name="hashtags"></label>
+      <label id="script-box">
+        <span class="row between">🎙️ سكربت الفويس اوفر <button type="button" id="ai-voiceover" class="ghost small">🎙️ اكتبه من لقطاتي</button></span>
+        <textarea name="script" rows="8" placeholder="المشاهد واللقطات ونص الفويس اوفر"></textarea>
+      </label>
       <div>
         <div class="row between">
           <span>الصور / الفيديو</span>
@@ -191,7 +256,34 @@
     </div>
   </dialog>
 
+  <!-- محرر اللقطة -->
+  <dialog id="shot-editor">
+    <form id="shot-form" method="dialog" class="form">
+      <div class="row between">
+        <h2>اللقطة</h2>
+        <button type="button" class="ghost" data-close>✕</button>
+      </div>
+      <label>العنوان <input name="title" required></label>
+      <div class="row">
+        <label>النوع
+          <select name="kind"><option value="video">🎥 فيديو</option><option value="photo">📷 صورة</option></select>
+        </label>
+        <label>التصنيف <input name="category" placeholder="شغل، أجواء، وجه..."></label>
+        <label>المدة <input name="duration" placeholder="مثلاً: ٥-١٠ ثواني"></label>
+      </div>
+      <label>شنو يتصور بالضبط <textarea name="description" rows="3"></textarea></label>
+      <label>💡 نصايح التصوير <textarea name="tips" rows="2"></textarea></label>
+      <label>🎯 تنفع لـ <input name="usage"></label>
+      <div class="row between">
+        <button type="button" id="shot-delete" class="danger">حذف</button>
+        <button type="submit" class="primary">حفظ</button>
+      </div>
+    </form>
+  </dialog>
+
   <div id="toast" class="toast" hidden></div>
   <script src="app.js" type="module"></script>
+  <script src="strategy.js" type="module"></script>
+  <script src="shots.js" type="module"></script>
 </body>
 </html>

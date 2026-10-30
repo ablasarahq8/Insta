@@ -7,6 +7,7 @@ import fs from "node:fs";
 import * as store from "./lib/store.js";
 import * as ai from "./lib/ai.js";
 import * as instagram from "./lib/instagram.js";
+import { strategyWeek } from "./public/planutil.js";
 
 const PORT = process.env.PORT || 3000;
 const UPLOAD_DIR = path.resolve("data/uploads");
@@ -97,10 +98,64 @@ app.post("/api/ai/plan-week", wrap(async (req, res) => {
   const weekPosts = store.listIdeas()
     .filter((i) => i.scheduledAt && new Date(i.scheduledAt) >= start && new Date(i.scheduledAt) < end)
     .map((i) => ({ ...i, day: Math.floor((new Date(i.scheduledAt) - start) / 86_400_000) }));
+  const sw = /^\d{4}-\d{2}-\d{2}$/.test(req.body.weekDate || "")
+    ? strategyWeek(store.getStrategy(), req.body.weekDate)
+    : null;
   res.json(await ai.planWeek(store.getProfile(), store.listIdeas(), weekPosts, {
     count,
     topic: req.body.topic || "",
+    strategyWeek: sw,
   }));
+}));
+
+// ---------- الخطة التسويقية ----------
+app.get("/api/strategy", (req, res) => res.json(store.getStrategy()));
+app.put("/api/strategy", (req, res) => {
+  const { plan, ...input } = req.body; // الخطة نفسها ما تتعدل إلا من الذكاء الاصطناعي
+  res.json(store.updateStrategy(input));
+});
+
+app.post("/api/ai/strategy", wrap(async (req, res) => {
+  const strategy = store.getStrategy();
+  if (!strategy.startDate) return res.status(400).json({ error: "حدد تاريخ بداية الخطة" });
+  if (!strategy.goals.length) return res.status(400).json({ error: "اختار هدف واحد على الأقل" });
+  const plan = await ai.buildStrategy(store.getProfile(), strategy);
+  res.json(store.updateStrategy({ plan: { ...plan, generatedAt: new Date().toISOString() } }));
+}));
+
+// ---------- مكتبة اللقطات ----------
+app.get("/api/shots", (req, res) => res.json(store.listShots()));
+app.post("/api/shots", (req, res) => res.status(201).json(store.createShot(req.body)));
+app.put("/api/shots/:id", (req, res) => {
+  const shot = store.updateShot(req.params.id, req.body);
+  shot ? res.json(shot) : res.status(404).json({ error: "اللقطة مو موجودة" });
+});
+app.delete("/api/shots/:id", (req, res) => {
+  store.deleteShot(req.params.id) ? res.status(204).end() : res.status(404).json({ error: "اللقطة مو موجودة" });
+});
+
+app.post("/api/ai/shots", wrap(async (req, res) => {
+  const count = Math.min(Math.max(Number(req.body.count) || 15, 3), 30);
+  const shots = await ai.suggestShots(store.getProfile(), store.getStrategy(), store.listShots(), { count });
+  res.json(shots.map((s) => store.createShot(s)));
+}));
+
+// سكربت فويس اوفر لريل مبني على مكتبة اللقطات
+app.post("/api/ideas/:id/voiceover", wrap(async (req, res) => {
+  const idea = store.getIdea(req.params.id);
+  if (!idea) return res.status(404).json({ error: "الفكرة مو موجودة" });
+  const scenes = await ai.voiceoverScript(store.getProfile(), idea, store.listShots());
+  let t = 0;
+  const script = scenes.map((sc, i) => {
+    const from = t;
+    t += sc.seconds;
+    return [
+      `🎬 المشهد ${i + 1} (${from}-${t} ث) — ${sc.fromLibrary ? "📁" : "🆕 لقطة جديدة:"} ${sc.shot}`,
+      `🎙️ ${sc.voiceover}`,
+      sc.onScreenText && `📝 على الشاشة: ${sc.onScreenText}`,
+    ].filter(Boolean).join("\n");
+  }).join("\n\n");
+  res.json({ script, scenes });
 }));
 
 app.post("/api/ideas/:id/caption", wrap(async (req, res) => {

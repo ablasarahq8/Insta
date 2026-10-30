@@ -173,3 +173,58 @@ dialog::backdrop { background: rgb(0 0 0 / .45); }
   .week { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
   .day { min-height: 0; }
 }
+
+/* ---------- الخطة التسويقية ---------- */
+fieldset { border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; margin: 0; display: grid; gap: 10px; }
+legend { font-weight: 700; padding: 0 6px; }
+.form label.check, label.check { display: flex; align-items: center; gap: 8px; font-weight: 500; cursor: pointer; }
+.check input { width: 18px; height: 18px; accent-color: var(--accent); }
+.goal-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 8px; }
+.goal-row { display: grid; grid-template-columns: 170px 1fr; gap: 8px; align-items: center; }
+.launch-list { display: grid; gap: 8px; }
+.launch-row { display: grid; grid-template-columns: 2fr 1fr 1fr 2fr auto; gap: 8px; padding: 8px; border: 1px dashed var(--border); border-radius: 10px; }
+#strategy-plan { display: grid; gap: 14px; margin-top: 14px; }
+.plan-summary p { white-space: pre-line; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+.kpi { display: grid; gap: 2px; padding: 10px; border-radius: 10px; background: var(--bg); border: 1px solid var(--border); }
+.kpi b { font-size: 1.1rem; color: var(--accent); }
+.phases { display: flex; gap: 4px; margin: 10px 0; }
+.phase { min-width: 0; padding: 8px; border-radius: 10px; background: var(--bg); border: 1px solid var(--border); display: grid; font-size: .85rem; }
+.phase:nth-child(5n+1) { border-top: 4px solid var(--tof); }
+.phase:nth-child(5n+2) { border-top: 4px solid var(--mof); }
+.phase:nth-child(5n+3) { border-top: 4px solid var(--accent-2); }
+.phase:nth-child(5n+4) { border-top: 4px solid var(--accent); }
+.phase:nth-child(5n+5) { border-top: 4px solid var(--bof); }
+.phase b, .phase span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.phase span { color: var(--muted); }
+.phase-list { margin: 0; padding-inline-start: 18px; color: var(--muted); font-size: .9rem; }
+.timeline { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 0; }
+.timeline li { display: grid; grid-template-columns: 110px 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.timeline li.past { opacity: .5; }
+.timeline .when { color: var(--muted); font-size: .9rem; }
+.timeline p { margin: 2px 0 0; color: var(--muted); font-size: .9rem; }
+.launch-day b { color: var(--accent); }
+.section-title { margin: 10px 0 0; }
+.weeks { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+.plan-week { display: grid; gap: 8px; align-content: start; }
+.plan-week.now { border-color: var(--accent); }
+.plan-week h3 { margin: 0; font-size: 1.05rem; }
+.plan-week p { margin: 0; }
+.plan-week ul { margin: 0; padding-inline-start: 18px; font-size: .9rem; }
+.events { margin: 0; padding: 8px 10px; list-style: none; background: var(--bg); border-radius: 10px; font-size: .9rem; display: grid; gap: 4px; }
+.week-strategy { display: grid; gap: 6px; padding: 12px; border-radius: 10px; background: var(--bg); border: 1px solid var(--border); }
+
+/* ---------- اللقطات ---------- */
+.shot { display: flex; flex-direction: column; gap: 6px; }
+.shot h3 { margin: 0; font-size: 1rem; }
+.shot p { margin: 0; color: var(--muted); font-size: .9rem; }
+.shot.done { border-color: var(--ok); }
+.shot.done h3 { color: var(--ok); }
+
+@media (max-width: 700px) {
+  .goal-row { grid-template-columns: 1fr; }
+  .launch-row { grid-template-columns: 1fr 1fr; }
+  .launch-row [data-f=name], .launch-row [data-f=details] { grid-column: 1 / -1; }
+  .phases { flex-direction: column; }
+  .timeline li { grid-template-columns: 1fr; gap: 2px; }
+}

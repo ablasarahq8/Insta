@@ -12,7 +12,8 @@
   <header>
     <h1>دفتر أفكار إنستغرام</h1>
     <nav>
-      <button class="tab active" data-view="ideas">أفكاري</button>
+      <button class="tab active" data-view="week">الأسبوع</button>
+      <button class="tab" data-view="ideas">أفكاري</button>
       <button class="tab" data-view="suggest">اقتراحات</button>
       <button class="tab" data-view="profile">ملف الحساب</button>
     </nav>
@@ -21,8 +22,50 @@
   <div id="banner" class="banner" hidden></div>
 
   <main>
+    <!-- الأسبوع -->
+    <section id="view-week" class="view">
+      <div class="card week-head">
+        <div class="row between">
+          <button id="prev-week" class="ghost">→ اللي طاف</button>
+          <div class="center">
+            <h2 id="week-label"></h2>
+            <button id="this-week" class="ghost small" hidden>ارجع لهالأسبوع</button>
+          </div>
+          <button id="next-week" class="ghost">الجاي ←</button>
+        </div>
+        <div id="balance"></div>
+      </div>
+
+      <form id="plan-form" class="card quick">
+        <input name="topic" placeholder="مناسبة أو موضوع هالأسبوع؟ (اختياري)" autocomplete="off">
+        <select name="count" title="كم منشور">
+          <option value="3">٣ منشورات</option>
+          <option value="5">٥ منشورات</option>
+          <option value="7" selected>٧ منشورات</option>
+          <option value="10">١٠ منشورات</option>
+          <option value="14">١٤ منشور</option>
+        </select>
+        <input type="time" name="time" value="19:00" title="وقت النشر">
+        <button class="primary">✨ خطط لي الأسبوع</button>
+      </form>
+
+      <div id="plan-preview" class="card" hidden>
+        <div class="row between">
+          <h2>الخطة المقترحة</h2>
+          <div class="row">
+            <button id="plan-cancel" class="ghost">إلغاء</button>
+            <button id="plan-accept" class="primary">اعتمد الخطة</button>
+          </div>
+        </div>
+        <p class="hint">بتنحفظ كمسودات بمواعيدها. أول ما تجهز الصور وتخلي الحالة «مجدولة» تنتشر تلقائياً بوقتها.</p>
+        <div id="plan-list" class="plan-list"></div>
+      </div>
+
+      <div id="week" class="week"></div>
+    </section>
+
     <!-- أفكاري -->
-    <section id="view-ideas" class="view">
+    <section id="view-ideas" class="view" hidden>
       <form id="quick" class="card quick">
         <input name="title" placeholder="فكرة جديدة؟ اكتبها بسرعة..." required autocomplete="off">
         <select name="format">
@@ -47,6 +90,8 @@
     <section id="view-suggest" class="view" hidden>
       <form id="suggest-form" class="card quick">
         <input name="topic" placeholder="موضوع معين؟ (اختياري) مثلاً: رمضان، العودة للمدارس..." autocomplete="off">
+        <select name="funnel" data-options="funnel"><option value="">أي مرحلة</option></select>
+        <select name="goal" data-options="goal"><option value="">أي هدف</option></select>
         <select name="count">
           <option>3</option><option selected>5</option><option>8</option><option>10</option>
         </select>
@@ -99,6 +144,15 @@
         </label>
         <label>موعد النشر <input type="datetime-local" name="scheduledAt"></label>
       </div>
+      <div class="row">
+        <label>مرحلة القمع
+          <select name="funnel" data-options="funnel"><option value="">—</option></select>
+        </label>
+        <label>الهدف
+          <select name="goal" data-options="goal"><option value="">—</option></select>
+        </label>
+      </div>
+      <p class="hint" id="schedule-hint" hidden>عشان تنتشر تلقائياً بموعدها، خل الحالة «مجدولة».</p>
       <label>ملاحظات وتفاصيل التنفيذ <textarea name="notes" rows="3"></textarea></label>
       <label>
         <span class="row between">الكابشن <button type="button" id="ai-caption" class="ghost small">✨ اكتبه لي</button></span>
@@ -122,6 +176,19 @@
         </div>
       </div>
     </form>
+  </dialog>
+
+  <!-- اختيار فكرة ليوم معين -->
+  <dialog id="picker">
+    <div class="form">
+      <div class="row between">
+        <h2 id="picker-title"></h2>
+        <button type="button" class="ghost" data-close>✕</button>
+      </div>
+      <button id="picker-new" class="primary">+ منشور جديد بهاليوم</button>
+      <p class="hint">أو اختار من أفكارك اللي ما لها موعد:</p>
+      <div id="picker-list" class="picker-list"></div>
+    </div>
   </dialog>
 
   <div id="toast" class="toast" hidden></div>

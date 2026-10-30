@@ -84,11 +84,23 @@ app.post("/api/upload", upload.array("files", 10), (req, res) => {
 // ---------- الذكاء الاصطناعي ----------
 app.post("/api/ai/suggest", wrap(async (req, res) => {
   const count = Math.min(Math.max(Number(req.body.count) || 5, 1), 10);
-  const ideas = await ai.suggestIdeas(store.getProfile(), store.listIdeas(), {
+  const { topic = "", funnel = "", goal = "" } = req.body;
+  res.json(await ai.suggestIdeas(store.getProfile(), store.listIdeas(), { count, topic, funnel, goal }));
+}));
+
+// start/end: حدود الأسبوع بتوقيت المستخدم (ISO) عشان نعرف شنو محطوط فيه
+app.post("/api/ai/plan-week", wrap(async (req, res) => {
+  const start = new Date(req.body.start);
+  const end = new Date(req.body.end);
+  if (isNaN(start) || isNaN(end)) return res.status(400).json({ error: "حدود الأسبوع غلط" });
+  const count = Math.min(Math.max(Number(req.body.count) || 7, 1), 14);
+  const weekPosts = store.listIdeas()
+    .filter((i) => i.scheduledAt && new Date(i.scheduledAt) >= start && new Date(i.scheduledAt) < end)
+    .map((i) => ({ ...i, day: Math.floor((new Date(i.scheduledAt) - start) / 86_400_000) }));
+  res.json(await ai.planWeek(store.getProfile(), store.listIdeas(), weekPosts, {
     count,
     topic: req.body.topic || "",
-  });
-  res.json(ideas);
+  }));
 }));
 
 app.post("/api/ideas/:id/caption", wrap(async (req, res) => {

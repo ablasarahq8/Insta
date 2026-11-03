@@ -4,8 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>دفتر أفكار إنستغرام</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/vendor/font/400.css">
+  <link rel="stylesheet" href="/vendor/font/500.css">
+  <link rel="stylesheet" href="/vendor/font/700.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -173,6 +174,14 @@
         <label>الأهداف <textarea name="goals" rows="2" placeholder="زيادة متابعين، مبيعات، وعي بالبراند..."></textarea></label>
         <label>محاور المحتوى <textarea name="pillars" rows="2" placeholder="المواضيع الأساسية اللي تتكلم عنها"></textarea></label>
         <label>أمثلة من منشوراتك <textarea name="examples" rows="4" placeholder="الصق كابشنات سابقة نجحت عشان نفس الأسلوب"></textarea></label>
+        <fieldset>
+          <legend>ألوان البراند (للتصاميم)</legend>
+          <div class="row">
+            <label class="color">الأساسي <input type="color" name="brandPrimary"></label>
+            <label class="color">الثانوي <input type="color" name="brandAccent"></label>
+            <label class="color">الخلفية <input type="color" name="brandBg"></label>
+          </div>
+        </fieldset>
         <button class="primary">حفظ الملف</button>
       </form>
     </section>
@@ -224,6 +233,7 @@
         <span class="row between">🎙️ سكربت الفويس اوفر <button type="button" id="ai-voiceover" class="ghost small">🎙️ اكتبه من لقطاتي</button></span>
         <textarea name="script" rows="8" placeholder="المشاهد واللقطات ونص الفويس اوفر"></textarea>
       </label>
+      <button type="button" id="open-designer" class="design-btn">🎨 صمّم البوست وشوف شكله على الإنستغرام</button>
       <div>
         <div class="row between">
           <span>الصور / الفيديو</span>
@@ -242,6 +252,34 @@
       </div>
     </form>
   </dialog>
+
+  <!-- مصمم البوست -->
+  <dialog id="designer" class="wide">
+    <div class="form">
+      <div class="row between">
+        <h2>🎨 تصميم البوست</h2>
+        <button type="button" class="ghost" data-close>✕</button>
+      </div>
+      <div class="designer">
+        <div class="ig-phone" id="ig-preview"></div>
+        <div class="design-side">
+          <div class="row">
+            <label>الستايل <select id="design-style"></select></label>
+            <button type="button" id="design-ai" class="secondary">✨ صمّم من جديد</button>
+          </div>
+          <p class="hint">عدّل أي نص والمعاينة تتغير على طول. الألوان من «ملف الحساب».</p>
+          <div id="design-slides" class="design-slides"></div>
+          <p class="hint" id="design-reel-hint">هذا غلاف الريل — نزّله وحطه غلاف وانت تنشر الفيديو.</p>
+          <div class="row">
+            <button type="button" id="design-download" class="ghost">⬇️ نزّل الصور</button>
+            <button type="button" id="design-save" class="primary">💾 احفظها صور للمنشور</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+  <!-- مكان مخفي نرسم فيه السلايدات بمقاسها الحقيقي وقت التصدير -->
+  <div id="design-stage" class="design-stage" aria-hidden="true"></div>
 
   <!-- اختيار فكرة ليوم معين -->
   <dialog id="picker">
@@ -282,6 +320,7 @@
   </dialog>
 
   <div id="toast" class="toast" hidden></div>
+  <script src="/vendor/html-to-image/html-to-image.js"></script>
   <script src="app.js" type="module"></script>
   <script src="strategy.js" type="module"></script>
   <script src="shots.js" type="module"></script>

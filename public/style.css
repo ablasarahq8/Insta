@@ -228,3 +228,67 @@ legend { font-weight: 700; padding: 0 6px; }
   .phases { flex-direction: column; }
   .timeline li { grid-template-columns: 1fr; gap: 2px; }
 }
+
+/* ---------- مصمم البوست ---------- */
+.design-btn { width: 100%; padding: 12px; border: 2px dashed var(--accent); color: var(--accent); font-weight: 700; background: transparent; }
+.design-btn:hover { background: var(--bg); }
+label.color { display: flex; align-items: center; gap: 8px; }
+label.color input { width: 48px; height: 36px; padding: 2px; }
+dialog.wide { width: min(1000px, calc(100vw - 32px)); }
+.designer { display: grid; grid-template-columns: 372px 1fr; gap: 20px; align-items: start; }
+.design-side { display: grid; gap: 12px; }
+.design-slides { display: grid; gap: 8px; max-height: 50vh; overflow: auto; }
+.design-slide { display: grid; gap: 6px; padding: 10px; border: 1px solid var(--border); border-radius: 10px; }
+.design-slide.on { border-color: var(--accent); }
+
+/* معاينة الإنستغرام */
+.ig-phone { width: 372px; max-width: 100%; box-sizing: border-box; padding: 16px; border-radius: 28px; background: #fff; color: #111; border: 1px solid #ddd; display: grid; gap: 8px; direction: ltr; }
+.ig-head { display: flex; align-items: center; gap: 8px; font-size: .9rem; }
+.ig-avatar { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 700;
+  background: linear-gradient(45deg, #f58529, #dd2a7b, #8134af); }
+.ig-media { position: relative; overflow: hidden; background: #eee; }
+.ig-scale { transform-origin: top left; }
+.ig-empty { display: grid; place-items: center; height: 100%; color: #888; }
+.ig-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 28px; height: 28px; padding: 0; border-radius: 50%;
+  background: rgb(255 255 255 / .7); color: #111; font-size: 1.2rem; line-height: 1; opacity: .8; }
+.ig-nav.prev { left: 8px; } .ig-nav.next { right: 8px; }
+.ig-dots { display: flex; justify-content: center; gap: 4px; }
+.ig-dots i { width: 6px; height: 6px; border-radius: 50%; background: #ccc; }
+.ig-dots i.on { background: #0095f6; }
+.ig-actions { display: flex; gap: 14px; font-size: 1.3rem; }
+.ig-save { margin-left: auto; }
+.ig-caption { font-size: .85rem; white-space: pre-line; direction: rtl; text-align: right; max-height: 7.5em; overflow: hidden; }
+.ig-tag { color: #00376b; }
+
+/* السلايد نفسه (بالمقاس الحقيقي ١٠٨٠ بكسل) */
+.design-stage { position: fixed; left: -10000px; top: 0; }
+.slide { box-sizing: border-box; padding: 90px; display: flex; flex-direction: column; direction: rtl; font-family: "IBM Plex Sans Arabic", sans-serif; position: relative; overflow: hidden; }
+.slide-top { display: flex; justify-content: space-between; font-size: 34px; opacity: .75; font-weight: 500; direction: ltr; }
+.slide-main { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 40px; }
+.slide h2 { margin: 0; font-size: 104px; line-height: 1.25; font-weight: 700; }
+.slide.kind-content h2 { font-size: 80px; }
+.slide p { margin: 0; font-size: 46px; line-height: 1.6; }
+.slide-num { width: 120px; height: 120px; border-radius: 50%; display: grid; place-items: center; font-size: 60px; font-weight: 700; }
+.slide-pill { align-self: flex-start; padding: 24px 48px; border-radius: 999px; font-size: 44px; font-weight: 700; }
+.slide-swipe { font-size: 40px; font-weight: 700; align-self: flex-end; }
+.slide.fmt-reel .slide-main { justify-content: flex-end; padding-bottom: 260px; }
+
+.style-bold { background: var(--b1); color: #fff; }
+.style-bold h2::after { content: ""; display: block; width: 180px; height: 16px; margin-top: 36px; border-radius: 8px; background: var(--b2); }
+.style-bold .slide-num, .style-bold .slide-pill { background: var(--b2); color: #fff; }
+
+.style-minimal { background: var(--bg); color: #1f1a17; border: 28px solid var(--b1); }
+.style-minimal h2 { color: var(--b1); }
+.style-minimal .slide-num, .style-minimal .slide-pill { background: var(--b1); color: #fff; }
+
+.style-gradient { background: linear-gradient(150deg, var(--b1), var(--b2)); color: #fff; }
+.style-gradient .slide-num, .style-gradient .slide-pill { background: rgb(255 255 255 / .22); color: #fff; }
+.style-gradient::after { content: ""; position: absolute; width: 700px; height: 700px; border-radius: 50%; background: rgb(255 255 255 / .08); left: -250px; bottom: -250px; }
+
+@media (max-width: 800px) {
+  .designer { grid-template-columns: minmax(0, 1fr); justify-items: center; }
+  .design-side { width: 100%; }
+}
+@media (max-width: 420px) {
+  .ig-phone { width: 100%; padding: 12px; }
+}

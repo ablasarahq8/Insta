@@ -4,6 +4,7 @@ import {
   localDateStr, fromDateStr, fmtDate, uploadFiles,
 } from "./common.js";
 import { strategyWeek } from "./planutil.js";
+import { openDesigner } from "./design.js";
 
 let ideas = [];
 let filter = "all";
@@ -146,6 +147,7 @@ function collectEditor() {
   const data = Object.fromEntries(new FormData(editorForm));
   data.scheduledAt = data.scheduledAt ? new Date(data.scheduledAt).toISOString() : null;
   data.media = editing.media;
+  data.design = editing.design || null;
   if (data.status === "scheduled" && !data.scheduledAt) throw new Error("حدد موعد النشر للمنشور المجدول");
   return data;
 }
@@ -175,6 +177,17 @@ $("#delete").addEventListener("click", async () => {
   await loadIdeas();
   toast("انحذفت");
 });
+
+// مصمم البوست — نحفظ أول عشان ياخذ آخر عنوان وكابشن
+$("#open-designer").addEventListener("click", (e) => busy(e.target, async () => {
+  await saveEditor();
+  await openDesigner(editing, async (design, media) => {
+    editing.design = design;
+    if (media) editing.media = [...editing.media.filter((m) => m.type === "video"), ...media];
+    renderMedia();
+    await saveEditor();
+  });
+}));
 
 $("#ai-caption").addEventListener("click", (e) => busy(e.target, async () => {
   await saveEditor();

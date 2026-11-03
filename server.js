@@ -35,6 +35,9 @@ if (process.env.APP_PASSWORD) {
 }
 
 app.use(express.static(path.resolve("public")));
+// مكتبات الواجهة: تحويل التصميم لصورة، والخط العربي (محلي عشان يدخل بالصور)
+app.use("/vendor/html-to-image", express.static(path.resolve("node_modules/html-to-image/dist")));
+app.use("/vendor/font", express.static(path.resolve("node_modules/@fontsource/ibm-plex-sans-arabic")));
 
 const upload = multer({
   storage: multer.diskStorage({
@@ -143,6 +146,13 @@ app.post("/api/ai/shots", wrap(async (req, res) => {
   const count = Math.min(Math.max(Number(req.body.count) || 15, 3), 30);
   const shots = await ai.suggestShots(store.getProfile(), store.getStrategy(), store.listShots(), { count });
   res.json(shots.map((s) => store.createShot(s)));
+}));
+
+// نصوص سلايدات التصميم
+app.post("/api/ideas/:id/design", wrap(async (req, res) => {
+  const idea = store.getIdea(req.params.id);
+  if (!idea) return res.status(404).json({ error: "الفكرة مو موجودة" });
+  res.json(await ai.designSlides(store.getProfile(), idea));
 }));
 
 // سكربت فويس اوفر لريل مبني على مكتبة اللقطات

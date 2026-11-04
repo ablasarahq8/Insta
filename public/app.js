@@ -509,6 +509,25 @@ async function loadProfile() {
   for (const [k, v] of Object.entries(p)) if (profileForm.elements[k]) profileForm.elements[k].value = v;
 }
 
+// ملف الحساب الجاهز — مأخوذ من مهارات sarah-instagram-carousel و stories-and-scripts
+const SARAH_PROFILE = {
+  handle: "@ablasarahq8",
+  niche: "تقنية وذكاء اصطناعي للمعلمات: أدوات، أفكار للصف، يوميات معلمة علوم",
+  audience: "معلمات (٩١٪+ إناث، ٢٥–٤٤ سنة) في الكويت وعمان والسعودية، يبون يشتغلون بذكاء ويرتاحون أكثر ويتطورون مهنياً بالتقنية",
+  tone: "أنثوي احترافي: هادي، واثق، واضح، قريب من المعلمة. مو طفولي ولا رسمي جاف. محتوى عملي يفيد بسرعة ويختصر الوقت بخطوات واضحة",
+  language: "كويتي خالص (شلون، شنو، وايد، تنطرين، الحين). بدون فصحى رسمية، وإيموجي قليل (✨ 🌸 💜 🎯). لا ChatGPT (استخدمي Gemini)، ولا ManyChat",
+  goals: "أساعد المعلمة تشتغل بذكاء، ترتاح أكثر، وتتطور مهنياً باستخدام التقنية. دعوات ناعمة مبنية على الهوية (هدية مجانية، رابط، تصويت، سؤال) مو بيع مباشر",
+  pillars: "أدوات الذكاء الاصطناعي للمعلمة، تحضير الدروس، أفكار وأنشطة للصف، يوميات معلمة علوم، التطوير المهني، المجتمع والدورات",
+};
+
+$("#profile-preset").addEventListener("click", () => {
+  for (const [k, v] of Object.entries(SARAH_PROFILE)) {
+    const el = profileForm.elements[k];
+    if (el && (!el.value.trim() || confirm(`«${el.closest("label")?.firstChild?.textContent.trim()}» فيه كلام. أبدّله؟`))) el.value = v;
+  }
+  toast("تعبّى ✓ راجعيه وعدّلي اللي تبين، وبعدين اضغطي «حفظ الملف»");
+});
+
 profileForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   await api("/api/profile", { method: "PUT", body: Object.fromEntries(new FormData(profileForm)) });

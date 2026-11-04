@@ -169,7 +169,9 @@ function renderPlan() {
 
 $("#strategy-plan").addEventListener("click", (e) => {
   const btn = e.target.closest("[data-week]");
-  if (btn) window.dispatchEvent(new CustomEvent("goto-week", { detail: btn.dataset.week }));
+  if (!btn) return;
+  e.preventDefault();
+  window.dispatchEvent(new CustomEvent("goto-week", { detail: btn.dataset.week }));
 });
 
 // ---------- البداية ----------

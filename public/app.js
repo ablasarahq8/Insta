@@ -281,10 +281,16 @@ const currentStrategyWeek = () => strategyWeek(strategy, localDateStr(weekStart)
 
 window.addEventListener("strategy-changed", (e) => { strategy = e.detail; renderWeek(); });
 window.addEventListener("goto-week", (e) => {
-  weekStart = startOfWeek(fromDateStr(e.detail));
-  renderWeek();
+  // ننقل للصفحة أول، عشان لو صار خطأ بالرسم ما يبين إن الزر ما سوى شي
   show("week");
   window.scrollTo(0, 0);
+  try {
+    weekStart = startOfWeek(fromDateStr(e.detail));
+    renderWeek();
+  } catch (err) {
+    console.error(err);
+    toast(`ما قدرت أعرض هالأسبوع: ${err.message}`);
+  }
 });
 
 const weekPosts = () => {
@@ -347,7 +353,7 @@ function renderBalance(posts) {
   const unset = total - Object.values(funnel).reduce((a, b) => a + b, 0);
 
   const sw = currentStrategyWeek();
-  const mix = sw ? { tof: sw.tof, mof: sw.mof, bof: sw.bof } : FUNNEL_TARGET;
+  const mix = sw && [sw.tof, sw.mof, sw.bof].every(Number.isFinite) ? { tof: sw.tof, mof: sw.mof, bof: sw.bof } : FUNNEL_TARGET;
   const tips = [];
   for (const [k, target] of Object.entries(mix)) {
     const diff = pct(funnel[k]) - target;

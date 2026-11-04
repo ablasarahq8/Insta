@@ -27,8 +27,8 @@ export async function openDesigner(idea, onSave) {
   };
   $("#design-style").innerHTML = Object.entries(STYLES)
     .map(([k, v]) => `<option value="${k}" ${k === state.style ? "selected" : ""}>${v}</option>`).join("");
-  $("#design-save").hidden = idea.format === "reel";
-  $("#design-reel-hint").hidden = idea.format !== "reel";
+  $("#design-format").value = idea.format;
+  updateFormatUi();
   dialog.showModal(); // قبل الرسم عشان نعرف عرض الشاشة
   render();
   if (!state.slides.length) generate($("#design-ai"));
@@ -40,6 +40,13 @@ function brandVars() {
 }
 
 const handle = () => (state.profile.handle || "@myaccount").replace(/^@?/, "@");
+
+// كلاس حسب طول النص عشان الخط يصغر للعناوين والنصوص الطويلة
+const sizeClass = (slide) => {
+  const t = (slide.title || "").length;
+  const b = (slide.body || "").length;
+  return [t > 42 ? "t-xlong" : t > 26 ? "t-long" : "", b > 110 ? "b-long" : ""].join(" ");
+};
 
 const AR_DIGITS = "٠١٢٣٤٥٦٧٨٩";
 const arNum = (n) => String(n).padStart(2, "0").replace(/\d/g, (d) => AR_DIGITS[d]);
@@ -58,7 +65,7 @@ function sarahSlideHTML(slide, i, w, h) {
   const tone = dark ? "dark" : "light";
   const handleText = `${(state.profile.handle || "ABLASARAHQ8").replace(/^@/, "").toUpperCase()}@`;
   return `
-    <div class="slide style-sarah s-${tone} kind-${slide.kind} fmt-${state.idea.format}" style="width:${w}px;height:${h}px">
+    <div class="slide ${sizeClass(slide)} style-sarah s-${tone} kind-${slide.kind} fmt-${state.idea.format}" style="width:${w}px;height:${h}px">
       ${slide.kind === "cover" ? `<i class="s-dot s-dot1"></i><i class="s-dot s-dot2"></i><i class="s-dot s-dot3"></i>` : ""}
       <div class="s-header"><span class="s-handle">${esc(handleText)}</span><img class="s-logo" src="/brand/logo_${dark ? "light" : "dark"}.png" alt=""></div>
       <div class="s-main">
@@ -112,7 +119,7 @@ function scrapSlideHTML(slide, i, w, h) {
     : title;
   const deco = ["star", "sparkle", "heart"];
   return `
-    <div class="slide style-scrap kind-${slide.kind} fmt-${state.idea.format}" style="width:${w}px;height:${h}px">
+    <div class="slide ${sizeClass(slide)} style-scrap kind-${slide.kind} fmt-${state.idea.format}" style="width:${w}px;height:${h}px">
       <i class="sc-scrap sc-lilac" style="clip-path:${torn(i + 1, 8)}"></i>
       <i class="sc-scrap sc-blush" style="clip-path:${torn(i + 2, 8)}"></i>
       <i class="sc-scrap sc-cream" style="clip-path:${torn(i + 3, 8)}"></i>
@@ -146,7 +153,7 @@ function slideHTML(slide, i) {
   if (state.style === "sarah") return sarahSlideHTML(slide, i, w, h);
   if (state.style === "scrapbook") return scrapSlideHTML(slide, i, w, h);
   return `
-    <div class="slide style-${state.style} kind-${slide.kind} fmt-${state.idea.format}" style="width:${w}px;height:${h}px;${brandVars()}">
+    <div class="slide ${sizeClass(slide)} style-${state.style} kind-${slide.kind} fmt-${state.idea.format}" style="width:${w}px;height:${h}px;${brandVars()}">
       <div class="slide-top"><span>${esc(handle())}</span>${total > 1 ? `<span>${i + 1}/${total}</span>` : ""}</div>
       <div class="slide-main">
         ${slide.kind === "content" ? `<div class="slide-num">${i}</div>` : ""}
@@ -194,7 +201,7 @@ function render() {
 
 function generate(btn) {
   busy(btn, async () => {
-    state.slides = await api(`/api/ideas/${state.idea.id}/design`, { method: "POST", body: { style: state.style } });
+    state.slides = await api(`/api/ideas/${state.idea.id}/design`, { method: "POST", body: { style: state.style, format: state.idea.format } });
     state.index = 0;
     render();
   });
@@ -204,6 +211,19 @@ window.addEventListener("resize", () => { if (dialog.open) render(); });
 
 $("#design-ai").addEventListener("click", (e) => generate(e.target));
 $("#design-style").addEventListener("change", (e) => { state.style = e.target.value; render(); });
+
+function updateFormatUi() {
+  $("#design-save").hidden = state.idea.format === "reel";
+  $("#design-reel-hint").hidden = state.idea.format !== "reel";
+}
+
+// تغيير النوع (بوست = سلايد وحدة، كاروسيل = عدة سلايدات، ريل = غلاف) ويصمم من جديد
+$("#design-format").addEventListener("change", (e) => {
+  state.idea.format = e.target.value;
+  state.formatChanged = true;
+  updateFormatUi();
+  generate($("#design-ai"));
+});
 
 $("#ig-preview").addEventListener("click", (e) => {
   const nav = e.target.closest("[data-nav]");
@@ -246,7 +266,7 @@ async function renderImages() {
 $("#design-save").addEventListener("click", (e) => busy(e.target, async () => {
   if (!state.slides.length) throw new Error("ما في سلايدات");
   const media = await uploadFiles(await renderImages());
-  await state.onSave({ style: state.style, slides: state.slides }, media);
+  await state.onSave({ style: state.style, slides: state.slides, format: state.idea.format }, media);
   dialog.close();
   toast("انحفظ التصميم كصور للمنشور ✓");
 }));
@@ -259,5 +279,5 @@ $("#design-download").addEventListener("click", (e) => busy(e.target, async () =
     a.click();
     URL.revokeObjectURL(a.href);
   }
-  await state.onSave({ style: state.style, slides: state.slides }, null);
+  await state.onSave({ style: state.style, slides: state.slides, format: state.idea.format }, null);
 }));

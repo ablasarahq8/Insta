@@ -183,6 +183,8 @@ $("#open-designer").addEventListener("click", (e) => busy(e.target, async () => 
   await saveEditor();
   await openDesigner(editing, async (design, media) => {
     editing.design = design;
+    // إذا تغير النوع من المصمم (مثلاً بوست ← كاروسيل) نحدّثه بالمنشور
+    if (design.format) { editing.format = design.format; editorForm.elements.format.value = design.format; updateScriptBox(); }
     if (media) editing.media = [...editing.media.filter((m) => m.type === "video"), ...media];
     renderMedia();
     await saveEditor();

@@ -501,3 +501,12 @@ dialog::backdrop { background: rgb(26 18 34 / .5); backdrop-filter: blur(2px); }
   .week-head > .row > button { padding: 6px 8px; white-space: nowrap; font-size: .85rem; }
   .week-head h2 { font-size: .95rem; }
 }
+
+/* عناوين السلايدات نص عادي (قاعدة h2 فوق للأيقونات ما تنطبق عليها) */
+.slide h2, .story-frame h2 { display: block; }
+/* العناوين الطويلة تصغر عشان ما تتزاحم */
+.slide.t-long h2 { font-size: 80px; }
+.slide.t-xlong h2 { font-size: 66px; }
+.slide.kind-content.t-long h2 { font-size: 64px; }
+.slide.kind-content.t-xlong h2 { font-size: 56px; }
+.slide.b-long p, .slide.b-long .s-card p, .slide.b-long .sc-polaroid p { font-size: 32px; }

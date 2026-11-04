@@ -195,7 +195,8 @@ app.post("/api/ai/shots", wrap(async (req, res) => {
 app.post("/api/ideas/:id/design", wrap(async (req, res) => {
   const idea = store.getIdea(req.params.id);
   if (!idea) return res.status(404).json({ error: "الفكرة مو موجودة" });
-  res.json(await ai.designSlides(store.getProfile(), idea, req.body?.style));
+  const format = ["post", "carousel", "reel"].includes(req.body?.format) ? req.body.format : idea.format;
+  res.json(await ai.designSlides(store.getProfile(), { ...idea, format }, req.body?.style));
 }));
 
 // سكربت فويس اوفر لريل مبني على مكتبة اللقطات

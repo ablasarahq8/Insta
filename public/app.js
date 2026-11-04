@@ -482,6 +482,25 @@ $("#plan-accept").addEventListener("click", (e) => busy(e.target, async () => {
   toast("انحفظت خطة الأسبوع ✓");
 }));
 
+// ---------- رفع ملف جاهز ----------
+$("#quick-pub-form").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const fd = new FormData(form);
+  const when = fd.get("when");
+  fd.delete("when");
+  if (when) fd.set("publishAt", new Date(when).toISOString());
+  const later = when && new Date(when) > new Date();
+  if (!later && !confirm("بينتشر على الإنستغرام الحين. متأكدة؟")) return;
+  busy($("button", form), async () => {
+    const res = await api("/api/quick-publish", { method: "POST", body: fd });
+    form.reset();
+    await loadIdeas();
+    window.dispatchEvent(new Event("stories-changed"));
+    toast(later ? "انجدول ✓" : res.status === "failed" ? `فشل: ${res.error}` : "انتشر 🎉");
+  });
+});
+
 // ---------- ملف الحساب ----------
 const profileForm = $("#profile-form");
 
@@ -500,6 +519,9 @@ profileForm.addEventListener("submit", async (e) => {
 async function init() {
   await Promise.all([loadIdeas(), loadProfile()]);
   const status = await api("/api/status");
+  $("#hook-status").innerHTML = status.uploadKey
+    ? `✅ مفعّل. بأي محادثة تسوين فيها ريل قولي «ارفعيه ستوري» أو «انشريه ريل»، وعطيها رابط الموقع <b dir="ltr">${esc(status.baseUrl || location.origin)}</b> ومفتاح الرفع (UPLOAD_KEY) أول مرة.`
+    : `❌ مو مفعّل. من Render: الخدمة ← Environment ← ضيفي <b>UPLOAD_KEY</b> واضغطي Generate عشان يطلع مفتاح عشوائي، وبعدين Save.`;
   const warnings = [];
   if (!status.instagram) warnings.push("ربط إنستغرام مو مفعّل — حط IG_USER_ID و IG_ACCESS_TOKEN في ملف .env عشان تقدر تنشر.");
   if (!status.publicUrl) warnings.push("PUBLIC_BASE_URL مو محدد — الصور المرفوعة ما راح يقدر إنستغرام يوصلها (الروابط الخارجية تشتغل عادي).");

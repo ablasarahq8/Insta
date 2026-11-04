@@ -25,6 +25,7 @@ function sundayOf(dateStr) {
 }
 
 window.addEventListener("strategy-changed", (e) => { strategy = e.detail; renderWeek(); });
+window.addEventListener("stories-changed", () => api("/api/stories").then((s) => { stories = s; renderWeek(); }).catch(() => {}));
 
 async function load() {
   [stories, profile] = await Promise.all([api("/api/stories"), api("/api/profile")]);

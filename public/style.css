@@ -417,3 +417,9 @@ input.inline { width: auto; padding: 2px 8px; font-weight: 700; }
 .st-media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background-size: cover; background-position: center; }
 .st-bg-row select { flex: 1; }
 .st-publish { display: grid; gap: 8px; padding: 12px; }
+
+.quick-pub { margin-top: 12px; }
+.quick-pub summary { cursor: pointer; font-weight: 700; }
+.quick-pub form { margin-top: 12px; }
+#hook-info { margin-top: 14px; }
+#hook-info h2 { font-size: 1rem; }

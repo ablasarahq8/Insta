@@ -28,6 +28,8 @@ app.get("/healthz", (req, res) => res.send("ok"));
 // حماية بسيطة بكلمة سر (اختيارية) لباقي الموقع
 if (process.env.APP_PASSWORD) {
   app.use((req, res, next) => {
+    // عنوان الرفع من برا له مفتاح خاص فيه (UPLOAD_KEY)
+    if (req.path.startsWith("/api/hook/")) return next();
     const [, encoded] = (req.headers.authorization || "").split(" ");
     const [, pass] = Buffer.from(encoded || "", "base64").toString().split(":");
     if (pass === process.env.APP_PASSWORD) return next();
@@ -62,6 +64,8 @@ app.get("/api/status", (req, res) =>
   res.json({
     instagram: instagram.isConfigured(),
     publicUrl: Boolean(PUBLIC_BASE_URL),
+    uploadKey: (process.env.UPLOAD_KEY || "").length >= 16,
+    baseUrl: PUBLIC_BASE_URL,
   }),
 );
 
@@ -260,7 +264,8 @@ async function publishStory(story) {
     for (const [i, f] of story.frames.entries()) {
       if (f.media === "video") {
         if (!f.video) throw new Error(`الشريحة ${i + 1} فيديو بس ما فيها فيديو مرفوع`);
-        if (!f.overlay) throw new Error(`الشريحة ${i + 1} ما تجهزت، اضغطي «جهّزي» من جديد`);
+        // فيديو جاهز بدون طبقة نص (مثلاً ريل متركّب برا الموقع) ينتشر مثل ما هو
+        if (!f.overlay) { items.push({ type: "video", url: absUrl(f.video) }); continue; }
         const out = `${crypto.randomUUID()}.mp4`;
         await overlayVideo(localPath(f.video), localPath(f.overlay), path.join(UPLOAD_DIR, out));
         items.push({ type: "video", url: absUrl(`/uploads/${out}`) });
@@ -290,6 +295,67 @@ app.post("/api/ideas/:id/publish", wrap(async (req, res) => {
   if (!idea) return res.status(404).json({ error: "الفكرة مو موجودة" });
   res.json(await publishIdea(idea));
 }));
+
+// ---------- رفع ملف جاهز (ريل/ستوري/بوست) ----------
+// تاريخ اليوم بتوقيت الحساب (الكويت افتراضياً) عشان يطلع باليوم الصح بالتقويم
+const localDay = (d) => new Intl.DateTimeFormat("en-CA", { timeZone: process.env.APP_TZ || "Asia/Kuwait" }).format(d);
+
+async function quickPublish(file, { as = "story", caption = "", publishAt = "" }) {
+  if (!file) throw Object.assign(new Error("ارفعي ملف فيديو أو صورة (JPG/PNG/MP4/MOV)"), { status: 400 });
+  const media = { url: `/uploads/${file.filename}`, type: file.mimetype.startsWith("video/") ? "video" : "image" };
+  const when = publishAt ? new Date(publishAt) : null;
+  if (when && isNaN(when)) throw Object.assign(new Error("الموعد غلط، استخدمي صيغة ISO مثل 2026-11-05T19:00:00+03:00"), { status: 400 });
+  const later = when && when > new Date();
+  const title = (caption.split("\n")[0] || file.originalname).slice(0, 80);
+
+  if (as === "story") {
+    const story = store.createStory({
+      date: localDay(when || new Date()),
+      type: "personal",
+      title: title || "ستوري جاهز",
+      ending: "none",
+      measure: "",
+      frames: [{ role: "ملف جاهز", media: media.type === "video" ? "video" : "photo", shot: "", kicker: "", statements: [],
+        quotes: false, sticker: "", ctaLine: "", ctaKeyword: "", ctaSub: "",
+        ...(media.type === "video" ? { video: media.url } : { image: media.url, rendered: media.url }) }],
+      status: later ? "scheduled" : "ready",
+      publishAt: when ? when.toISOString() : null,
+    });
+    return { kind: "story", ...(later ? story : await publishStory(story)) };
+  }
+
+  if (as === "reel" && media.type !== "video") throw Object.assign(new Error("الريل لازم يكون فيديو"), { status: 400 });
+  const idea = store.createIdea({
+    title,
+    format: as === "reel" ? "reel" : "post",
+    caption,
+    media: [media],
+    status: later ? "scheduled" : "draft",
+    scheduledAt: when ? when.toISOString() : null,
+  });
+  return { kind: as === "reel" ? "reel" : "post", ...(later ? idea : await publishIdea(idea)) };
+}
+
+const sendQuick = async (req, res) => {
+  try {
+    res.json(await quickPublish(req.file, req.body));
+  } catch (err) {
+    res.status(err.status || 500).json({ error: err.message });
+  }
+};
+
+// من الموقع (بكلمة سر الموقع)
+app.post("/api/quick-publish", upload.single("file"), sendQuick);
+
+// من برا (مثلاً محادثة Claude): الهيدر X-Upload-Key لازم يطابق UPLOAD_KEY
+app.post("/api/hook/publish", (req, res, next) => {
+  const key = process.env.UPLOAD_KEY || "";
+  const given = String(req.headers["x-upload-key"] || "");
+  const ok = key.length >= 16 && given.length === key.length &&
+    crypto.timingSafeEqual(Buffer.from(given), Buffer.from(key));
+  if (!ok) return res.status(key ? 401 : 503).json({ error: key ? "مفتاح الرفع غلط" : "الرفع من برا مو مفعّل (حطي UPLOAD_KEY بإعدادات السيرفر)" });
+  next();
+}, upload.single("file"), sendQuick);
 
 // كل دقيقة: انشر المنشورات المجدولة اللي جا وقتها
 setInterval(() => {

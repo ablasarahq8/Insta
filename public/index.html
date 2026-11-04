@@ -136,6 +136,20 @@
         </select>
         <button class="primary">حفظ</button>
       </form>
+      <details class="card quick-pub">
+        <summary>📤 ارفعي ملف جاهز (ريل، ستوري، بوست)</summary>
+        <form id="quick-pub-form" class="form">
+          <div class="row">
+            <label>الملف <input type="file" name="file" accept="video/mp4,video/quicktime,image/jpeg,image/png" required></label>
+            <label>ينزل كـ
+              <select name="as"><option value="story">ستوري</option><option value="reel">ريل</option><option value="post">بوست</option></select>
+            </label>
+            <label>الموعد (فاضي = الحين) <input type="datetime-local" name="when"></label>
+          </div>
+          <label>الكابشن (للريل والبوست) <textarea name="caption" rows="3"></textarea></label>
+          <button class="primary">📤 ارفعي وانشري</button>
+        </form>
+      </details>
       <div class="filters">
         <button class="chip active" data-status="all">الكل</button>
         <button class="chip" data-status="idea">أفكار</button>
@@ -206,6 +220,10 @@
         </fieldset>
         <button class="primary">حفظ الملف</button>
       </form>
+      <div class="card form" id="hook-info">
+        <h2>🔗 الرفع من محادثة Claude</h2>
+        <p class="hint" id="hook-status"></p>
+      </div>
     </section>
   </main>
 

@@ -1,6 +1,6 @@
 // صفحة الخطة التسويقية
 import { FUNNEL, GOALS, STRATEGY_GOALS, LAUNCH_TYPES } from "./taxonomy.js";
-import { $, $$, esc, api, toast, busy, goalBadge, localDateStr, fromDateStr, fmtDate } from "./common.js";
+import { $, $$, esc, api, toast, busy, goalBadge, localDateStr, fromDateStr, fmtDate, icon } from "./common.js";
 import { addDaysStr, toSunday, launchEvents, strategyWeek } from "./planutil.js";
 
 const form = $("#strategy-form");
@@ -14,7 +14,7 @@ const dateLabel = (s, opts = { day: "numeric", month: "short" }) => fmtDate(from
 // ---------- النموذج ----------
 $("#goal-list").innerHTML = Object.entries(STRATEGY_GOALS).map(([k, g]) => `
   <div class="goal-row">
-    <label class="check"><input type="checkbox" data-goal="${k}"> ${g.emoji} ${g.name}</label>
+    <label class="check"><input type="checkbox" data-goal="${k}"> ${g.name}</label>
     <input data-detail="${k}" placeholder="${g.placeholder}">
   </div>`).join("");
 
@@ -26,7 +26,7 @@ function launchRow(l = {}) {
     <select data-f="type">${Object.entries(LAUNCH_TYPES).map(([k, v]) => `<option value="${k}" ${l.type === k ? "selected" : ""}>${v}</option>`).join("")}</select>
     <input data-f="date" type="date" value="${esc(l.date || "")}" title="تاريخ الإطلاق">
     <input data-f="details" placeholder="تفاصيل: السعر، لمنو، شنو يميزه..." value="${esc(l.details || "")}">
-    <button type="button" class="ghost" data-remove title="شيل">✕</button>`;
+    <button type="button" class="ghost icon-btn" data-remove title="شيلي">${icon("x")}</button>`;
   if (l.id) div.dataset.id = l.id;
   return div;
 }
@@ -130,7 +130,7 @@ function renderPlan() {
 
     ${events.length ? `
     <div class="card">
-      <h2>📢 جدول الإعلان عن الإطلاقات</h2>
+      <h2>${icon("megaphone")} جدول الإعلان عن الإطلاقات</h2>
       <ol class="timeline">${events.map((ev) => `
         <li class="${ev.isLaunchDay ? "launch-day" : ""} ${ev.date < today ? "past" : ""}">
           <span class="when">${dateLabel(ev.date, { weekday: "short", day: "numeric", month: "short" })}</span>
@@ -157,11 +157,11 @@ function renderPlan() {
         ${funnelBar(w)}
         <div class="meta">${w.goals.map(goalBadge).join("")}</div>
         <ul>${w.keyContent.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>
-        <p class="hint">🎯 ${esc(w.cta)}</p>
-        ${sw?.events.length ? `<ul class="events">${sw.events.map((ev) => `<li class="${ev.isLaunchDay ? "launch-day" : ""}">📢 ${dateLabel(ev.date, { weekday: "short" })}: ${esc(ev.launch)} — ${esc(ev.title)}</li>`).join("")}</ul>` : ""}
+        <p class="hint">${icon("target", 14)} ${esc(w.cta)}</p>
+        ${sw?.events.length ? `<ul class="events">${sw.events.map((ev) => `<li class="${ev.isLaunchDay ? "launch-day" : ""}">${icon("megaphone", 14)} ${dateLabel(ev.date, { weekday: "short" })}: ${esc(ev.launch)} — ${esc(ev.title)}</li>`).join("")}</ul>` : ""}
         <div class="row between">
           <span class="hint">${planned} من ${w.postsPerWeek} منشورات محطوطة</span>
-          <button class="primary small" data-week="${weekDate}">افتح الأسبوع ←</button>
+          <button class="primary small" data-week="${weekDate}">افتحي الأسبوع ${icon("next", 14)}</button>
         </div>
       </article>`;
     }).join("")}</div>`;

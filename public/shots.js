@@ -1,5 +1,5 @@
 // مكتبة اللقطات: صور وفيديوهات B-roll تتصور مرة وحدة وتنستخدم للريلز
-import { $, $$, esc, api, toast, busy, uploadFiles } from "./common.js";
+import { $, $$, esc, api, toast, busy, uploadFiles, icon } from "./common.js";
 
 let shots = [];
 let filter = "all";
@@ -18,7 +18,7 @@ function render() {
   const list = shots.filter((s) => filter === "all" || (filter === "done" ? s.done : !s.done));
   const el = $("#shots");
   if (!list.length) {
-    el.innerHTML = `<p class="empty">${shots.length ? "ما في شي هني" : "المكتبة فاضية — خل الذكاء الاصطناعي يقترح لك شنو تصور 👆"}</p>`;
+    el.innerHTML = `<p class="empty">${shots.length ? "ما في شي هني" : "المكتبة فاضية. خلي الذكاء الاصطناعي يقترح لچ شنو تصورين"}</p>`;
     return;
   }
   el.innerHTML = list.map((s) => `
@@ -26,15 +26,15 @@ function render() {
       <div class="row between">
         <label class="check"><input type="checkbox" data-done ${s.done ? "checked" : ""}> ${s.done ? "جاهزة" : "صوّرتها؟"}</label>
         <span class="meta">
-          <span class="badge">${s.kind === "photo" ? "📷 صورة" : "🎥 فيديو"}</span>
+          <span class="badge">${s.kind === "photo" ? `${icon("image", 13)} صورة` : `${icon("video", 13)} فيديو`}</span>
           ${s.category ? `<span class="badge">${esc(s.category)}</span>` : ""}
         </span>
       </div>
       <h3>${esc(s.title)}</h3>
       ${s.description ? `<p>${esc(s.description)}</p>` : ""}
       ${s.duration && s.kind !== "photo" ? `<span class="hint">⏱️ ${esc(s.duration)}</span>` : ""}
-      ${s.tips ? `<span class="hint">💡 ${esc(s.tips)}</span>` : ""}
-      ${s.usage ? `<span class="hint">🎯 ${esc(s.usage)}</span>` : ""}
+      ${s.tips ? `<span class="hint"><b>نصيحة:</b> ${esc(s.tips)}</span>` : ""}
+      ${s.usage ? `<span class="hint"><b>تنفع لـ:</b> ${esc(s.usage)}</span>` : ""}
       <div class="media">${s.media.map((m) => m.type === "video"
         ? `<video src="${esc(m.url)}" muted></video>`
         : `<img src="${esc(m.url)}" alt="">`).join("")}</div>

@@ -1,6 +1,6 @@
 import { FUNNEL, FUNNEL_TARGET, GOALS, FORMATS } from "./taxonomy.js";
 import {
-  $, $$, esc, api, toast, busy, show, STATUSES, funnelBadge, goalBadge,
+  $, $$, esc, api, toast, busy, show, STATUSES, funnelBadge, goalBadge, icon,
   localDateStr, fromDateStr, fmtDate, uploadFiles,
 } from "./common.js";
 import { strategyWeek } from "./planutil.js";
@@ -22,7 +22,7 @@ function renderIdeas() {
   const list = filter === "all" ? ideas : ideas.filter((i) => i.status === filter);
   const el = $("#ideas");
   if (!list.length) {
-    el.innerHTML = `<p class="empty">ما في شي هني للحين — اكتب أول فكرة فوق أو خذ اقتراحات 👆</p>`;
+    el.innerHTML = `<p class="empty">ما في شي هني للحين — اكتبي أول فكرة فوق، أو خذي اقتراحات</p>`;
     return;
   }
   el.innerHTML = list.map((i) => {
@@ -37,7 +37,7 @@ function renderIdeas() {
           <span class="badge">${FORMATS[i.format] || i.format}</span>
           ${funnelBadge(i.funnel)}${goalBadge(i.goal)}
           <span class="badge ${i.status}">${STATUSES[i.status]}</span>
-          ${i.source === "ai" ? `<span class="badge ai">✨ مقترحة</span>` : ""}
+          ${i.source === "ai" ? `<span class="badge ai">مقترحة</span>` : ""}
           ${when && i.status === "scheduled" ? `<span class="badge">${when}</span>` : ""}
         </div>
       </article>`;
@@ -101,7 +101,7 @@ $("#ai-voiceover").addEventListener("click", (e) => busy(e.target, async () => {
   await saveEditor();
   const { script } = await api(`/api/ideas/${editing.id}/voiceover`, { method: "POST" });
   editorForm.elements.script.value = script;
-  toast("انكتب السكربت — 📁 لقطة من مكتبتك · 🆕 لقطة تحتاج تصورها");
+  toast("انكتب السكربت. «📁» لقطة من مكتبتچ، و«🆕» لقطة تحتاجين تصورينها");
 }));
 
 function updateScheduleHint() {
@@ -115,7 +115,7 @@ function renderMedia() {
   $("#media").innerHTML = editing.media.map((m, idx) => `
     <figure>
       ${m.type === "video" ? `<video src="${esc(m.url)}" muted></video>` : `<img src="${esc(m.url)}" alt="">`}
-      <button type="button" data-remove="${idx}" title="شيل">✕</button>
+      <button type="button" data-remove="${idx}" title="شيلي">${icon("x", 14)}</button>
     </figure>`).join("");
 }
 
@@ -203,7 +203,7 @@ $("#publish").addEventListener("click", (e) => {
       await saveEditor();
       await api(`/api/ideas/${editing.id}/publish`, { method: "POST" });
       dialog.close();
-      toast("انتشرت على إنستغرام 🎉");
+      toast("انتشرت على إنستغرام");
     } finally {
       await loadIdeas();
     }
@@ -226,7 +226,7 @@ function renderSuggestions() {
   $("#suggestions").innerHTML = suggestions.map((s, idx) => `
     <article class="card idea" style="cursor:default">
       <h3>${esc(s.title)}</h3>
-      <p class="hook">🎣 ${esc(s.hook)}</p>
+      <p class="hook">${esc(s.hook)}</p>
       <p>${esc(s.notes)}</p>
       <div class="row between">
         <span class="meta"><span class="badge">${FORMATS[s.format] || s.format}</span>${funnelBadge(s.funnel)}${goalBadge(s.goal)}</span>
@@ -313,7 +313,7 @@ function renderWeek() {
             <b>${esc(p.title)}</b>
             <span class="meta">${funnelBadge(p.funnel)}${goalBadge(p.goal)}<span class="badge ${p.status}">${STATUSES[p.status]}</span></span>
           </div>`).join("")}
-        <button class="add-day" data-day="${idx}">+ ضيف</button>
+        <button class="add-day" data-day="${idx}">${icon("plus", 14)} ضيفي</button>
       </div>`;
   }).join("");
 
@@ -328,17 +328,17 @@ function renderStrategyWeek() {
   el.hidden = !sw;
   if (!sw) return;
   el.innerHTML = `
-    <div class="row between"><b>📋 الأسبوع ${sw.week} من الخطة · ${esc(sw.phase)}</b><span class="badge">${sw.postsPerWeek} منشورات مقترحة</span></div>
+    <div class="row between"><b>${icon("map", 16)} الأسبوع ${sw.week} من الخطة · ${esc(sw.phase)}</b><span class="badge">${sw.postsPerWeek} منشورات مقترحة</span></div>
     <div><b>${esc(sw.theme)}</b> — ${esc(sw.focus)}</div>
-    <div class="hint">🎯 الدعوة للإجراء: ${esc(sw.cta)}</div>
+    <div class="hint">الدعوة للإجراء: ${esc(sw.cta)}</div>
     ${sw.events.length ? `<ul class="events">${sw.events.map((ev) => `
-      <li class="${ev.isLaunchDay ? "launch-day" : ""}"><b>${fmtDate(fromDateStr(ev.date), { weekday: "long", day: "numeric", month: "short" })}</b> · 📢 ${esc(ev.launch)} — ${esc(ev.title)}</li>`).join("")}</ul>` : ""}`;
+      <li class="${ev.isLaunchDay ? "launch-day" : ""}"><b>${fmtDate(fromDateStr(ev.date), { weekday: "long", day: "numeric", month: "short" })}</b> · ${icon("megaphone", 14)} ${esc(ev.launch)} — ${esc(ev.title)}</li>`).join("")}</ul>` : ""}`;
 }
 
 function renderBalance(posts) {
   const total = posts.length;
   if (!total) {
-    $("#balance").innerHTML = `<p class="hint">الأسبوع فاضي — ضيف منشورات بالأيام أو خل الذكاء الاصطناعي يخطط لك 👇</p>`;
+    $("#balance").innerHTML = `<p class="hint">الأسبوع فاضي. ضيفي منشورات بالأيام، أو خلي الذكاء الاصطناعي يخطط لچ</p>`;
     return;
   }
   const count = (key, val) => posts.filter((p) => p[key] === val).length;
@@ -366,8 +366,8 @@ function renderBalance(posts) {
         <span><b>${total}</b> منشور</span>
         ${Object.entries(FUNNEL).map(([k, f]) => `<span><i class="dot ${k}"></i>${f.label} <b>${funnel[k]}</b> (${pct(funnel[k])}% · الهدف ${mix[k]}%)</span>`).join("")}
       </div>
-      <div class="goals">${goalCounts.map(([k, n]) => `<span class="badge ${n ? "" : "zero"}">${GOALS[k].emoji} ${GOALS[k].name} ${n}</span>`).join("")}</div>
-      ${tips.length ? `<ul class="tips">${tips.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>` : `<p class="hint">✓ الأسبوع متوازن</p>`}
+      <div class="goals">${goalCounts.map(([k, n]) => `<span class="badge ${n ? "" : "zero"}">${GOALS[k].name} <b>${n}</b></span>`).join("")}</div>
+      ${tips.length ? `<ul class="tips">${tips.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>` : `<p class="hint ok-text">${icon("check", 14)} الأسبوع متوازن</p>`}
     </div>`;
 }
 
@@ -450,7 +450,7 @@ function renderPlan() {
       <span class="when">${DAYS[p.day]}</span>
       <div>
         <b>${esc(p.title)}</b>
-        <p>🎣 ${esc(p.hook)}</p>
+        <p>${esc(p.hook)}</p>
         <span class="meta"><span class="badge">${FORMATS[p.format] || p.format}</span>${funnelBadge(p.funnel)}${goalBadge(p.goal)}</span>
       </div>
     </div>`).join("");
@@ -497,7 +497,7 @@ $("#quick-pub-form").addEventListener("submit", (e) => {
     form.reset();
     await loadIdeas();
     window.dispatchEvent(new Event("stories-changed"));
-    toast(later ? "انجدول ✓" : res.status === "failed" ? `فشل: ${res.error}` : "انتشر 🎉");
+    toast(later ? "انجدول ✓" : res.status === "failed" ? `فشل: ${res.error}` : "انتشر");
   });
 });
 
@@ -539,11 +539,11 @@ async function init() {
   await Promise.all([loadIdeas(), loadProfile()]);
   const status = await api("/api/status");
   $("#hook-status").innerHTML = status.uploadKey
-    ? `✅ مفعّل. بأي محادثة تسوين فيها ريل قولي «ارفعيه ستوري» أو «انشريه ريل»، وعطيها رابط الموقع <b dir="ltr">${esc(status.baseUrl || location.origin)}</b> ومفتاح الرفع (UPLOAD_KEY) أول مرة.`
-    : `❌ مو مفعّل. من Render: الخدمة ← Environment ← ضيفي <b>UPLOAD_KEY</b> واضغطي Generate عشان يطلع مفتاح عشوائي، وبعدين Save.`;
+    ? `${icon("check", 14)} مفعّل. بأي محادثة تسوين فيها ريل قولي «ارفعيه ستوري» أو «انشريه ريل»، وعطيها رابط الموقع <b dir="ltr">${esc(status.baseUrl || location.origin)}</b> ومفتاح الرفع (UPLOAD_KEY) أول مرة.`
+    : `مو مفعّل. من Render: الخدمة ← Environment ← ضيفي <b>UPLOAD_KEY</b> واضغطي Generate عشان يطلع مفتاح عشوائي، وبعدين Save.`;
   const warnings = [];
-  if (!status.instagram) warnings.push("ربط إنستغرام مو مفعّل — حط IG_USER_ID و IG_ACCESS_TOKEN في ملف .env عشان تقدر تنشر.");
-  if (!status.publicUrl) warnings.push("PUBLIC_BASE_URL مو محدد — الصور المرفوعة ما راح يقدر إنستغرام يوصلها (الروابط الخارجية تشتغل عادي).");
+  if (!status.instagram) warnings.push("الإنستغرام مو مربوط، فالنشر ما يشتغل. (IG_USER_ID و IG_ACCESS_TOKEN)");
+  if (!status.publicUrl) warnings.push("رابط الموقع العام مو محدد، فالصور المرفوعة ما تنتشر. (PUBLIC_BASE_URL)");
   if (warnings.length) {
     $("#banner").innerHTML = warnings.map(esc).join("<br>");
     $("#banner").hidden = false;

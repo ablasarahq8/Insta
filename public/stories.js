@@ -1,6 +1,6 @@
 // صفحة الستوري: خطة أسبوعية لتسلسلات الستوري + تصميم الشرائح ٩:١٦ (من مهارة stories-and-scripts)
 import { STORY_TYPES, STORY_ENDINGS, STORY_SCHEDULE } from "./taxonomy.js";
-import { $, $$, esc, api, toast, busy, localDateStr, fromDateStr, fmtDate, uploadFiles } from "./common.js";
+import { $, $$, esc, api, toast, busy, localDateStr, fromDateStr, fmtDate, uploadFiles, icon } from "./common.js";
 import { addDaysStr, strategyWeek } from "./planutil.js";
 
 const DAYS = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
@@ -42,8 +42,8 @@ function renderWeek() {
   const sw = strategyWeek(strategy, weekDate);
   $("#story-strategy").hidden = !sw;
   if (sw) {
-    $("#story-strategy").innerHTML = `📋 الأسبوع ${sw.week} من الخطة · <b>${esc(sw.theme)}</b>${sw.events.length
-      ? ` · 📢 ${sw.events.map((e) => esc(`${e.launch} — ${e.title}`)).join("، ")}` : ""}`;
+    $("#story-strategy").innerHTML = `${icon("map", 16)} الأسبوع ${sw.week} من الخطة · <b>${esc(sw.theme)}</b>${sw.events.length
+      ? ` · ${icon("megaphone", 14)} ${sw.events.map((e) => esc(`${e.launch} — ${e.title}`)).join("، ")}` : ""}`;
   }
 
   const today = localDateStr(new Date());
@@ -56,12 +56,12 @@ function renderWeek() {
         <div class="day-head"><b>${name}</b><span>${fmtDate(fromDateStr(date), { day: "numeric", month: "short" })}</span></div>
         ${list.length ? list.map((s) => `
           <div class="post story-card" data-id="${s.id}" style="border-inline-start-color:${STORY_TYPES[s.type]?.color}">
-            <span class="time">${STORY_TYPES[s.type]?.emoji} ${STORY_TYPES[s.type]?.name}، ${arNum(s.frames.length)} شرائح</span>
+            <span class="time"><i class="type-dot" style="background:${STORY_TYPES[s.type]?.color}"></i>${STORY_TYPES[s.type]?.name}، ${arNum(s.frames.length)} شرائح</span>
             <b>${esc(s.title)}</b>
             <span class="meta"><span class="badge">${STORY_ENDINGS[s.ending] || ""}</span>${{ posted: `<span class="badge published">انتشرت</span>`, scheduled: `<span class="badge scheduled">مجدولة</span>`, failed: `<span class="badge failed">فشلت</span>` }[s.status] || ""}</span>
           </div>`).join("")
-          : `<p class="hint">المقترح: ${STORY_TYPES[sched.type].emoji} ${STORY_TYPES[sched.type].name}</p>`}
-        <button class="add-day" data-day="${d}">${list.length ? "🔄 اكتبه من جديد" : "✨ اكتب ستوري هاليوم"}</button>
+          : `<p class="hint"><i class="type-dot" style="background:${STORY_TYPES[sched.type].color}"></i>المقترح: ${STORY_TYPES[sched.type].name}</p>`}
+        <button class="add-day" data-day="${d}">${list.length ? `${icon("refresh", 14)} اكتبيه من جديد` : `${icon("sparkles", 14)} اكتبي ستوري هاليوم`}</button>
       </div>`;
   }).join("");
 }
@@ -118,7 +118,7 @@ function frameHTML(f, i, total, { exporting = false } = {}) {
       ${video
         ? (exporting ? "" : f.video
           ? `<video class="st-media" src="${esc(f.video)}" muted autoplay loop playsinline></video>`
-          : `<div class="st-video-bg">🎥 ${esc(f.shot || "الفيديو")}</div>`)
+          : `<div class="st-video-bg">${icon("video", 90)}<br>${esc(f.shot || "الفيديو")}</div>`)
         : f.image
           ? `<div class="st-media" style="background-image:url('${esc(f.image)}')"></div>`
           : `<i class="st-blob st-b1"></i><i class="st-blob st-b2"></i><i class="st-blob st-b3"></i>`}
@@ -138,7 +138,7 @@ function openEditor(story) {
   frameIndex = 0;
   form.elements.title.value = editing.title;
   form.elements.type.innerHTML = Object.entries(STORY_TYPES)
-    .map(([k, t]) => `<option value="${k}" ${k === editing.type ? "selected" : ""}>${t.emoji} ${t.name}</option>`).join("");
+    .map(([k, t]) => `<option value="${k}" ${k === editing.type ? "selected" : ""}>${t.name}</option>`).join("");
   form.elements.ending.innerHTML = Object.entries(STORY_ENDINGS)
     .map(([k, v]) => `<option value="${k}" ${k === editing.ending ? "selected" : ""}>${v}</option>`).join("");
   form.elements.measure.value = editing.measure;
@@ -168,11 +168,11 @@ function bgPicker(f) {
   return `
     <div class="row st-bg-row">
       <select data-bg>
-        <option value="">${want === "video" ? "🎥 الفيديو: بدون" : "🖼️ الخلفية: ثيم فاتح"}</option>
-        ${opts.map((m) => `<option value="${esc(m.url)}" ${m.url === current ? "selected" : ""}>📁 ${esc(m.title)}</option>`).join("")}
-        ${current && !opts.some((m) => m.url === current) ? `<option value="${esc(current)}" selected>📎 ملف مرفوع</option>` : ""}
+        <option value="">${want === "video" ? "الفيديو: ما اخترتي" : "الخلفية: الثيم الفاتح"}</option>
+        ${opts.map((m) => `<option value="${esc(m.url)}" ${m.url === current ? "selected" : ""}>من المكتبة: ${esc(m.title)}</option>`).join("")}
+        ${current && !opts.some((m) => m.url === current) ? `<option value="${esc(current)}" selected>ملف مرفوع</option>` : ""}
       </select>
-      <label class="ghost small file-btn">+ ارفعي${want === "video" ? " فيديو" : " صورة"}<input type="file" data-bg-file accept="${want === "video" ? "video/mp4,video/quicktime" : "image/jpeg,image/png"}" hidden></label>
+      <label class="ghost small file-btn">${icon("upload", 14)} ارفعي${want === "video" ? " فيديو" : " صورة"}<input type="file" data-bg-file accept="${want === "video" ? "video/mp4,video/quicktime" : "image/jpeg,image/png"}" hidden></label>
     </div>`;
 }
 
@@ -195,7 +195,7 @@ function renderEditor() {
     <div class="design-slide ${i === frameIndex ? "on" : ""}" data-i="${i}">
       <div class="row between">
         <b>${arNum(i + 1)} — <input data-f="role" value="${esc(f.role)}" class="inline"></b>
-        <select data-f="media"><option value="photo" ${f.media === "photo" ? "selected" : ""}>📷 صورة</option><option value="video" ${f.media === "video" ? "selected" : ""}>🎥 فيديو</option></select>
+        <select data-f="media"><option value="photo" ${f.media === "photo" ? "selected" : ""}>صورة</option><option value="video" ${f.media === "video" ? "selected" : ""}>فيديو</option></select>
       </div>
       <input data-f="shot" value="${esc(f.shot)}" placeholder="شنو تصورين (الخلفية)">
       ${bgPicker(f)}
@@ -296,7 +296,7 @@ $("#story-publish").addEventListener("click", (e) => {
       stories = await api("/api/stories");
       renderWeek();
     });
-    if (done.status === "posted") { dialog.close(); toast("انتشر الستوري 🎉"); }
+    if (done.status === "posted") { dialog.close(); toast("انتشر الستوري"); }
   });
 });
 

@@ -1,5 +1,5 @@
 // مصمم البوست: سلايدات بألوان البراند + معاينة بشكل الإنستغرام + حفظها كصور
-import { $, esc, api, toast, busy, uploadFiles } from "./common.js";
+import { $, esc, api, toast, busy, uploadFiles, icon } from "./common.js";
 
 const STYLES = {
   sarah: "أبلة سارة (هويتي)",
@@ -178,7 +178,7 @@ function render() {
         <button type="button" class="ig-nav next" data-nav="1" ${state.index === slides.length - 1 ? "hidden" : ""}>›</button>` : ""}
     </div>
     ${slides.length > 1 ? `<div class="ig-dots">${slides.map((_, i) => `<i class="${i === state.index ? "on" : ""}"></i>`).join("")}</div>` : ""}
-    <div class="ig-actions"><span>♡</span><span>💬</span><span>➤</span><span class="ig-save">🔖</span></div>
+    <div class="ig-actions">${icon("heart", 22)}${icon("message", 22)}${icon("send", 22)}<span class="ig-save">${icon("bookmark", 22)}</span></div>
     <div class="ig-caption"><b>${esc(handle().slice(1))}</b> ${esc(caption || "الكابشن بيطلع هني...").replace(/(#[^\s#]+)/g, '<span class="ig-tag">$1</span>')}</div>`;
 
   // تعديل النصوص

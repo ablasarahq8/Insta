@@ -1,5 +1,6 @@
 // أدوات مشتركة بين صفحات الموقع
 import { FUNNEL, GOALS } from "./taxonomy.js";
+export { icon } from "./icons.js";
 
 export const $ = (sel, root = document) => root.querySelector(sel);
 export const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -46,10 +47,10 @@ $$("[data-options=funnel]").forEach((sel) =>
     .map(([k, f]) => `<option value="${k}">${f.label} — ${f.name}</option>`).join("")));
 $$("[data-options=goal]").forEach((sel) =>
   sel.insertAdjacentHTML("beforeend", Object.entries(GOALS)
-    .map(([k, g]) => `<option value="${k}">${g.emoji} ${g.name}</option>`).join("")));
+    .map(([k, g]) => `<option value="${k}">${g.name}</option>`).join("")));
 
 export const funnelBadge = (f) => FUNNEL[f] ? `<span class="badge ${f}" title="${FUNNEL[f].name}">${FUNNEL[f].label}</span>` : "";
-export const goalBadge = (g) => GOALS[g] ? `<span class="badge">${GOALS[g].emoji} ${GOALS[g].name}</span>` : "";
+export const goalBadge = (g) => GOALS[g] ? `<span class="badge">${GOALS[g].name}</span>` : "";
 
 // ---------- التنقل ----------
 export function show(view) {

@@ -8,6 +8,7 @@ import * as store from "./lib/store.js";
 import * as ai from "./lib/ai.js";
 import * as instagram from "./lib/instagram.js";
 import { strategyWeek, addDaysStr } from "./public/planutil.js";
+import { overlayVideo } from "./lib/video.js";
 
 const PORT = process.env.PORT || 3000;
 const UPLOAD_DIR = path.join(store.DATA_DIR, "uploads");
@@ -239,6 +240,51 @@ async function publishIdea(idea) {
   }
 }
 
+// ---------- نشر الستوري ----------
+// قبل النشر الواجهة ترسم كل شريحة وترفعها: rendered (صورة نهائية) أو overlay (طبقة شفافة فوق الفيديو)
+const absUrl = (url) => {
+  if (/^https?:\/\//.test(url)) return url;
+  const base = PUBLIC_BASE_URL.replace(/\/$/, "");
+  if (!base) throw new Error("لازم تحدد PUBLIC_BASE_URL عشان إنستغرام يوصل للملفات المرفوعة");
+  return base + url;
+};
+const localPath = (url) =>
+  url.startsWith("/uploads/") ? path.join(UPLOAD_DIR, path.basename(url)) : url;
+
+async function publishStory(story) {
+  const key = `story:${story.id}`;
+  if (publishing.has(key)) throw new Error("النشر شغال على هالستوري");
+  publishing.add(key);
+  try {
+    const items = [];
+    for (const [i, f] of story.frames.entries()) {
+      if (f.media === "video") {
+        if (!f.video) throw new Error(`الشريحة ${i + 1} فيديو بس ما فيها فيديو مرفوع`);
+        if (!f.overlay) throw new Error(`الشريحة ${i + 1} ما تجهزت، اضغطي «جهّزي» من جديد`);
+        const out = `${crypto.randomUUID()}.mp4`;
+        await overlayVideo(localPath(f.video), localPath(f.overlay), path.join(UPLOAD_DIR, out));
+        items.push({ type: "video", url: absUrl(`/uploads/${out}`) });
+      } else {
+        if (!f.rendered) throw new Error(`الشريحة ${i + 1} ما تجهزت، اضغطي «جهّزي» من جديد`);
+        items.push({ type: "image", url: absUrl(f.rendered) });
+      }
+    }
+    const publishedIds = await instagram.publishStories(items);
+    return store.updateStory(story.id, { status: "posted", publishedIds, error: null });
+  } catch (err) {
+    store.updateStory(story.id, { status: "failed", error: err.message });
+    throw err;
+  } finally {
+    publishing.delete(key);
+  }
+}
+
+app.post("/api/stories/:id/publish", wrap(async (req, res) => {
+  const story = store.listStories().find((s) => s.id === req.params.id);
+  if (!story) return res.status(404).json({ error: "الستوري مو موجود" });
+  res.json(await publishStory(story));
+}));
+
 app.post("/api/ideas/:id/publish", wrap(async (req, res) => {
   const idea = store.getIdea(req.params.id);
   if (!idea) return res.status(404).json({ error: "الفكرة مو موجودة" });
@@ -251,6 +297,11 @@ setInterval(() => {
   for (const idea of store.listIdeas()) {
     if (idea.status === "scheduled" && idea.scheduledAt && new Date(idea.scheduledAt) <= now) {
       publishIdea(idea).catch((err) => console.error(`فشل نشر "${idea.title}":`, err.message));
+    }
+  }
+  for (const story of store.listStories()) {
+    if (story.status === "scheduled" && story.publishAt && new Date(story.publishAt) <= now) {
+      publishStory(story).catch((err) => console.error(`فشل نشر ستوري "${story.title}":`, err.message));
     }
   }
 }, 60_000);

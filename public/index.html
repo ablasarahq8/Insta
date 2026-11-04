@@ -315,11 +315,20 @@
             <label>النوع <select name="type"></select></label>
             <label>النهاية <select name="ending"></select></label>
             <label>الحالة
-              <select name="status"><option value="draft">مسودة</option><option value="ready">جاهزة</option><option value="posted">نزلت</option></select>
+              <select name="status"><option value="draft">مسودة</option><option value="ready">جاهزة</option><option value="scheduled">مجدولة</option><option value="posted">انتشرت</option><option value="failed">فشلت</option></select>
             </label>
           </div>
           <label>📊 شنو تقيسين <input name="measure"></label>
           <div id="story-frames" class="design-slides"></div>
+          <div class="card st-publish">
+            <div class="row">
+              <label>🗓️ موعد النشر <input type="datetime-local" name="publishAt"></label>
+              <button type="button" id="story-schedule" class="secondary">جدولي</button>
+              <button type="button" id="story-publish" class="primary">📤 انشري الحين</button>
+            </div>
+            <p class="hint">كل شريحة تنتشر ستوري بروحها بالترتيب. شرائح الفيديو يندمج النص فوقها تلقائياً. الملصقات (تصويت، سؤال، رابط) ما يقدر إنستغرام يضيفها من برا، ضيفيها من التطبيق بعد النشر.</p>
+            <p id="story-error" class="error" hidden></p>
+          </div>
           <div class="row between">
             <button type="button" id="story-delete" class="danger">حذف</button>
             <div class="row">

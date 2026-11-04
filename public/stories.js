@@ -1,6 +1,6 @@
 // صفحة الستوري: خطة أسبوعية لتسلسلات الستوري + تصميم الشرائح ٩:١٦ (من مهارة stories-and-scripts)
 import { STORY_TYPES, STORY_ENDINGS, STORY_SCHEDULE } from "./taxonomy.js";
-import { $, $$, esc, api, toast, busy, localDateStr, fromDateStr, fmtDate } from "./common.js";
+import { $, $$, esc, api, toast, busy, localDateStr, fromDateStr, fmtDate, uploadFiles } from "./common.js";
 import { addDaysStr, strategyWeek } from "./planutil.js";
 
 const DAYS = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
@@ -8,6 +8,7 @@ const AR = "٠١٢٣٤٥٦٧٨٩";
 const arNum = (n) => String(n).replace(/\d/g, (d) => AR[d]);
 
 let stories = [];
+let library = []; // ملفات مكتبة اللقطات: [{ url, type, title }]
 let strategy = null;
 let profile = {};
 let weekDate = sundayOf(localDateStr(new Date()));
@@ -56,7 +57,7 @@ function renderWeek() {
           <div class="post story-card" data-id="${s.id}" style="border-inline-start-color:${STORY_TYPES[s.type]?.color}">
             <span class="time">${STORY_TYPES[s.type]?.emoji} ${STORY_TYPES[s.type]?.name}، ${arNum(s.frames.length)} شرائح</span>
             <b>${esc(s.title)}</b>
-            <span class="meta"><span class="badge">${STORY_ENDINGS[s.ending] || ""}</span>${s.status === "posted" ? `<span class="badge published">نزلت</span>` : ""}</span>
+            <span class="meta"><span class="badge">${STORY_ENDINGS[s.ending] || ""}</span>${{ posted: `<span class="badge published">انتشرت</span>`, scheduled: `<span class="badge scheduled">مجدولة</span>`, failed: `<span class="badge failed">فشلت</span>` }[s.status] || ""}</span>
           </div>`).join("")
           : `<p class="hint">المقترح: ${STORY_TYPES[sched.type].emoji} ${STORY_TYPES[sched.type].name}</p>`}
         <button class="add-day" data-day="${d}">${list.length ? "🔄 اكتبه من جديد" : "✨ اكتب ستوري هاليوم"}</button>
@@ -113,9 +114,15 @@ function frameHTML(f, i, total, { exporting = false } = {}) {
     ${f.sticker ? `<div class="st-sticker">مكان ملصق ${esc(f.sticker)}</div>` : ""}`;
   return `
     <div class="story-frame ${video ? "st-video" : "st-photo"} ${exporting ? "exporting" : ""}">
-      ${video ? (exporting ? "" : `<div class="st-video-bg">🎥 ${esc(f.shot || "الفيديو")}</div>`) : `<i class="st-blob st-b1"></i><i class="st-blob st-b2"></i><i class="st-blob st-b3"></i>`}
+      ${video
+        ? (exporting ? "" : f.video
+          ? `<video class="st-media" src="${esc(f.video)}" muted autoplay loop playsinline></video>`
+          : `<div class="st-video-bg">🎥 ${esc(f.shot || "الفيديو")}</div>`)
+        : f.image
+          ? `<div class="st-media" style="background-image:url('${esc(f.image)}')"></div>`
+          : `<i class="st-blob st-b1"></i><i class="st-blob st-b2"></i><i class="st-blob st-b3"></i>`}
       <div class="st-safe">
-        ${video ? `<div class="st-card">${content}</div>` : content}
+        ${video || f.image ? `<div class="st-card">${content}</div>` : content}
       </div>
       <div class="st-foot">
         ${last ? `<img class="st-logo" src="/brand/logo_dark.png" alt="">` : ""}
@@ -135,9 +142,37 @@ function openEditor(story) {
     .map(([k, v]) => `<option value="${k}" ${k === editing.ending ? "selected" : ""}>${v}</option>`).join("");
   form.elements.measure.value = editing.measure;
   form.elements.status.value = editing.status;
+  form.elements.publishAt.value = editing.publishAt ? toLocalInput(editing.publishAt) : `${editing.date}T19:00`;
+  $("#story-error").hidden = !editing.error;
+  $("#story-error").textContent = editing.error ? `آخر محاولة نشر فشلت: ${editing.error}` : "";
+  api("/api/shots").then((shots) => {
+    library = shots.flatMap((s) => s.media.map((m) => ({ ...m, title: s.title })));
+    if (dialog.open) renderEditor();
+  }).catch(() => {});
   $("#story-edit-date").textContent = `${DAYS[fromDateStr(editing.date).getDay()]} ${fmtDate(fromDateStr(editing.date), { day: "numeric", month: "long" })}`;
   dialog.showModal();
   renderEditor();
+}
+
+function toLocalInput(iso) {
+  const d = new Date(iso);
+  return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+}
+
+// قائمة الخلفية: من مكتبة اللقطات (صور للشرائح العادية، فيديو لشرائح الفيديو)
+function bgPicker(f) {
+  const want = f.media === "video" ? "video" : "image";
+  const current = f.media === "video" ? f.video : f.image;
+  const opts = library.filter((m) => m.type === want);
+  return `
+    <div class="row st-bg-row">
+      <select data-bg>
+        <option value="">${want === "video" ? "🎥 الفيديو: بدون" : "🖼️ الخلفية: ثيم فاتح"}</option>
+        ${opts.map((m) => `<option value="${esc(m.url)}" ${m.url === current ? "selected" : ""}>📁 ${esc(m.title)}</option>`).join("")}
+        ${current && !opts.some((m) => m.url === current) ? `<option value="${esc(current)}" selected>📎 ملف مرفوع</option>` : ""}
+      </select>
+      <label class="ghost small file-btn">+ ارفعي${want === "video" ? " فيديو" : " صورة"}<input type="file" data-bg-file accept="${want === "video" ? "video/mp4,video/quicktime" : "image/jpeg,image/png"}" hidden></label>
+    </div>`;
 }
 
 function renderPreview() {
@@ -162,6 +197,7 @@ function renderEditor() {
         <select data-f="media"><option value="photo" ${f.media === "photo" ? "selected" : ""}>📷 صورة</option><option value="video" ${f.media === "video" ? "selected" : ""}>🎥 فيديو</option></select>
       </div>
       <input data-f="shot" value="${esc(f.shot)}" placeholder="شنو تصورين (الخلفية)">
+      ${bgPicker(f)}
       <input data-f="kicker" value="${esc(f.kicker)}" placeholder="عنوان صغير فوق النص (اختياري)">
       <textarea data-f="statements" rows="3" placeholder="كل عبارة بسطر، والكلمة المظللة بين [[ ]]">${esc(f.statements.join("\n"))}</textarea>
       <div class="row">
@@ -187,8 +223,24 @@ $("#story-frames").addEventListener("focusin", (e) => {
 
 function onFrameEdit(e) {
   const card = e.target.closest(".design-slide");
+  if (!card) return;
+  const frame0 = editing.frames[card.dataset.i];
+  if (e.type === "change" && e.target.matches("[data-bg]")) {
+    frame0[frame0.media === "video" ? "video" : "image"] = e.target.value || "";
+    return renderPreview();
+  }
+  if (e.type === "change" && e.target.matches("[data-bg-file]")) {
+    const files = [...e.target.files];
+    e.target.value = "";
+    uploadFiles(files).then(([m]) => {
+      frame0[frame0.media === "video" ? "video" : "image"] = m.url;
+      renderEditor();
+    }).catch((err) => toast(err.message));
+    return;
+  }
   const f = e.target.dataset.f;
-  if (!card || !f) return;
+  if (!f) return;
+  if (f === "media" && e.type === "change") { frame0.media = e.target.value; return renderEditor(); }
   const frame = editing.frames[card.dataset.i];
   frame[f] = f === "statements" ? e.target.value.split("\n").map((s) => s.trim()).filter(Boolean) : e.target.value;
   renderPreview();
@@ -204,15 +256,63 @@ function collect() {
     ending: form.elements.ending.value,
     measure: form.elements.measure.value,
     status: form.elements.status.value,
+    publishAt: form.elements.publishAt.value ? new Date(form.elements.publishAt.value).toISOString() : null,
   };
 }
+
+// يرسم الشرائح ويرفعها: صورة نهائية للشرائح العادية، وطبقة شفافة لشرائح الفيديو
+async function prepare(s) {
+  if (!window.htmlToImage) throw new Error("مكتبة الصور ما تحملت، حدّثي الصفحة");
+  await document.fonts.ready;
+  const missing = s.frames.findIndex((f) => f.media === "video" && !f.video);
+  if (missing >= 0) throw new Error(`الشريحة ${missing + 1} فيديو، ارفعي الفيديو أو اختاريه من اللقطات`);
+  const stage = $("#design-stage");
+  for (const [i, f] of s.frames.entries()) {
+    stage.innerHTML = frameHTML(f, i, s.frames.length, { exporting: true });
+    const blob = await window.htmlToImage.toBlob(stage.firstElementChild, { width: 1080, height: 1920, pixelRatio: 1 });
+    const [m] = await uploadFiles([new File([blob], `story-${i + 1}.png`, { type: "image/png" })]);
+    if (f.media === "video") { f.overlay = m.url; delete f.rendered; } else { f.rendered = m.url; delete f.overlay; }
+  }
+  stage.innerHTML = "";
+  return s;
+}
+
+async function saveStory(s) {
+  const saved = await api(`/api/stories/${s.id}`, { method: "PUT", body: s });
+  stories = stories.map((x) => (x.id === saved.id ? saved : x));
+  editing = structuredClone(saved);
+  renderWeek();
+  return saved;
+}
+
+$("#story-publish").addEventListener("click", (e) => {
+  if (!confirm("بننشر شرائح هالستوري على الإنستغرام الحين بالترتيب. متأكدة؟")) return;
+  busy(e.target, async () => {
+    const s = await prepare(collect());
+    await saveStory(s);
+    toast("جاري النشر... الفيديو ياخذ وقت شوي");
+    const done = await api(`/api/stories/${s.id}/publish`, { method: "POST" }).finally(async () => {
+      stories = await api("/api/stories");
+      renderWeek();
+    });
+    if (done.status === "posted") { dialog.close(); toast("انتشر الستوري 🎉"); }
+  });
+});
+
+$("#story-schedule").addEventListener("click", (e) => busy(e.target, async () => {
+  const s = collect();
+  if (!s.publishAt) throw new Error("حددي موعد النشر");
+  if (new Date(s.publishAt) < new Date()) throw new Error("الموعد لازم يكون بالمستقبل");
+  await prepare(s);
+  await saveStory({ ...s, status: "scheduled", error: null });
+  dialog.close();
+  toast("انجدول الستوري ✓ بينتشر تلقائياً بموعده");
+}));
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   try {
-    const saved = await api(`/api/stories/${editing.id}`, { method: "PUT", body: collect() });
-    stories = stories.map((s) => (s.id === saved.id ? saved : s));
-    renderWeek();
+    await saveStory(collect());
     dialog.close();
     toast("انحفظ ✓");
   } catch (err) { toast(err.message); }

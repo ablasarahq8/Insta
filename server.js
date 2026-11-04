@@ -174,6 +174,47 @@ app.post("/api/ai/story-week", wrap(async (req, res) => {
     .map(({ day, ...s }) => store.createStory({ ...s, date: dateOf(day) })));
 }));
 
+// ---------- المساعد ----------
+// ملخص اللي يعرفه المساعد عن خطتها وأسبوعها وأفكارها
+function assistantContext() {
+  const st = store.getStrategy();
+  const plan = st.plan;
+  const today = localDay(new Date());
+  const upcoming = store.listIdeas()
+    .filter((i) => i.scheduledAt && localDay(new Date(i.scheduledAt)) >= today)
+    .sort((a, b) => a.scheduledAt.localeCompare(b.scheduledAt))
+    .slice(0, 14)
+    .map((i) => `- ${localDay(new Date(i.scheduledAt))}: ${i.title} (${i.format}, ${i.status})`);
+  const ideas = store.listIdeas().filter((i) => !i.scheduledAt).slice(0, 20).map((i) => `- ${i.title}`);
+  const stories = store.listStories().filter((s) => s.date >= today).slice(0, 7).map((s) => `- ${s.date}: ${s.title} (${s.type})`);
+  return [
+    `اليوم: ${today}`,
+    plan ? `الخطة التسويقية (تبدأ ${st.startDate}، ${st.weeks} أسبوع): ${plan.summary}` : "ما فيه خطة تسويقية للحين.",
+    st.goals.length ? `الأهداف: ${st.goals.map((g) => `${g.type}${g.detail ? ` (${g.detail})` : ""}`).join("، ")}` : "",
+    st.launches.length ? `الإطلاقات: ${st.launches.map((l) => `${l.name} (${l.type}) ${l.date || ""}`).join("، ")}` : "",
+    upcoming.length ? `المنشورات الجاية:\n${upcoming.join("\n")}` : "",
+    stories.length ? `الستوريات الجاية:\n${stories.join("\n")}` : "",
+    ideas.length ? `أفكار محفوظة بدون موعد:\n${ideas.join("\n")}` : "",
+  ].filter(Boolean).join("\n\n");
+}
+
+app.get("/api/assistant", (req, res) => res.json(store.getChat()));
+app.delete("/api/assistant", (req, res) => { store.clearChat(); res.status(204).end(); });
+app.post("/api/assistant", wrap(async (req, res) => {
+  const message = String(req.body.message || "").trim();
+  if (!message) return res.status(400).json({ error: "اكتبي رسالتچ" });
+  store.addChat("user", message);
+  try {
+    const history = store.getChat().slice(-30);
+    const reply = await ai.assistantReply(store.getProfile(), assistantContext(), history);
+    res.json(store.addChat("assistant", reply));
+  } catch (err) {
+    // نشيل رسالتها اللي ما انرد عليها عشان المحادثة تبقى متناوبة
+    store.dropLastUserChat();
+    throw err;
+  }
+}));
+
 // ---------- مكتبة اللقطات ----------
 app.get("/api/shots", (req, res) => res.json(store.listShots()));
 app.post("/api/shots", (req, res) => res.status(201).json(store.createShot(req.body)));

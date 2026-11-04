@@ -52,6 +52,23 @@ $$("[data-options=goal]").forEach((sel) =>
 export const funnelBadge = (f) => FUNNEL[f] ? `<span class="badge ${f}" title="${FUNNEL[f].name}">${FUNNEL[f].label}</span>` : "";
 export const goalBadge = (g) => GOALS[g] ? `<span class="badge">${GOALS[g].name}</span>` : "";
 
+// ---------- الوضع البسيط / المتقدم ----------
+// الأدوات المتقدمة (التصميم والنشر) مخفية إلا إذا شغلتها من ملف الحساب
+export function setAdvanced(on) {
+  document.body.classList.toggle("advanced", on);
+  try { localStorage.setItem("advanced", on ? "1" : ""); } catch {}
+}
+let advancedSaved = false;
+try { advancedSaved = localStorage.getItem("advanced") === "1"; } catch {}
+setAdvanced(advancedSaved);
+
+// علامات المتابعة: صورت / عدلت / نزلت
+export const CHECKS = { shot: "صورت", edited: "عدلت", posted: "نزلت" };
+export const checksBadge = (checks = []) => {
+  const n = checks.filter((c) => c in CHECKS).length;
+  return n ? `<span class="badge checks ${n === 3 ? "done" : ""}">✓ ${n}/3</span>` : "";
+};
+
 // ---------- التنقل ----------
 export function show(view) {
   $$(".tab").forEach((t) => t.classList.toggle("active", t.dataset.view === view));

@@ -1,6 +1,6 @@
 // صفحة الستوري: خطة أسبوعية لتسلسلات الستوري + تصميم الشرائح ٩:١٦ (من مهارة stories-and-scripts)
 import { STORY_TYPES, STORY_ENDINGS, STORY_SCHEDULE } from "./taxonomy.js";
-import { $, $$, esc, api, toast, busy, localDateStr, fromDateStr, fmtDate, uploadFiles, icon } from "./common.js";
+import { $, $$, esc, api, toast, busy, localDateStr, fromDateStr, fmtDate, uploadFiles, icon, checksBadge } from "./common.js";
 import { addDaysStr, strategyWeek } from "./planutil.js";
 
 const DAYS = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
@@ -25,7 +25,19 @@ function sundayOf(dateStr) {
 }
 
 window.addEventListener("strategy-changed", (e) => { strategy = e.detail; renderWeek(); });
-window.addEventListener("stories-changed", () => api("/api/stories").then((s) => { stories = s; renderWeek(); }).catch(() => {}));
+const changed = () => window.dispatchEvent(new Event("stories-changed"));
+window.addEventListener("stories-reload", () => api("/api/stories").then((s) => { stories = s; renderWeek(); }).catch(() => {}));
+
+// من صفحة الأسبوع: فتح ستوري، أو تخطيط ستوري أسبوع معين
+window.addEventListener("open-story", (e) => {
+  const s = stories.find((x) => x.id === e.detail);
+  if (s) openEditor(s);
+});
+window.addEventListener("plan-story-week", (e) => {
+  weekDate = sundayOf(e.detail.weekDate);
+  renderWeek();
+  generate([0, 1, 2, 3, 4, 5, 6], e.detail.btn);
+});
 
 async function load() {
   [stories, profile] = await Promise.all([api("/api/stories"), api("/api/profile")]);
@@ -58,7 +70,7 @@ function renderWeek() {
           <div class="post story-card" data-id="${s.id}" style="border-inline-start-color:${STORY_TYPES[s.type]?.color}">
             <span class="time"><i class="type-dot" style="background:${STORY_TYPES[s.type]?.color}"></i>${STORY_TYPES[s.type]?.name}، ${arNum(s.frames.length)} شرائح</span>
             <b>${esc(s.title)}</b>
-            <span class="meta"><span class="badge">${STORY_ENDINGS[s.ending] || ""}</span>${{ posted: `<span class="badge published">انتشرت</span>`, scheduled: `<span class="badge scheduled">مجدولة</span>`, failed: `<span class="badge failed">فشلت</span>` }[s.status] || ""}</span>
+            <span class="meta"><span class="badge">${STORY_ENDINGS[s.ending] || ""}</span>${checksBadge(s.checks)}${{ posted: `<span class="badge published">انتشرت</span>`, scheduled: `<span class="badge scheduled">مجدولة</span>`, failed: `<span class="badge failed">فشلت</span>` }[s.status] || ""}</span>
           </div>`).join("")
           : `<p class="hint"><i class="type-dot" style="background:${STORY_TYPES[sched.type].color}"></i>المقترح: ${STORY_TYPES[sched.type].name}</p>`}
         <button class="add-day" data-day="${d}">${list.length ? `${icon("refresh", 14)} اكتبيه من جديد` : `${icon("sparkles", 14)} اكتبي ستوري هاليوم`}</button>
@@ -82,7 +94,8 @@ async function generate(days, btn) {
     });
     stories = await api("/api/stories");
     renderWeek();
-    toast("انكتبت الستوريات ✓");
+    changed();
+    toast("انكتبت الستوريات ✓ تلقينها بأيام الأسبوع");
   });
 }
 
@@ -143,6 +156,7 @@ function openEditor(story) {
     .map(([k, v]) => `<option value="${k}" ${k === editing.ending ? "selected" : ""}>${v}</option>`).join("");
   form.elements.measure.value = editing.measure;
   form.elements.status.value = editing.status;
+  $$("#story-checks [data-check]").forEach((c) => { c.checked = (editing.checks || []).includes(c.dataset.check); });
   form.elements.publishAt.value = editing.publishAt ? toLocalInput(editing.publishAt) : `${editing.date}T19:00`;
   $("#story-error").hidden = !editing.error;
   $("#story-error").textContent = editing.error ? `آخر محاولة نشر فشلت: ${editing.error}` : "";
@@ -258,6 +272,7 @@ function collect() {
     measure: form.elements.measure.value,
     status: form.elements.status.value,
     publishAt: form.elements.publishAt.value ? new Date(form.elements.publishAt.value).toISOString() : null,
+    checks: $$("#story-checks [data-check]").filter((c) => c.checked).map((c) => c.dataset.check),
   };
 }
 
@@ -283,6 +298,7 @@ async function saveStory(s) {
   stories = stories.map((x) => (x.id === saved.id ? saved : x));
   editing = structuredClone(saved);
   renderWeek();
+  changed();
   return saved;
 }
 
@@ -324,6 +340,7 @@ $("#story-delete").addEventListener("click", async () => {
   await api(`/api/stories/${editing.id}`, { method: "DELETE" });
   stories = stories.filter((s) => s.id !== editing.id);
   renderWeek();
+  changed();
   dialog.close();
 });
 

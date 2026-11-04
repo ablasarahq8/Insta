@@ -1,6 +1,6 @@
-import { FUNNEL, FUNNEL_TARGET, GOALS, FORMATS } from "./taxonomy.js";
+import { FUNNEL, FUNNEL_TARGET, GOALS, FORMATS, STORY_TYPES, STORY_ENDINGS } from "./taxonomy.js";
 import {
-  $, $$, esc, api, toast, busy, show, STATUSES, funnelBadge, goalBadge, icon,
+  $, $$, esc, api, toast, busy, show, STATUSES, funnelBadge, goalBadge, icon, setAdvanced, checksBadge,
   localDateStr, fromDateStr, fmtDate, uploadFiles,
 } from "./common.js";
 import { strategyWeek } from "./planutil.js";
@@ -36,7 +36,7 @@ function renderIdeas() {
         <div class="meta">
           <span class="badge">${FORMATS[i.format] || i.format}</span>
           ${funnelBadge(i.funnel)}${goalBadge(i.goal)}
-          <span class="badge ${i.status}">${STATUSES[i.status]}</span>
+          <span class="badge ${i.status}">${STATUSES[i.status]}</span>${checksBadge(i.checks)}
           ${i.source === "ai" ? `<span class="badge ai">مقترحة</span>` : ""}
           ${when && i.status === "scheduled" ? `<span class="badge">${when}</span>` : ""}
         </div>
@@ -83,6 +83,7 @@ function openEditor(idea) {
     editorForm.elements[name].value = editing[name] || "";
   }
   editorForm.elements.scheduledAt.value = toLocalInput(editing.scheduledAt);
+  $$("#post-checks [data-check]").forEach((c) => { c.checked = (editing.checks || []).includes(c.dataset.check); });
   $("#editor-error").hidden = !editing.error;
   $("#editor-error").textContent = editing.error ? `آخر محاولة نشر فشلت: ${editing.error}` : "";
   renderMedia();
@@ -148,6 +149,9 @@ function collectEditor() {
   data.scheduledAt = data.scheduledAt ? new Date(data.scheduledAt).toISOString() : null;
   data.media = editing.media;
   data.design = editing.design || null;
+  data.checks = $$("#post-checks [data-check]").filter((c) => c.checked).map((c) => c.dataset.check);
+  // «نزلت» يعني المنشور انتشر
+  if (data.checks.includes("posted")) data.status = "published";
   if (data.status === "scheduled" && !data.scheduledAt) throw new Error("حدد موعد النشر للمنشور المجدول");
   return data;
 }
@@ -278,6 +282,12 @@ const fmtTime = (d) => d.toLocaleTimeString("ar-KW", { hour: "numeric", minute: 
 let weekStart = startOfWeek(new Date());
 let planDraft = null; // { posts, time, start }
 let strategy = null; // الخطة التسويقية (من strategy.js)
+let storyList = []; // الستوريات عشان تطلع بأيام الأسبوع
+
+const weekStories = (day) => storyList.filter((s) => s.date === localDateStr(day));
+const loadStories = () => api("/api/stories").then((s) => { storyList = s; renderWeek(); }).catch(() => {});
+window.addEventListener("stories-changed", loadStories);
+window.addEventListener("ideas-reload", () => loadIdeas().catch(() => {}));
 
 const currentStrategyWeek = () => strategyWeek(strategy, localDateStr(weekStart));
 
@@ -319,7 +329,13 @@ function renderWeek() {
           <div class="post ${p.funnel}" data-id="${p.id}">
             <span class="time">${fmtTime(new Date(p.scheduledAt))} · ${FORMATS[p.format] || ""}</span>
             <b>${esc(p.title)}</b>
-            <span class="meta">${funnelBadge(p.funnel)}${goalBadge(p.goal)}<span class="badge ${p.status}">${STATUSES[p.status]}</span></span>
+            <span class="meta">${funnelBadge(p.funnel)}${goalBadge(p.goal)}<span class="badge ${p.status}">${STATUSES[p.status]}</span>${checksBadge(p.checks)}</span>
+          </div>`).join("")}
+        ${weekStories(day).map((s) => `
+          <div class="post story-item" data-story="${s.id}" style="border-inline-start-color:${STORY_TYPES[s.type]?.color || "var(--muted)"}">
+            <span class="time">${icon("phone", 13)} ستوري · ${STORY_TYPES[s.type]?.name || ""}</span>
+            <b>${esc(s.title)}</b>
+            <span class="meta">${checksBadge(s.checks)}</span>
           </div>`).join("")}
         <button class="add-day" data-day="${idx}">${icon("plus", 14)} ضيفي</button>
       </div>`;
@@ -384,6 +400,8 @@ $("#next-week").addEventListener("click", () => { weekStart = addDays(weekStart,
 $("#this-week").addEventListener("click", () => { weekStart = startOfWeek(new Date()); renderWeek(); });
 
 $("#week").addEventListener("click", (e) => {
+  const st = e.target.closest(".story-item");
+  if (st) return window.dispatchEvent(new CustomEvent("open-story", { detail: st.dataset.story }));
   const post = e.target.closest(".post");
   if (post) return openEditor(ideas.find((i) => i.id === post.dataset.id));
   const add = e.target.closest(".add-day");
@@ -490,6 +508,67 @@ $("#plan-accept").addEventListener("click", (e) => busy(e.target, async () => {
   toast("انحفظت خطة الأسبوع ✓");
 }));
 
+// ---------- الأدوات المتقدمة ----------
+$("#advanced-toggle").checked = document.body.classList.contains("advanced");
+$("#advanced-toggle").addEventListener("change", (e) => {
+  setAdvanced(e.target.checked);
+  toast(e.target.checked ? "انفتحت الأدوات المتقدمة" : "رجع الموقع للوضع البسيط");
+});
+
+// ---------- النسخ ----------
+async function copyText(text, done = "انسخ ✓") {
+  try { await navigator.clipboard.writeText(text); toast(done); }
+  catch { toast("ما قدرت أنسخ من هالمتصفح"); }
+}
+
+$("#copy-caption").addEventListener("click", () => {
+  const { caption, hashtags } = editorForm.elements;
+  copyText([caption.value, hashtags.value].filter(Boolean).join("\n\n"), "انسخ الكابشن والهاشتاقات ✓");
+});
+
+// الأسبوع كامل كنص مرتب — تلصقينه بأي محادثة (Claude أو ChatGPT)
+function weekText() {
+  const sw = currentStrategyWeek();
+  const end = addDays(weekStart, 6);
+  const lines = [`# خطة الأسبوع: ${fmtDate(weekStart, { day: "numeric", month: "long" })} – ${fmtDate(end, { day: "numeric", month: "long", year: "numeric" })}`];
+  if (sw) lines.push(`الأسبوع ${sw.week} من الخطة (${sw.phase})`, `الثيم: ${sw.theme} — ${sw.focus}`, `الدعوة للإجراء: ${sw.cta}`);
+  const posts = weekPosts();
+  let any = false;
+  DAYS.forEach((name, idx) => {
+    const day = addDays(weekStart, idx);
+    const dayPosts = posts.filter((p) => sameDay(new Date(p.scheduledAt), day));
+    const dayStories = weekStories(day);
+    if (!dayPosts.length && !dayStories.length) return;
+    any = true;
+    lines.push("", `## ${name} ${fmtDate(day, { day: "numeric", month: "long" })}`);
+    for (const p of dayPosts) {
+      lines.push("", `### ${FORMATS[p.format] || "منشور"}: ${p.title}`);
+      const tags = [FUNNEL[p.funnel]?.label, GOALS[p.goal]?.name].filter(Boolean).join(" · ");
+      if (tags) lines.push(tags);
+      if (p.notes) lines.push(`الفكرة والتنفيذ: ${p.notes}`);
+      if (p.script) lines.push(`السكربت:\n${p.script}`);
+      if (p.caption) lines.push(`الكابشن:\n${p.caption}`);
+      if (p.hashtags) lines.push(`الهاشتاقات: ${p.hashtags}`);
+    }
+    for (const s of dayStories) {
+      lines.push("", `### ستوري (${STORY_TYPES[s.type]?.name || ""} · ${STORY_ENDINGS[s.ending] || ""}): ${s.title}`);
+      s.frames.forEach((f, i) => {
+        lines.push(`${i + 1}. ${f.role} (${f.media === "video" ? "فيديو" : "صورة"}) — تصوير: ${f.shot || "—"}`);
+        if (f.statements?.length) lines.push(`   النص: ${f.statements.join(" / ")}`);
+        if (f.ctaKeyword) lines.push(`   الدعوة: ${f.ctaLine || "ارسلوا لي كلمة"} «${f.ctaKeyword}» ${f.ctaSub || "بالخاص"}`);
+      });
+      if (s.measure) lines.push(`شنو تقيسين: ${s.measure}`);
+    }
+  });
+  if (!any) lines.push("", "(ما فيه منشورات أو ستوري محطوطة هالأسبوع)");
+  return lines.join("\n");
+}
+
+$("#week-copy").addEventListener("click", () => copyText(weekText(), "انسخ الأسبوع ✓ الصقيه بأي محادثة"));
+
+$("#week-plan-stories").addEventListener("click", (e) =>
+  window.dispatchEvent(new CustomEvent("plan-story-week", { detail: { weekDate: localDateStr(weekStart), btn: e.currentTarget } })));
+
 // ---------- رفع ملف جاهز ----------
 $("#quick-pub-form").addEventListener("submit", (e) => {
   e.preventDefault();
@@ -505,6 +584,7 @@ $("#quick-pub-form").addEventListener("submit", (e) => {
     form.reset();
     await loadIdeas();
     window.dispatchEvent(new Event("stories-changed"));
+    window.dispatchEvent(new Event("stories-reload"));
     toast(later ? "انجدول ✓" : res.status === "failed" ? `فشل: ${res.error}` : "انتشر");
   });
 });
@@ -544,6 +624,7 @@ profileForm.addEventListener("submit", async (e) => {
 
 // ---------- البداية ----------
 async function init() {
+  loadStories();
   await Promise.all([loadIdeas(), loadProfile()]);
   const status = await api("/api/status");
   $("#hook-status").innerHTML = status.uploadKey

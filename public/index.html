@@ -19,16 +19,17 @@
     <nav>
       <span class="nav-group">التخطيط</span>
       <button class="tab" data-view="strategy"><i data-icon="map"></i><span>الخطة</span></button>
-      <button class="tab active" data-view="week"><i data-icon="calendar"></i><span>الأسبوع</span></button>
-      <button class="tab" data-view="stories"><i data-icon="phone"></i><span>الستوري</span></button>
+      <button class="tab active" data-view="week"><i data-icon="calendar"></i><span>هالأسبوع</span></button>
+      <button class="tab adv" data-view="stories"><i data-icon="phone"></i><span>الستوري</span></button>
       <span class="nav-group">المحتوى</span>
       <button class="tab" data-view="ideas"><i data-icon="bulb"></i><span>أفكاري</span></button>
-      <button class="tab" data-view="suggest"><i data-icon="wand"></i><span>اقتراحات</span></button>
-      <button class="tab" data-view="shots"><i data-icon="camera"></i><span>اللقطات</span></button>
+      <button class="tab" data-view="assistant"><i data-icon="message"></i><span>المساعد</span></button>
+      <button class="tab adv" data-view="suggest"><i data-icon="wand"></i><span>اقتراحات</span></button>
+      <button class="tab adv" data-view="shots"><i data-icon="camera"></i><span>اللقطات</span></button>
       <span class="nav-group">الإعدادات</span>
       <button class="tab" data-view="profile"><i data-icon="user"></i><span>ملف الحساب</span></button>
     </nav>
-    <div id="banner" class="banner" hidden></div>
+    <div id="banner" class="banner adv" hidden></div>
   </aside>
 
   <main>
@@ -68,7 +69,13 @@
 
     <!-- الأسبوع -->
     <section id="view-week" class="view">
-      <header class="page-head"><h1>الأسبوع</h1><p>شنو ينزل كل يوم بالفيد، وتوازن مراحل القمع والأهداف.</p></header>
+      <header class="page-head row between">
+        <div><h1>هالأسبوع</h1><p>شنو تنزلين كل يوم بالفيد والستوري، وتعلمين على اللي خلصتيه.</p></div>
+        <div class="row">
+          <button id="week-plan-stories" class="secondary"><i data-icon="phone"></i> خططي ستوري الأسبوع</button>
+          <button id="week-copy" class="ghost"><i data-icon="copy"></i> انسخي الأسبوع كامل</button>
+        </div>
+      </header>
       <div class="card week-head">
         <div class="row between">
           <button id="prev-week" class="ghost"><i data-icon="prev"></i> اللي طاف</button>
@@ -132,9 +139,34 @@
       <div id="story-week" class="week"></div>
     </section>
 
+    <!-- المساعد -->
+    <section id="view-assistant" class="view" hidden>
+      <header class="page-head row between">
+        <div><h1>المساعد</h1><p>تفكر معاچ بالمحتوى والمنتجات والدورات، وتعرف حسابچ وخطتچ وأسبوعچ.</p></div>
+        <button id="chat-clear" class="ghost"><i data-icon="refresh"></i> محادثة يديدة</button>
+      </header>
+      <div class="card chat">
+        <div id="chat-log" class="chat-log"></div>
+        <div id="chat-starters" class="chat-starters">
+          <button type="button" class="chip">شنو منتج أو دورة ممكن أضيفها تناسب جمهوري؟</button>
+          <button type="button" class="chip">شنو أنزل هالأسبوع وليش؟</button>
+          <button type="button" class="chip">راجعي خطتي وقوليلي شنو ناقصها</button>
+          <button type="button" class="chip">عطيني ٥ أفكار ريلز تجيب متابعين</button>
+          <button type="button" class="chip">شلون أعلن عن الدورة الجاية بدون بيع مباشر؟</button>
+        </div>
+        <form id="chat-form" class="chat-form">
+          <textarea name="message" rows="2" placeholder="اكتبي سؤالچ أو فكرتچ… (Enter للإرسال)"></textarea>
+          <button class="primary"><i data-icon="send"></i> إرسال</button>
+        </form>
+      </div>
+    </section>
+
     <!-- أفكاري -->
     <section id="view-ideas" class="view" hidden>
-      <header class="page-head"><h1>أفكاري</h1><p>كل أفكارچ ومنشوراتچ بمكان واحد، من الفكرة لين النشر.</p></header>
+      <header class="page-head row between">
+        <div><h1>أفكاري</h1><p>كل أفكارچ ومنشوراتچ بمكان واحد، من الفكرة لين النشر.</p></div>
+        <button class="secondary" data-goto="suggest"><i data-icon="wand"></i> اقترحي علي أفكار</button>
+      </header>
       <form id="quick" class="card quick">
         <input name="title" placeholder="فكرة جديدة؟ اكتبها بسرعة..." required autocomplete="off">
         <select name="format">
@@ -144,7 +176,7 @@
         </select>
         <button class="primary">حفظ</button>
       </form>
-      <details class="card quick-pub">
+      <details class="card quick-pub adv">
         <summary><i data-icon="upload"></i> ارفعي ملف جاهز (ريل، ستوري، بوست)</summary>
         <form id="quick-pub-form" class="form">
           <div class="row">
@@ -235,7 +267,11 @@
         </fieldset>
         <button class="primary">حفظ الملف</button>
       </form>
-      <div class="card form" id="hook-info">
+      <div class="card form">
+        <label class="check"><input type="checkbox" id="advanced-toggle"> الأدوات المتقدمة: تصميم البوستات، والنشر التلقائي، والستوري المفصل، واللقطات</label>
+        <p class="hint">خليها طافية إذا تبين الموقع بسيط: خطة، وأسبوع، وأفكار، ومساعد. وتقدرين تشغلينها بأي وقت.</p>
+      </div>
+      <div class="card form adv" id="hook-info">
         <h2><i data-icon="link"></i> الرفع من محادثة Claude</h2>
         <p class="hint" id="hook-status"></p>
       </div>
@@ -277,10 +313,15 @@
           <select name="goal" data-options="goal"><option value="">—</option></select>
         </label>
       </div>
-      <p class="hint" id="schedule-hint" hidden>عشان تنتشر تلقائياً بموعدها، خل الحالة «مجدولة».</p>
+      <div class="checklist" id="post-checks">
+        <label class="check"><input type="checkbox" data-check="shot"> صورت</label>
+        <label class="check"><input type="checkbox" data-check="edited"> عدلت</label>
+        <label class="check"><input type="checkbox" data-check="posted"> نزلت</label>
+      </div>
+      <p class="hint adv" id="schedule-hint" hidden>عشان تنتشر تلقائياً بموعدها، خل الحالة «مجدولة».</p>
       <label>ملاحظات وتفاصيل التنفيذ <textarea name="notes" rows="3"></textarea></label>
       <label>
-        <span class="row between">الكابشن <button type="button" id="ai-caption" class="ghost small"><i data-icon="sparkles"></i> اكتبيه لي</button></span>
+        <span class="row between">الكابشن <span class="row"><button type="button" id="copy-caption" class="ghost small"><i data-icon="copy"></i> انسخي الكابشن والهاشتاقات</button><button type="button" id="ai-caption" class="ghost small"><i data-icon="sparkles"></i> اكتبيه لي</button></span></span>
         <textarea name="caption" rows="5"></textarea>
       </label>
       <label>الهاشتاقات <input name="hashtags"></label>
@@ -288,8 +329,8 @@
         <span class="row between">سكربت الفويس اوفر <button type="button" id="ai-voiceover" class="ghost small"><i data-icon="mic"></i> اكتبه من لقطاتي</button></span>
         <textarea name="script" rows="8" placeholder="المشاهد واللقطات ونص الفويس اوفر"></textarea>
       </label>
-      <button type="button" id="open-designer" class="design-btn"><i data-icon="palette"></i> صمّمي البوست وشوفي شكله على الإنستغرام</button>
-      <div>
+      <button type="button" id="open-designer" class="design-btn adv"><i data-icon="palette"></i> صمّمي البوست وشوفي شكله على الإنستغرام</button>
+      <div class="adv">
         <div class="row between">
           <span>الصور / الفيديو</span>
           <label class="ghost small file-btn"><i data-icon="upload" data-size="14"></i> ارفعي ملفات<input type="file" id="files" accept="image/jpeg,image/png,video/mp4,video/quicktime" multiple hidden></label>
@@ -301,7 +342,7 @@
       <div class="row between">
         <button type="button" id="delete" class="danger">حذف</button>
         <div class="row">
-          <button type="button" id="publish" class="secondary">انشر الحين</button>
+          <button type="button" id="publish" class="secondary adv">انشر الحين</button>
           <button type="submit" class="primary">حفظ</button>
         </div>
       </div>
@@ -360,7 +401,12 @@
           </div>
           <label>شنو تقيسين <input name="measure"></label>
           <div id="story-frames" class="design-slides"></div>
-          <div class="card st-publish">
+          <div class="checklist" id="story-checks">
+            <label class="check"><input type="checkbox" data-check="shot"> صورت</label>
+            <label class="check"><input type="checkbox" data-check="edited"> عدلت</label>
+            <label class="check"><input type="checkbox" data-check="posted"> نزلت</label>
+          </div>
+          <div class="card st-publish adv">
             <div class="row">
               <label>موعد النشر <input type="datetime-local" name="publishAt"></label>
               <button type="button" id="story-schedule" class="secondary">جدولي</button>
@@ -373,7 +419,7 @@
             <button type="button" id="story-delete" class="danger">حذف</button>
             <div class="row">
               <button type="button" id="story-copy" class="ghost"><i data-icon="copy"></i> انسخي السكربت</button>
-              <button type="button" id="story-download" class="ghost"><i data-icon="download"></i> نزّلي التصاميم</button>
+              <button type="button" id="story-download" class="ghost adv"><i data-icon="download"></i> نزّلي التصاميم</button>
               <button type="submit" class="primary">حفظ</button>
             </div>
           </div>
@@ -430,5 +476,6 @@
   <script src="strategy.js" type="module"></script>
   <script src="shots.js" type="module"></script>
   <script src="stories.js" type="module"></script>
+  <script src="assistant.js" type="module"></script>
 </body>
 </html>

@@ -2,6 +2,7 @@
 import { $, esc, api, toast, busy, uploadFiles } from "./common.js";
 
 const STYLES = {
+  sarah: "أبلة سارة (هويتي)",
   bold: "جريء",
   minimal: "هادئ",
   gradient: "متدرج",
@@ -18,7 +19,7 @@ export async function openDesigner(idea, onSave) {
   state = {
     idea,
     profile,
-    style: idea.design?.style || "bold",
+    style: idea.design?.style || "sarah",
     slides: structuredClone(idea.design?.slides || []),
     index: 0,
     onSave,
@@ -39,10 +40,42 @@ function brandVars() {
 
 const handle = () => (state.profile.handle || "@myaccount").replace(/^@?/, "@");
 
+const AR_DIGITS = "٠١٢٣٤٥٦٧٨٩";
+const arNum = (n) => String(n).padStart(2, "0").replace(/\d/g, (d) => AR_DIGITS[d]);
+
+// العنوان مع تلوين الكلمة المهمة بالتدرج
+function titleHTML(slide) {
+  const title = esc(slide.title);
+  const hl = esc(slide.highlight || "");
+  return hl && title.includes(hl) ? title.replace(hl, `<span class="s-grad">${hl}</span>`) : title;
+}
+
+// هوية أبلة سارة: فاتح/غامق بالتناوب، اللوغو، الترقيم بالأرقام الهندية، CTA ناعم
+function sarahSlideHTML(slide, i, w, h) {
+  const total = state.slides.length;
+  const dark = slide.kind === "cta" || (slide.kind === "content" && i % 2 === 0);
+  const tone = dark ? "dark" : "light";
+  const handleText = `${(state.profile.handle || "ABLASARAHQ8").replace(/^@/, "").toUpperCase()}@`;
+  return `
+    <div class="slide style-sarah s-${tone} kind-${slide.kind} fmt-${state.idea.format}" style="width:${w}px;height:${h}px">
+      ${slide.kind === "cover" ? `<i class="s-dot s-dot1"></i><i class="s-dot s-dot2"></i><i class="s-dot s-dot3"></i>` : ""}
+      <div class="s-header"><span class="s-handle">${esc(handleText)}</span><img class="s-logo" src="/brand/logo_${dark ? "light" : "dark"}.png" alt=""></div>
+      <div class="s-main">
+        ${slide.pre ? `<div class="s-pre">${esc(slide.pre)}</div>` : ""}
+        <h2 class="s-title">${titleHTML(slide)}</h2>
+        ${slide.body ? (slide.kind === "content" ? `<div class="s-card"><p>${esc(slide.body)}</p></div>` : `<p class="s-sub">${esc(slide.body)}</p>`) : ""}
+        ${slide.kind === "cta" ? `<div class="s-actions"><span>📌 احفظي</span><span class="primary">💬 علّقي</span><span>↗ شاركي</span></div>` : ""}
+      </div>
+      ${slide.kind === "cover" && total > 1 ? `<div class="s-swipe">اسحبي لليسار <i></i></div>` : ""}
+      ${total > 1 ? `<div class="s-page">${arNum(total)} / ${arNum(i + 1)}</div>` : ""}
+    </div>`;
+}
+
 // HTML السلايد بالمقاس الحقيقي
 function slideHTML(slide, i) {
   const total = state.slides.length;
   const { w, h } = sizeOf(state.idea.format);
+  if (state.style === "sarah") return sarahSlideHTML(slide, i, w, h);
   return `
     <div class="slide style-${state.style} kind-${slide.kind} fmt-${state.idea.format}" style="width:${w}px;height:${h}px;${brandVars()}">
       <div class="slide-top"><span>${esc(handle())}</span>${total > 1 ? `<span>${i + 1}/${total}</span>` : ""}</div>
@@ -83,14 +116,16 @@ function render() {
   $("#design-slides").innerHTML = slides.map((s, i) => `
     <div class="design-slide ${i === state.index ? "on" : ""}" data-i="${i}">
       <div class="row between"><b>سلايد ${i + 1}</b><span class="hint">${{ cover: "غلاف", content: "محتوى", cta: "دعوة للإجراء" }[s.kind]}</span></div>
+      ${state.style === "sarah" ? `<input data-f="pre" value="${esc(s.pre || "")}" placeholder="التمهيد فوق العنوان">` : ""}
       <input data-f="title" value="${esc(s.title)}" placeholder="العنوان">
+      ${state.style === "sarah" ? `<input data-f="highlight" value="${esc(s.highlight || "")}" placeholder="الكلمة الملونة (من العنوان)">` : ""}
       <textarea data-f="body" rows="2" placeholder="النص">${esc(s.body)}</textarea>
     </div>`).join("");
 }
 
 function generate(btn) {
   busy(btn, async () => {
-    state.slides = await api(`/api/ideas/${state.idea.id}/design`, { method: "POST" });
+    state.slides = await api(`/api/ideas/${state.idea.id}/design`, { method: "POST", body: { style: state.style } });
     state.index = 0;
     render();
   });

@@ -37,7 +37,9 @@ if (process.env.APP_PASSWORD) {
   });
 }
 
-app.use(express.static(path.resolve("public")));
+// no-cache: المتصفح يتأكد من آخر نسخة كل مرة (عشان التحديثات تبين على طول بعد النشر)
+const fresh = { setHeaders: (res) => res.setHeader("Cache-Control", "no-cache") };
+app.use(express.static(path.resolve("public"), fresh));
 // مكتبات الواجهة: تحويل التصميم لصورة، والخط العربي (محلي عشان يدخل بالصور)
 app.use("/vendor/html-to-image", express.static(path.resolve("node_modules/html-to-image/dist")));
 app.use("/vendor/font", express.static(path.resolve("node_modules/@fontsource/ibm-plex-sans-arabic")));

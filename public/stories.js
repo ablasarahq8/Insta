@@ -70,10 +70,10 @@ function renderWeek() {
           <div class="post story-card" data-id="${s.id}" style="border-inline-start-color:${STORY_TYPES[s.type]?.color}">
             <span class="time"><i class="type-dot" style="background:${STORY_TYPES[s.type]?.color}"></i>${STORY_TYPES[s.type]?.name}، ${arNum(s.frames.length)} شرائح</span>
             <b>${esc(s.title)}</b>
-            <span class="meta"><span class="badge">${STORY_ENDINGS[s.ending] || ""}</span>${checksBadge(s.checks)}${{ posted: `<span class="badge published">انتشرت</span>`, scheduled: `<span class="badge scheduled">مجدولة</span>`, failed: `<span class="badge failed">فشلت</span>` }[s.status] || ""}</span>
+            <span class="meta"><span class="badge">${STORY_ENDINGS[s.ending] || ""}</span>${checksBadge(s.checks)}${{ posted: `<span class="badge published">نُشرت</span>`, scheduled: `<span class="badge scheduled">مجدولة</span>`, failed: `<span class="badge failed">فشلت</span>` }[s.status] || ""}</span>
           </div>`).join("")
           : `<p class="hint"><i class="type-dot" style="background:${STORY_TYPES[sched.type].color}"></i>المقترح: ${STORY_TYPES[sched.type].name}</p>`}
-        <button class="add-day" data-day="${d}">${list.length ? `${icon("refresh", 14)} اكتبيه من جديد` : `${icon("sparkles", 14)} اكتبي ستوري هاليوم`}</button>
+        <button class="add-day" data-day="${d}">${list.length ? `${icon("refresh", 14)} إعادة الكتابة` : `${icon("sparkles", 14)} كتابة ستوري اليوم`}</button>
       </div>`;
   }).join("");
 }
@@ -84,7 +84,7 @@ $("#story-this-week").addEventListener("click", () => { weekDate = sundayOf(loca
 
 async function generate(days, btn) {
   const exists = stories.some((s) => days.some((d) => s.date === addDaysStr(weekDate, d)));
-  if (exists && !confirm("فيه ستوري محطوط بهالأيام، بيتبدل بالجديد. أكمل؟")) return;
+  if (exists && !confirm("توجد ستوري في هذه الأيام وسيُستبدل بالجديد. هل تريد المتابعة؟")) return;
   const start = fromDateStr(weekDate);
   const end = fromDateStr(addDaysStr(weekDate, 7));
   await busy(btn, async () => {
@@ -95,7 +95,7 @@ async function generate(days, btn) {
     stories = await api("/api/stories");
     renderWeek();
     changed();
-    toast("انكتبت الستوريات ✓ تلقينها بأيام الأسبوع");
+    toast("كُتبت الستوري ✓ وتظهر في أيام الأسبوع");
   });
 }
 
@@ -159,7 +159,7 @@ function openEditor(story) {
   $$("#story-checks [data-check]").forEach((c) => { c.checked = (editing.checks || []).includes(c.dataset.check); });
   form.elements.publishAt.value = editing.publishAt ? toLocalInput(editing.publishAt) : `${editing.date}T19:00`;
   $("#story-error").hidden = !editing.error;
-  $("#story-error").textContent = editing.error ? `آخر محاولة نشر فشلت: ${editing.error}` : "";
+  $("#story-error").textContent = editing.error ? `فشلت آخر محاولة نشر: ${editing.error}` : "";
   api("/api/shots").then((shots) => {
     library = shots.flatMap((s) => s.media.map((m) => ({ ...m, title: s.title })));
     if (dialog.open) renderEditor();
@@ -182,11 +182,11 @@ function bgPicker(f) {
   return `
     <div class="row st-bg-row">
       <select data-bg>
-        <option value="">${want === "video" ? "الفيديو: ما اخترتي" : "الخلفية: الثيم الفاتح"}</option>
+        <option value="">${want === "video" ? "الفيديو: لم يُختر" : "الخلفية: الثيم الفاتح"}</option>
         ${opts.map((m) => `<option value="${esc(m.url)}" ${m.url === current ? "selected" : ""}>من المكتبة: ${esc(m.title)}</option>`).join("")}
         ${current && !opts.some((m) => m.url === current) ? `<option value="${esc(current)}" selected>ملف مرفوع</option>` : ""}
       </select>
-      <label class="ghost small file-btn">${icon("upload", 14)} ارفعي${want === "video" ? " فيديو" : " صورة"}<input type="file" data-bg-file accept="${want === "video" ? "video/mp4,video/quicktime" : "image/jpeg,image/png"}" hidden></label>
+      <label class="ghost small file-btn">${icon("upload", 14)} رفع${want === "video" ? " فيديو" : " صورة"}<input type="file" data-bg-file accept="${want === "video" ? "video/mp4,video/quicktime" : "image/jpeg,image/png"}" hidden></label>
     </div>`;
 }
 
@@ -211,13 +211,13 @@ function renderEditor() {
         <b>${arNum(i + 1)} — <input data-f="role" value="${esc(f.role)}" class="inline"></b>
         <select data-f="media"><option value="photo" ${f.media === "photo" ? "selected" : ""}>صورة</option><option value="video" ${f.media === "video" ? "selected" : ""}>فيديو</option></select>
       </div>
-      <input data-f="shot" value="${esc(f.shot)}" placeholder="شنو تصورين (الخلفية)">
+      <input data-f="shot" value="${esc(f.shot)}" placeholder="ما الذي يُصوَّر (الخلفية)">
       ${bgPicker(f)}
       <input data-f="kicker" value="${esc(f.kicker)}" placeholder="عنوان صغير فوق النص (اختياري)">
       <textarea data-f="statements" rows="3" placeholder="كل عبارة بسطر، والكلمة المظللة بين [[ ]]">${esc(f.statements.join("\n"))}</textarea>
       <div class="row">
         <input data-f="sticker" value="${esc(f.sticker)}" placeholder="ملصق (تصويت، سؤال، رابط)">
-        <input data-f="ctaKeyword" value="${esc(f.ctaKeyword)}" placeholder="كلمة بالخاص (للدعوة)">
+        <input data-f="ctaKeyword" value="${esc(f.ctaKeyword)}" placeholder="كلمة الرسائل الخاصة (للدعوة)">
       </div>
     </div>`).join("");
 }
@@ -278,10 +278,10 @@ function collect() {
 
 // يرسم الشرائح ويرفعها: صورة نهائية للشرائح العادية، وطبقة شفافة لشرائح الفيديو
 async function prepare(s) {
-  if (!window.htmlToImage) throw new Error("مكتبة الصور ما تحملت، حدّثي الصفحة");
+  if (!window.htmlToImage) throw new Error("لم تُحمَّل مكتبة الصور؛ حدّث الصفحة");
   await document.fonts.ready;
   const missing = s.frames.findIndex((f) => f.media === "video" && !f.video);
-  if (missing >= 0) throw new Error(`الشريحة ${missing + 1} فيديو، ارفعي الفيديو أو اختاريه من اللقطات`);
+  if (missing >= 0) throw new Error(`الشريحة ${missing + 1} فيديو؛ ارفع الفيديو أو اختره من اللقطات`);
   const stage = $("#design-stage");
   for (const [i, f] of s.frames.entries()) {
     stage.innerHTML = frameHTML(f, i, s.frames.length, { exporting: true });
@@ -303,27 +303,27 @@ async function saveStory(s) {
 }
 
 $("#story-publish").addEventListener("click", (e) => {
-  if (!confirm("بننشر شرائح هالستوري على الإنستغرام الحين بالترتيب. متأكدة؟")) return;
+  if (!confirm("ستُنشر شرائح هذه الستوري الآن بالترتيب. هل تريد المتابعة؟")) return;
   busy(e.target, async () => {
     const s = await prepare(collect());
     await saveStory(s);
-    toast("جاري النشر... الفيديو ياخذ وقت شوي");
+    toast("جارٍ النشر… قد يستغرق الفيديو بعض الوقت");
     const done = await api(`/api/stories/${s.id}/publish`, { method: "POST" }).finally(async () => {
       stories = await api("/api/stories");
       renderWeek();
     });
-    if (done.status === "posted") { dialog.close(); toast("انتشر الستوري"); }
+    if (done.status === "posted") { dialog.close(); toast("نُشرت الستوري"); }
   });
 });
 
 $("#story-schedule").addEventListener("click", (e) => busy(e.target, async () => {
   const s = collect();
-  if (!s.publishAt) throw new Error("حددي موعد النشر");
-  if (new Date(s.publishAt) < new Date()) throw new Error("الموعد لازم يكون بالمستقبل");
+  if (!s.publishAt) throw new Error("حدّد موعد النشر");
+  if (new Date(s.publishAt) < new Date()) throw new Error("يجب أن يكون الموعد في المستقبل");
   await prepare(s);
   await saveStory({ ...s, status: "scheduled", error: null });
   dialog.close();
-  toast("انجدول الستوري ✓ بينتشر تلقائياً بموعده");
+  toast("جُدولت الستوري ✓ وستُنشر تلقائيًا في موعدها");
 }));
 
 form.addEventListener("submit", async (e) => {
@@ -331,12 +331,12 @@ form.addEventListener("submit", async (e) => {
   try {
     await saveStory(collect());
     dialog.close();
-    toast("انحفظ ✓");
+    toast("حُفظ ✓");
   } catch (err) { toast(err.message); }
 });
 
 $("#story-delete").addEventListener("click", async () => {
-  if (!confirm("تحذفين هالستوري؟")) return;
+  if (!confirm("هل تريد حذف هذه الستوري؟")) return;
   await api(`/api/stories/${editing.id}`, { method: "DELETE" });
   stories = stories.filter((s) => s.id !== editing.id);
   renderWeek();
@@ -354,20 +354,20 @@ function scriptText(s) {
     f.ctaKeyword && `الدعوة: ${f.ctaLine || "ارسلوا لي كلمة"} «${f.ctaKeyword}» ${f.ctaSub || "بالخاص"}`,
     `الملصق: ${f.sticker || "—"}`,
   ].filter(Boolean).join("\n")).join("\n\n");
-  return `# ${s.title}\n${STORY_TYPES[s.type]?.name} · ${STORY_ENDINGS[s.ending]}\n\n${frames}\n\n**شنو تقيسين:** ${s.measure}`;
+  return `# ${s.title}\n${STORY_TYPES[s.type]?.name} · ${STORY_ENDINGS[s.ending]}\n\n${frames}\n\n**مؤشر القياس:** ${s.measure}`;
 }
 
 $("#story-copy").addEventListener("click", async () => {
   try {
     await navigator.clipboard.writeText(scriptText(collect()));
-    toast("انسخ السكربت ✓");
+    toast("نُسخ السكربت ✓");
   } catch {
-    toast("ما قدرت أنسخ، جربي من متصفح ثاني");
+    toast("تعذّر النسخ؛ جرّب متصفحًا آخر");
   }
 });
 
 $("#story-download").addEventListener("click", (e) => busy(e.target, async () => {
-  if (!window.htmlToImage) throw new Error("مكتبة الصور ما تحملت، حدّثي الصفحة");
+  if (!window.htmlToImage) throw new Error("لم تُحمَّل مكتبة الصور؛ حدّث الصفحة");
   await document.fonts.ready;
   const stage = $("#design-stage");
   const s = collect();
@@ -381,7 +381,7 @@ $("#story-download").addEventListener("click", (e) => busy(e.target, async () =>
     URL.revokeObjectURL(a.href);
   }
   stage.innerHTML = "";
-  toast("نزلت التصاميم — شرائح الفيديو طبقة شفافة تنحط فوق الفيديو");
+  toast("نُزّلت التصاميم؛ شرائح الفيديو طبقات شفافة توضع فوق الفيديو");
 }));
 
 window.addEventListener("resize", () => { if (dialog.open) renderPreview(); });

@@ -33,7 +33,7 @@ if (process.env.APP_PASSWORD) {
     const [, encoded] = (req.headers.authorization || "").split(" ");
     const [, pass] = Buffer.from(encoded || "", "base64").toString().split(":");
     if (pass === process.env.APP_PASSWORD) return next();
-    res.set("WWW-Authenticate", 'Basic realm="Insta Ideas"').status(401).send("لازم تدخل كلمة السر");
+    res.set("WWW-Authenticate", 'Basic realm="Insta Ideas"').status(401).send("يلزم إدخال كلمة المرور");
   });
 }
 
@@ -80,15 +80,15 @@ app.post("/api/ideas", (req, res) => res.status(201).json(store.createIdea(req.b
 
 app.put("/api/ideas/:id", (req, res) => {
   const idea = store.updateIdea(req.params.id, req.body);
-  idea ? res.json(idea) : res.status(404).json({ error: "الفكرة مو موجودة" });
+  idea ? res.json(idea) : res.status(404).json({ error: "الفكرة غير موجودة" });
 });
 
 app.delete("/api/ideas/:id", (req, res) => {
-  store.deleteIdea(req.params.id) ? res.status(204).end() : res.status(404).json({ error: "الفكرة مو موجودة" });
+  store.deleteIdea(req.params.id) ? res.status(204).end() : res.status(404).json({ error: "الفكرة غير موجودة" });
 });
 
 app.post("/api/upload", upload.array("files", 10), (req, res) => {
-  if (!req.files?.length) return res.status(400).json({ error: "نوع الملف مو مدعوم (JPG/PNG/MP4/MOV)" });
+  if (!req.files?.length) return res.status(400).json({ error: "نوع الملف غير مدعوم (JPG/PNG/MP4/MOV)" });
   res.json(
     req.files.map((f) => ({
       url: `/uploads/${f.filename}`,
@@ -108,7 +108,7 @@ app.post("/api/ai/suggest", wrap(async (req, res) => {
 app.post("/api/ai/plan-week", wrap(async (req, res) => {
   const start = new Date(req.body.start);
   const end = new Date(req.body.end);
-  if (isNaN(start) || isNaN(end)) return res.status(400).json({ error: "حدود الأسبوع غلط" });
+  if (isNaN(start) || isNaN(end)) return res.status(400).json({ error: "حدود الأسبوع غير صحيحة" });
   const count = Math.min(Math.max(Number(req.body.count) || 7, 1), 14);
   const weekPosts = store.listIdeas()
     .filter((i) => i.scheduledAt && new Date(i.scheduledAt) >= start && new Date(i.scheduledAt) < end)
@@ -132,8 +132,8 @@ app.put("/api/strategy", (req, res) => {
 
 app.post("/api/ai/strategy", wrap(async (req, res) => {
   const strategy = store.getStrategy();
-  if (!strategy.startDate) return res.status(400).json({ error: "حدد تاريخ بداية الخطة" });
-  if (!strategy.goals.length) return res.status(400).json({ error: "اختار هدف واحد على الأقل" });
+  if (!strategy.startDate) return res.status(400).json({ error: "حدّد تاريخ بدء الخطة" });
+  if (!strategy.goals.length) return res.status(400).json({ error: "اختر هدفًا واحدًا على الأقل" });
   const plan = await ai.buildStrategy(store.getProfile(), strategy);
   res.json(store.updateStrategy({ plan: { ...plan, generatedAt: new Date().toISOString() } }));
 }));
@@ -142,17 +142,17 @@ app.post("/api/ai/strategy", wrap(async (req, res) => {
 app.get("/api/stories", (req, res) => res.json(store.listStories()));
 app.put("/api/stories/:id", (req, res) => {
   const story = store.updateStory(req.params.id, req.body);
-  story ? res.json(story) : res.status(404).json({ error: "الستوري مو موجود" });
+  story ? res.json(story) : res.status(404).json({ error: "الستوري غير موجودة" });
 });
 app.delete("/api/stories/:id", (req, res) => {
-  store.deleteStory(req.params.id) ? res.status(204).end() : res.status(404).json({ error: "الستوري مو موجود" });
+  store.deleteStory(req.params.id) ? res.status(204).end() : res.status(404).json({ error: "الستوري غير موجودة" });
 });
 
 // weekDate: يوم الأحد بصيغة YYYY-MM-DD، days: الأيام المطلوبة (افتراضي الأسبوع كامل)
 // start/end: حدود الأسبوع بتوقيت المستخدم عشان نجيب منشوراته
 app.post("/api/ai/story-week", wrap(async (req, res) => {
   const { weekDate, topic = "", start, end } = req.body;
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(weekDate || "")) return res.status(400).json({ error: "حدد الأسبوع" });
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(weekDate || "")) return res.status(400).json({ error: "حدّد الأسبوع" });
   const days = Array.isArray(req.body.days) && req.body.days.length
     ? req.body.days.map(Number).filter((d) => d >= 0 && d <= 6)
     : [0, 1, 2, 3, 4, 5, 6];
@@ -202,7 +202,7 @@ app.get("/api/assistant", (req, res) => res.json(store.getChat()));
 app.delete("/api/assistant", (req, res) => { store.clearChat(); res.status(204).end(); });
 app.post("/api/assistant", wrap(async (req, res) => {
   const message = String(req.body.message || "").trim();
-  if (!message) return res.status(400).json({ error: "اكتبي رسالتچ" });
+  if (!message) return res.status(400).json({ error: "اكتب رسالتك" });
   store.addChat("user", message);
   try {
     const history = store.getChat().slice(-30);
@@ -220,10 +220,10 @@ app.get("/api/shots", (req, res) => res.json(store.listShots()));
 app.post("/api/shots", (req, res) => res.status(201).json(store.createShot(req.body)));
 app.put("/api/shots/:id", (req, res) => {
   const shot = store.updateShot(req.params.id, req.body);
-  shot ? res.json(shot) : res.status(404).json({ error: "اللقطة مو موجودة" });
+  shot ? res.json(shot) : res.status(404).json({ error: "اللقطة غير موجودة" });
 });
 app.delete("/api/shots/:id", (req, res) => {
-  store.deleteShot(req.params.id) ? res.status(204).end() : res.status(404).json({ error: "اللقطة مو موجودة" });
+  store.deleteShot(req.params.id) ? res.status(204).end() : res.status(404).json({ error: "اللقطة غير موجودة" });
 });
 
 app.post("/api/ai/shots", wrap(async (req, res) => {
@@ -235,7 +235,7 @@ app.post("/api/ai/shots", wrap(async (req, res) => {
 // نصوص سلايدات التصميم
 app.post("/api/ideas/:id/design", wrap(async (req, res) => {
   const idea = store.getIdea(req.params.id);
-  if (!idea) return res.status(404).json({ error: "الفكرة مو موجودة" });
+  if (!idea) return res.status(404).json({ error: "الفكرة غير موجودة" });
   const format = ["post", "carousel", "reel"].includes(req.body?.format) ? req.body.format : idea.format;
   res.json(await ai.designSlides(store.getProfile(), { ...idea, format }, req.body?.style));
 }));
@@ -243,7 +243,7 @@ app.post("/api/ideas/:id/design", wrap(async (req, res) => {
 // سكربت فويس اوفر لريل مبني على مكتبة اللقطات
 app.post("/api/ideas/:id/voiceover", wrap(async (req, res) => {
   const idea = store.getIdea(req.params.id);
-  if (!idea) return res.status(404).json({ error: "الفكرة مو موجودة" });
+  if (!idea) return res.status(404).json({ error: "الفكرة غير موجودة" });
   const scenes = await ai.voiceoverScript(store.getProfile(), idea, store.listShots());
   let t = 0;
   const script = scenes.map((sc, i) => {
@@ -260,7 +260,7 @@ app.post("/api/ideas/:id/voiceover", wrap(async (req, res) => {
 
 app.post("/api/ideas/:id/caption", wrap(async (req, res) => {
   const idea = store.getIdea(req.params.id);
-  if (!idea) return res.status(404).json({ error: "الفكرة مو موجودة" });
+  if (!idea) return res.status(404).json({ error: "الفكرة غير موجودة" });
   res.json(await ai.writeCaption(store.getProfile(), idea));
 }));
 
@@ -268,13 +268,13 @@ app.post("/api/ideas/:id/caption", wrap(async (req, res) => {
 const publishing = new Set();
 
 async function publishIdea(idea) {
-  if (publishing.has(idea.id)) throw new Error("النشر شغال على هذي الفكرة");
+  if (publishing.has(idea.id)) throw new Error("النشر جارٍ لهذه الفكرة");
   publishing.add(idea.id);
   try {
     const base = PUBLIC_BASE_URL.replace(/\/$/, "");
     const media = idea.media.map((m) => {
       if (/^https?:\/\//.test(m.url)) return m;
-      if (!base) throw new Error("لازم تحدد PUBLIC_BASE_URL عشان إنستغرام يوصل للملفات المرفوعة");
+      if (!base) throw new Error("يجب تحديد PUBLIC_BASE_URL ليتمكن إنستغرام من الوصول إلى الملفات المرفوعة");
       return { ...m, url: base + m.url };
     });
     const caption = [idea.caption, idea.hashtags].filter(Boolean).join("\n\n");
@@ -293,7 +293,7 @@ async function publishIdea(idea) {
 const absUrl = (url) => {
   if (/^https?:\/\//.test(url)) return url;
   const base = PUBLIC_BASE_URL.replace(/\/$/, "");
-  if (!base) throw new Error("لازم تحدد PUBLIC_BASE_URL عشان إنستغرام يوصل للملفات المرفوعة");
+  if (!base) throw new Error("يجب تحديد PUBLIC_BASE_URL ليتمكن إنستغرام من الوصول إلى الملفات المرفوعة");
   return base + url;
 };
 const localPath = (url) =>
@@ -301,20 +301,20 @@ const localPath = (url) =>
 
 async function publishStory(story) {
   const key = `story:${story.id}`;
-  if (publishing.has(key)) throw new Error("النشر شغال على هالستوري");
+  if (publishing.has(key)) throw new Error("النشر جارٍ لهذه الستوري");
   publishing.add(key);
   try {
     const items = [];
     for (const [i, f] of story.frames.entries()) {
       if (f.media === "video") {
-        if (!f.video) throw new Error(`الشريحة ${i + 1} فيديو بس ما فيها فيديو مرفوع`);
+        if (!f.video) throw new Error(`الشريحة ${i + 1} من نوع فيديو، لكن لم يُرفع لها فيديو`);
         // فيديو جاهز بدون طبقة نص (مثلاً ريل متركّب برا الموقع) ينتشر مثل ما هو
         if (!f.overlay) { items.push({ type: "video", url: absUrl(f.video) }); continue; }
         const out = `${crypto.randomUUID()}.mp4`;
         await overlayVideo(localPath(f.video), localPath(f.overlay), path.join(UPLOAD_DIR, out));
         items.push({ type: "video", url: absUrl(`/uploads/${out}`) });
       } else {
-        if (!f.rendered) throw new Error(`الشريحة ${i + 1} ما تجهزت، اضغطي «جهّزي» من جديد`);
+        if (!f.rendered) throw new Error(`الشريحة ${i + 1} غير مجهزة؛ أعد النشر من المحرر`);
         items.push({ type: "image", url: absUrl(f.rendered) });
       }
     }
@@ -330,13 +330,13 @@ async function publishStory(story) {
 
 app.post("/api/stories/:id/publish", wrap(async (req, res) => {
   const story = store.listStories().find((s) => s.id === req.params.id);
-  if (!story) return res.status(404).json({ error: "الستوري مو موجود" });
+  if (!story) return res.status(404).json({ error: "الستوري غير موجودة" });
   res.json(await publishStory(story));
 }));
 
 app.post("/api/ideas/:id/publish", wrap(async (req, res) => {
   const idea = store.getIdea(req.params.id);
-  if (!idea) return res.status(404).json({ error: "الفكرة مو موجودة" });
+  if (!idea) return res.status(404).json({ error: "الفكرة غير موجودة" });
   res.json(await publishIdea(idea));
 }));
 
@@ -345,10 +345,10 @@ app.post("/api/ideas/:id/publish", wrap(async (req, res) => {
 const localDay = (d) => new Intl.DateTimeFormat("en-CA", { timeZone: process.env.APP_TZ || "Asia/Kuwait" }).format(d);
 
 async function quickPublish(file, { as = "story", caption = "", publishAt = "" }) {
-  if (!file) throw Object.assign(new Error("ارفعي ملف فيديو أو صورة (JPG/PNG/MP4/MOV)"), { status: 400 });
+  if (!file) throw Object.assign(new Error("ارفع ملف فيديو أو صورة (JPG/PNG/MP4/MOV)"), { status: 400 });
   const media = { url: `/uploads/${file.filename}`, type: file.mimetype.startsWith("video/") ? "video" : "image" };
   const when = publishAt ? new Date(publishAt) : null;
-  if (when && isNaN(when)) throw Object.assign(new Error("الموعد غلط، استخدمي صيغة ISO مثل 2026-11-05T19:00:00+03:00"), { status: 400 });
+  if (when && isNaN(when)) throw Object.assign(new Error("الموعد غير صحيح؛ استخدم صيغة ISO مثل 2026-11-05T19:00:00+03:00"), { status: 400 });
   const later = when && when > new Date();
   const title = (caption.split("\n")[0] || file.originalname).slice(0, 80);
 
@@ -356,7 +356,7 @@ async function quickPublish(file, { as = "story", caption = "", publishAt = "" }
     const story = store.createStory({
       date: localDay(when || new Date()),
       type: "personal",
-      title: title || "ستوري جاهز",
+      title: title || "ستوري جاهزة",
       ending: "none",
       measure: "",
       frames: [{ role: "ملف جاهز", media: media.type === "video" ? "video" : "photo", shot: "", kicker: "", statements: [],
@@ -368,7 +368,7 @@ async function quickPublish(file, { as = "story", caption = "", publishAt = "" }
     return { kind: "story", ...(later ? story : await publishStory(story)) };
   }
 
-  if (as === "reel" && media.type !== "video") throw Object.assign(new Error("الريل لازم يكون فيديو"), { status: 400 });
+  if (as === "reel" && media.type !== "video") throw Object.assign(new Error("يجب أن يكون الريل فيديو"), { status: 400 });
   const idea = store.createIdea({
     title,
     format: as === "reel" ? "reel" : "post",
@@ -397,7 +397,7 @@ app.post("/api/hook/publish", (req, res, next) => {
   const given = String(req.headers["x-upload-key"] || "");
   const ok = key.length >= 16 && given.length === key.length &&
     crypto.timingSafeEqual(Buffer.from(given), Buffer.from(key));
-  if (!ok) return res.status(key ? 401 : 503).json({ error: key ? "مفتاح الرفع غلط" : "الرفع من برا مو مفعّل (حطي UPLOAD_KEY بإعدادات السيرفر)" });
+  if (!ok) return res.status(key ? 401 : 503).json({ error: key ? "مفتاح الرفع غير صحيح" : "الرفع الخارجي غير مفعّل (أضف UPLOAD_KEY في إعدادات الخادم)" });
   next();
 }, upload.single("file"), sendQuick);
 

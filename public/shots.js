@@ -14,17 +14,17 @@ async function load() {
 
 function render() {
   const done = shots.filter((s) => s.done).length;
-  $("#shots-progress").textContent = shots.length ? `صوّرت ${done} من ${shots.length}` : "";
+  $("#shots-progress").textContent = shots.length ? `صُوِّر ${done} من ${shots.length}` : "";
   const list = shots.filter((s) => filter === "all" || (filter === "done" ? s.done : !s.done));
   const el = $("#shots");
   if (!list.length) {
-    el.innerHTML = `<p class="empty">${shots.length ? "ما في شي هني" : "المكتبة فاضية. خلي الذكاء الاصطناعي يقترح لچ شنو تصورين"}</p>`;
+    el.innerHTML = `<p class="empty">${shots.length ? "لا يوجد شيء هنا" : "المكتبة فارغة. اطلب اقتراح لقطات للتصوير"}</p>`;
     return;
   }
   el.innerHTML = list.map((s) => `
     <article class="card shot ${s.done ? "done" : ""}" data-id="${s.id}">
       <div class="row between">
-        <label class="check"><input type="checkbox" data-done ${s.done ? "checked" : ""}> ${s.done ? "جاهزة" : "صوّرتها؟"}</label>
+        <label class="check"><input type="checkbox" data-done ${s.done ? "checked" : ""}> ${s.done ? "جاهزة" : "صُوِّرت؟"}</label>
         <span class="meta">
           <span class="badge">${s.kind === "photo" ? `${icon("image", 13)} صورة` : `${icon("video", 13)} فيديو`}</span>
           ${s.category ? `<span class="badge">${esc(s.category)}</span>` : ""}
@@ -34,12 +34,12 @@ function render() {
       ${s.description ? `<p>${esc(s.description)}</p>` : ""}
       ${s.duration && s.kind !== "photo" ? `<span class="hint">⏱️ ${esc(s.duration)}</span>` : ""}
       ${s.tips ? `<span class="hint"><b>نصيحة:</b> ${esc(s.tips)}</span>` : ""}
-      ${s.usage ? `<span class="hint"><b>تنفع لـ:</b> ${esc(s.usage)}</span>` : ""}
+      ${s.usage ? `<span class="hint"><b>مناسبة لـ:</b> ${esc(s.usage)}</span>` : ""}
       <div class="media">${s.media.map((m) => m.type === "video"
         ? `<video src="${esc(m.url)}" muted></video>`
         : `<img src="${esc(m.url)}" alt="">`).join("")}</div>
       <div class="row between">
-        <label class="ghost small file-btn">+ ارفع اللقطة<input type="file" data-upload accept="image/jpeg,image/png,video/mp4,video/quicktime" multiple hidden></label>
+        <label class="ghost small file-btn">+ رفع اللقطة<input type="file" data-upload accept="image/jpeg,image/png,video/mp4,video/quicktime" multiple hidden></label>
         <button class="ghost small" data-edit>تعديل</button>
       </div>
     </article>`).join("");
@@ -61,7 +61,7 @@ $("#shots").addEventListener("change", async (e) => {
       const shot = shots.find((s) => s.id === id);
       const media = await uploadFiles(files);
       await update(id, { media: [...shot.media, ...media], done: true });
-      toast("انرفعت ✓");
+      toast("رُفعت ✓");
     }
   } catch (err) { toast(err.message); }
 });
@@ -80,7 +80,7 @@ $("#suggest-shots").addEventListener("click", (e) => busy(e.target, async () => 
   const added = await api("/api/ai/shots", { method: "POST", body: { count: $("#shots-count").value } });
   shots.push(...added);
   render();
-  toast(`انضافت ${added.length} لقطة ✓`);
+  toast(`أُضيفت ${added.length} لقطة ✓`);
 }));
 
 // ---------- المحرر ----------
@@ -106,7 +106,7 @@ form.addEventListener("submit", async (e) => {
 });
 
 $("#shot-delete").addEventListener("click", async () => {
-  if (!confirm("تحذف هاللقطة؟")) return;
+  if (!confirm("هل تريد حذف هذه اللقطة؟")) return;
   await api(`/api/shots/${editingShot.id}`, { method: "DELETE" });
   shots = shots.filter((s) => s.id !== editingShot.id);
   dialog.close();

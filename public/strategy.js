@@ -22,11 +22,11 @@ function launchRow(l = {}) {
   const div = document.createElement("div");
   div.className = "launch-row";
   div.innerHTML = `
-    <input data-f="name" placeholder="اسم الإطلاق — مثلاً: دورة التصوير بالجوال" value="${esc(l.name || "")}">
+    <input data-f="name" placeholder="اسم الإطلاق، مثل: دورة التصوير بالجوال" value="${esc(l.name || "")}">
     <select data-f="type">${Object.entries(LAUNCH_TYPES).map(([k, v]) => `<option value="${k}" ${l.type === k ? "selected" : ""}>${v}</option>`).join("")}</select>
     <input data-f="date" type="date" value="${esc(l.date || "")}" title="تاريخ الإطلاق">
-    <input data-f="details" placeholder="تفاصيل: السعر، لمنو، شنو يميزه..." value="${esc(l.details || "")}">
-    <button type="button" class="ghost icon-btn" data-remove title="شيلي">${icon("x")}</button>`;
+    <input data-f="details" placeholder="التفاصيل: السعر، الفئة المستهدفة، ما يميزه…" value="${esc(l.details || "")}">
+    <button type="button" class="ghost icon-btn" data-remove title="إزالة">${icon("x")}</button>`;
   if (l.id) div.dataset.id = l.id;
   return div;
 }
@@ -50,7 +50,7 @@ function fillForm() {
 
 function collectForm() {
   const startDate = form.elements.startDate.value;
-  if (!startDate) throw new Error("حدد تاريخ بداية الخطة");
+  if (!startDate) throw new Error("حدّد تاريخ بدء الخطة");
   return {
     startDate: toSunday(startDate),
     weeks: Number(form.elements.weeks.value),
@@ -76,14 +76,14 @@ async function saveForm() {
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  try { await saveForm(); toast("انحفظت ✓"); } catch (err) { toast(err.message); }
+  try { await saveForm(); toast("حُفظت ✓"); } catch (err) { toast(err.message); }
 });
 
 $("#build-strategy").addEventListener("click", (e) => {
-  if (strategy.plan && !confirm("بتنبني خطة جديدة مكان الحالية. أكمل؟")) return;
+  if (strategy.plan && !confirm("ستُنشأ خطة جديدة بدلًا من الحالية. هل تريد المتابعة؟")) return;
   busy(e.target, async () => {
     await saveForm();
-    toast("جاري بناء الخطة... ممكن تاخذ دقيقة");
+    toast("جارٍ إنشاء الخطة… قد يستغرق ذلك دقيقة");
     strategy = await api("/api/ai/strategy", { method: "POST" });
     publish();
     renderPlan();
@@ -151,7 +151,7 @@ function renderPlan() {
           <b>الأسبوع ${w.week} من ${total}</b>
           <span class="hint">${dateLabel(weekDate)} – ${dateLabel(end)}</span>
         </div>
-        <div class="meta"><span class="badge">${esc(w.phase)}</span>${isNow ? `<span class="badge scheduled">هالأسبوع</span>` : ""}</div>
+        <div class="meta"><span class="badge">${esc(w.phase)}</span>${isNow ? `<span class="badge scheduled">هذا الأسبوع</span>` : ""}</div>
         <h3>${esc(w.theme)}</h3>
         <p>${esc(w.focus)}</p>
         ${funnelBar(w)}
@@ -160,8 +160,8 @@ function renderPlan() {
         <p class="hint">${icon("target", 14)} ${esc(w.cta)}</p>
         ${sw?.events.length ? `<ul class="events">${sw.events.map((ev) => `<li class="${ev.isLaunchDay ? "launch-day" : ""}">${icon("megaphone", 14)} ${dateLabel(ev.date, { weekday: "short" })}: ${esc(ev.launch)} — ${esc(ev.title)}</li>`).join("")}</ul>` : ""}
         <div class="row between">
-          <span class="hint">${planned} من ${w.postsPerWeek} منشورات محطوطة</span>
-          <button class="primary small" data-week="${weekDate}">افتحي الأسبوع ${icon("next", 14)}</button>
+          <span class="hint">${planned} من ${w.postsPerWeek} منشورات مضافة</span>
+          <button class="primary small" data-week="${weekDate}">فتح الأسبوع ${icon("next", 14)}</button>
         </div>
       </article>`;
     }).join("")}</div>`;

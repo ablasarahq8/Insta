@@ -25,11 +25,11 @@ function render() {
       <div class="msg ${m.role}">
         ${m.role === "assistant" ? format(m.content) : `<p>${esc(m.content).replace(/\n/g, "<br>")}</p>`}
         ${m.role === "assistant" ? `<div class="msg-actions">
-          <button type="button" class="ghost" data-copy="${i}">${icon("copy", 13)} انسخي</button>
-          <button type="button" class="ghost" data-idea="${i}">${icon("bulb", 13)} احفظيها فكرة</button>
+          <button type="button" class="ghost" data-copy="${i}">${icon("copy", 13)} نسخ</button>
+          <button type="button" class="ghost" data-idea="${i}">${icon("bulb", 13)} حفظ كفكرة</button>
         </div>` : ""}
-      </div>`).join("") + (waiting ? `<div class="typing">قاعدة أفكر…</div>` : "")
-    : `<p class="empty">اسأليني أي شي عن محتواچ أو منتجاتچ، أو اختاري وحدة من تحت.</p>`;
+      </div>`).join("") + (waiting ? `<div class="typing">جارٍ التفكير…</div>` : "")
+    : `<p class="empty">اسأل عن أي شيء يخص محتواك أو منتجاتك، أو اختر أحد الأسئلة أدناه.</p>`;
   log.scrollTop = log.scrollHeight;
 }
 
@@ -71,8 +71,8 @@ log.addEventListener("click", async (e) => {
   const copy = e.target.closest("[data-copy]");
   const idea = e.target.closest("[data-idea]");
   if (copy) {
-    try { await navigator.clipboard.writeText(chat[copy.dataset.copy].content); toast("انسخ ✓"); }
-    catch { toast("ما قدرت أنسخ من هالمتصفح"); }
+    try { await navigator.clipboard.writeText(chat[copy.dataset.copy].content); toast("نُسخ ✓"); }
+    catch { toast("تعذّر النسخ في هذا المتصفح"); }
   }
   if (idea) {
     const text = chat[idea.dataset.idea].content;
@@ -80,13 +80,13 @@ log.addEventListener("click", async (e) => {
     try {
       await api("/api/ideas", { method: "POST", body: { title, notes: text, source: "ai" } });
       window.dispatchEvent(new Event("ideas-reload"));
-      toast("انحفظت بأفكارچ ✓");
+      toast("حُفظت في الأفكار ✓");
     } catch (err) { toast(err.message); }
   }
 });
 
 $("#chat-clear").addEventListener("click", async () => {
-  if (chat.length && !confirm("تبدين محادثة يديدة؟ المحادثة الحالية بتنمسح.")) return;
+  if (chat.length && !confirm("بدء محادثة جديدة؟ ستُحذف المحادثة الحالية.")) return;
   await api("/api/assistant", { method: "DELETE" });
   chat = [];
   render();

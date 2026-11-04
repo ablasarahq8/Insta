@@ -35,7 +35,7 @@ export function toast(msg) {
 export async function busy(btn, fn) {
   const label = btn.textContent;
   btn.disabled = true;
-  btn.textContent = "لحظة...";
+  btn.textContent = "جارٍ التنفيذ…";
   try { return await fn(); }
   catch (err) { toast(err.message); }
   finally { btn.disabled = false; btn.textContent = label; }
@@ -63,7 +63,7 @@ try { advancedSaved = localStorage.getItem("advanced") === "1"; } catch {}
 setAdvanced(advancedSaved);
 
 // علامات المتابعة: صورت / عدلت / نزلت
-export const CHECKS = { shot: "صورت", edited: "عدلت", posted: "نزلت" };
+export const CHECKS = { shot: "صُوِّر", edited: "عُدِّل", posted: "نُشر" };
 export const checksBadge = (checks = []) => {
   const n = checks.filter((c) => c in CHECKS).length;
   return n ? `<span class="badge checks ${n === 3 ? "done" : ""}">✓ ${n}/3</span>` : "";

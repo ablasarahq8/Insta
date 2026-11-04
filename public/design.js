@@ -179,22 +179,22 @@ function render() {
     <div class="ig-head"><span class="ig-avatar">${esc(handle()[1]?.toUpperCase() || "?")}</span><b>${esc(handle().slice(1))}</b></div>
     <div class="ig-media" style="width:${frameW}px;height:${h * scale}px">
       ${slides.length ? `<div class="ig-scale" style="transform:scale(${scale})">${slideHTML(slides[state.index], state.index)}</div>`
-        : `<div class="ig-empty">لحظة... قاعد أصمم</div>`}
+        : `<div class="ig-empty">جارٍ التصميم…</div>`}
       ${slides.length > 1 ? `
         <button type="button" class="ig-nav prev" data-nav="-1" ${state.index === 0 ? "hidden" : ""}>‹</button>
         <button type="button" class="ig-nav next" data-nav="1" ${state.index === slides.length - 1 ? "hidden" : ""}>›</button>` : ""}
     </div>
     ${slides.length > 1 ? `<div class="ig-dots">${slides.map((_, i) => `<i class="${i === state.index ? "on" : ""}"></i>`).join("")}</div>` : ""}
     <div class="ig-actions">${icon("heart", 22)}${icon("message", 22)}${icon("send", 22)}<span class="ig-save">${icon("bookmark", 22)}</span></div>
-    <div class="ig-caption"><b>${esc(handle().slice(1))}</b> ${esc(caption || "الكابشن بيطلع هني...").replace(/(#[^\s#]+)/g, '<span class="ig-tag">$1</span>')}</div>`;
+    <div class="ig-caption"><b>${esc(handle().slice(1))}</b> ${esc(caption || "سيظهر الكابشن هنا…").replace(/(#[^\s#]+)/g, '<span class="ig-tag">$1</span>')}</div>`;
 
   // تعديل النصوص
   $("#design-slides").innerHTML = slides.map((s, i) => `
     <div class="design-slide ${i === state.index ? "on" : ""}" data-i="${i}">
-      <div class="row between"><b>سلايد ${i + 1}</b><span class="hint">${{ cover: "غلاف", content: "محتوى", cta: "دعوة للإجراء" }[s.kind]}</span></div>
+      <div class="row between"><b>شريحة ${i + 1}</b><span class="hint">${{ cover: "غلاف", content: "محتوى", cta: "دعوة للإجراء" }[s.kind]}</span></div>
       ${["sarah", "scrapbook"].includes(state.style) ? `<input data-f="pre" value="${esc(s.pre || "")}" placeholder="التمهيد فوق العنوان">` : ""}
       <input data-f="title" value="${esc(s.title)}" placeholder="العنوان">
-      ${["sarah", "scrapbook"].includes(state.style) ? `<input data-f="highlight" value="${esc(s.highlight || "")}" placeholder="الكلمة الملونة (من العنوان)">` : ""}
+      ${["sarah", "scrapbook"].includes(state.style) ? `<input data-f="highlight" value="${esc(s.highlight || "")}" placeholder="الكلمة الملوّنة (من العنوان)">` : ""}
       <textarea data-f="body" rows="2" placeholder="النص">${esc(s.body)}</textarea>
     </div>`).join("");
 }
@@ -249,7 +249,7 @@ $("#design-slides").addEventListener("input", (e) => {
 
 // يرسم كل سلايد كصورة PNG بمقاسها الحقيقي
 async function renderImages() {
-  if (!window.htmlToImage) throw new Error("مكتبة الصور ما تحملت، حدّث الصفحة");
+  if (!window.htmlToImage) throw new Error("لم تُحمَّل مكتبة الصور؛ حدّث الصفحة");
   await document.fonts.ready;
   const stage = $("#design-stage");
   const files = [];
@@ -264,11 +264,11 @@ async function renderImages() {
 }
 
 $("#design-save").addEventListener("click", (e) => busy(e.target, async () => {
-  if (!state.slides.length) throw new Error("ما في سلايدات");
+  if (!state.slides.length) throw new Error("لا توجد شرائح");
   const media = await uploadFiles(await renderImages());
   await state.onSave({ style: state.style, slides: state.slides, format: state.idea.format }, media);
   dialog.close();
-  toast("انحفظ التصميم كصور للمنشور ✓");
+  toast("حُفظ التصميم صورًا للمنشور ✓");
 }));
 
 $("#design-download").addEventListener("click", (e) => busy(e.target, async () => {

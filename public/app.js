@@ -22,7 +22,7 @@ function renderIdeas() {
   const list = filter === "all" ? ideas : ideas.filter((i) => i.status === filter);
   const el = $("#ideas");
   if (!list.length) {
-    el.innerHTML = `<p class="empty">ما في شي هني للحين — اكتبي أول فكرة فوق، أو خذي اقتراحات</p>`;
+    el.innerHTML = `<p class="empty">لا يوجد شيء بعد. اكتب أول فكرة في الأعلى، أو اطلب اقتراحات.</p>`;
     return;
   }
   el.innerHTML = list.map((i) => {
@@ -63,7 +63,7 @@ $("#quick").addEventListener("submit", async (e) => {
     await api("/api/ideas", { method: "POST", body: data });
     form.reset();
     await loadIdeas();
-    toast("انحفظت الفكرة ✓");
+    toast("حُفظت الفكرة ✓");
   } catch (err) { toast(err.message); }
 });
 
@@ -85,7 +85,7 @@ function openEditor(idea) {
   editorForm.elements.scheduledAt.value = toLocalInput(editing.scheduledAt);
   $$("#post-checks [data-check]").forEach((c) => { c.checked = (editing.checks || []).includes(c.dataset.check); });
   $("#editor-error").hidden = !editing.error;
-  $("#editor-error").textContent = editing.error ? `آخر محاولة نشر فشلت: ${editing.error}` : "";
+  $("#editor-error").textContent = editing.error ? `فشلت آخر محاولة نشر: ${editing.error}` : "";
   renderMedia();
   updateScheduleHint();
   updateScriptBox();
@@ -102,7 +102,7 @@ $("#ai-voiceover").addEventListener("click", (e) => busy(e.target, async () => {
   await saveEditor();
   const { script } = await api(`/api/ideas/${editing.id}/voiceover`, { method: "POST" });
   editorForm.elements.script.value = script;
-  toast("انكتب السكربت. «📁» لقطة من مكتبتچ، و«🆕» لقطة تحتاجين تصورينها");
+  toast("كُتب السكربت. «📁» لقطة من المكتبة، و«🆕» لقطة تحتاج إلى تصوير");
 }));
 
 function updateScheduleHint() {
@@ -116,7 +116,7 @@ function renderMedia() {
   $("#media").innerHTML = editing.media.map((m, idx) => `
     <figure>
       ${m.type === "video" ? `<video src="${esc(m.url)}" muted></video>` : `<img src="${esc(m.url)}" alt="">`}
-      <button type="button" data-remove="${idx}" title="شيلي">${icon("x", 14)}</button>
+      <button type="button" data-remove="${idx}" title="إزالة">${icon("x", 14)}</button>
     </figure>`).join("");
 }
 
@@ -138,7 +138,7 @@ $("#media-url").addEventListener("keydown", (e) => {
   if (e.key !== "Enter") return;
   e.preventDefault();
   const url = e.target.value.trim();
-  if (!/^https?:\/\//.test(url)) return toast("لازم الرابط يبدأ بـ https://");
+  if (!/^https?:\/\//.test(url)) return toast("يجب أن يبدأ الرابط بـ https://");
   editing.media.push({ url, type: /\.(mp4|mov)(\?|$)/i.test(url) ? "video" : "image" });
   e.target.value = "";
   renderMedia();
@@ -152,7 +152,7 @@ function collectEditor() {
   data.checks = $$("#post-checks [data-check]").filter((c) => c.checked).map((c) => c.dataset.check);
   // «نزلت» يعني المنشور انتشر
   if (data.checks.includes("posted")) data.status = "published";
-  if (data.status === "scheduled" && !data.scheduledAt) throw new Error("حدد موعد النشر للمنشور المجدول");
+  if (data.status === "scheduled" && !data.scheduledAt) throw new Error("حدّد موعد النشر للمنشور المجدول");
   return data;
 }
 
@@ -168,18 +168,18 @@ editorForm.addEventListener("submit", async (e) => {
   try {
     await saveEditor();
     dialog.close();
-    toast("انحفظ ✓");
+    toast("حُفظ ✓");
   } catch (err) { toast(err.message); }
 });
 
 $$("[data-close]").forEach((b) => b.addEventListener("click", () => b.closest("dialog").close()));
 
 $("#delete").addEventListener("click", async () => {
-  if (!confirm("أكيد تبي تحذف هذي الفكرة؟")) return;
+  if (!confirm("هل تريد حذف هذه الفكرة؟")) return;
   await api(`/api/ideas/${editing.id}`, { method: "DELETE" });
   dialog.close();
   await loadIdeas();
-  toast("انحذفت");
+  toast("حُذفت");
 });
 
 // مصمم البوست — نحفظ أول عشان ياخذ آخر عنوان وكابشن
@@ -203,13 +203,13 @@ $("#ai-caption").addEventListener("click", (e) => busy(e.target, async () => {
 }));
 
 $("#publish").addEventListener("click", (e) => {
-  if (!confirm("بننشرها الحين على إنستغرام. متأكد؟")) return;
+  if (!confirm("سيُنشر الآن على إنستغرام. هل تريد المتابعة؟")) return;
   busy(e.target, async () => {
     try {
       await saveEditor();
       await api(`/api/ideas/${editing.id}/publish`, { method: "POST" });
       dialog.close();
-      toast("انتشرت على إنستغرام");
+      toast("نُشر على إنستغرام");
     } finally {
       await loadIdeas();
     }
@@ -236,7 +236,7 @@ function renderSuggestions() {
       <p>${esc(s.notes)}</p>
       <div class="row between">
         <span class="meta"><span class="badge">${FORMATS[s.format] || s.format}</span>${funnelBadge(s.funnel)}${goalBadge(s.goal)}</span>
-        ${s.saved ? `<span class="badge published">انضافت ✓</span>` : `<button class="primary small" data-save="${idx}">ضيفها لأفكاري</button>`}
+        ${s.saved ? `<span class="badge published">أُضيفت ✓</span>` : `<button class="primary small" data-save="${idx}">إضافة إلى الأفكار</button>`}
       </div>
     </article>`).join("");
 }
@@ -261,7 +261,7 @@ $("#suggestions").addEventListener("click", async (e) => {
   s.saved = true;
   renderSuggestions();
   await loadIdeas();
-  toast("انضافت لأفكارك ✓");
+  toast("أُضيفت إلى الأفكار ✓");
 });
 
 // ---------- الأسبوع ----------
@@ -301,7 +301,7 @@ window.addEventListener("goto-week", (e) => {
     renderWeek();
   } catch (err) {
     console.error(err);
-    toast(`ما قدرت أعرض هالأسبوع: ${err.message}`);
+    toast(`تعذّر عرض هذا الأسبوع: ${err.message}`);
   }
 });
 
@@ -337,7 +337,7 @@ function renderWeek() {
             <b>${esc(s.title)}</b>
             <span class="meta">${checksBadge(s.checks)}</span>
           </div>`).join("")}
-        <button class="add-day" data-day="${idx}">${icon("plus", 14)} ضيفي</button>
+        <button class="add-day" data-day="${idx}">${icon("plus", 14)} إضافة</button>
       </div>`;
   }).join("");
 
@@ -362,7 +362,7 @@ function renderStrategyWeek() {
 function renderBalance(posts) {
   const total = posts.length;
   if (!total) {
-    $("#balance").innerHTML = `<p class="hint">الأسبوع فاضي. ضيفي منشورات بالأيام، أو خلي الذكاء الاصطناعي يخطط لچ</p>`;
+    $("#balance").innerHTML = `<p class="hint">الأسبوع فارغ. أضف منشورات إلى الأيام، أو اطلب تخطيط الأسبوع.</p>`;
     return;
   }
   const count = (key, val) => posts.filter((p) => p[key] === val).length;
@@ -375,13 +375,13 @@ function renderBalance(posts) {
   const tips = [];
   for (const [k, target] of Object.entries(mix)) {
     const diff = pct(funnel[k]) - target;
-    if (diff <= -15) tips.push(`${FUNNEL[k].label} (${FUNNEL[k].name}) قليل — المفروض حول ${target}%`);
-    if (diff >= 20) tips.push(`${FUNNEL[k].label} (${FUNNEL[k].name}) وايد — المفروض حول ${target}%`);
+    if (diff <= -15) tips.push(`${FUNNEL[k].label} (${FUNNEL[k].name}) منخفض، والمقترح نحو ${target}%`);
+    if (diff >= 20) tips.push(`${FUNNEL[k].label} (${FUNNEL[k].name}) مرتفع، والمقترح نحو ${target}%`);
   }
-  if (unset) tips.push(`${unset} منشور ما له مرحلة قمع`);
+  if (unset) tips.push(`${unset} منشور بلا مرحلة قمع`);
   const goalCounts = Object.keys(GOALS).map((k) => [k, count("goal", k)]);
   const repeated = goalCounts.filter(([, n]) => n >= 3 && n / total > 0.4);
-  repeated.forEach(([k]) => tips.push(`وايد منشورات «${GOALS[k].name}» — نوّع عشان الحساب ما يصير ممل`));
+  repeated.forEach(([k]) => tips.push(`منشورات «${GOALS[k].name}» كثيرة؛ يُستحسن التنويع`));
 
   $("#balance").innerHTML = `
     <div class="balance">
@@ -425,7 +425,7 @@ function openPicker(day) {
   const free = ideas.filter((i) => !i.scheduledAt && ["idea", "draft"].includes(i.status));
   $("#picker-list").innerHTML = free.length
     ? free.map((i) => `<button data-id="${i.id}"><b>${esc(i.title)}</b> <span class="meta">${funnelBadge(i.funnel)}${goalBadge(i.goal)}</span></button>`).join("")
-    : `<p class="empty">ما عندك أفكار بدون موعد</p>`;
+    : `<p class="empty">لا توجد أفكار بلا موعد</p>`;
   picker.showModal();
 }
 
@@ -450,7 +450,7 @@ $("#picker-list").addEventListener("click", async (e) => {
     });
     picker.close();
     await loadIdeas();
-    toast("انضافت لليوم ✓");
+    toast("أُضيفت إلى اليوم ✓");
   } catch (err) { toast(err.message); }
 });
 
@@ -505,25 +505,25 @@ $("#plan-accept").addEventListener("click", (e) => busy(e.target, async () => {
   planDraft = null;
   renderPlan();
   await loadIdeas();
-  toast("انحفظت خطة الأسبوع ✓");
+  toast("حُفظت خطة الأسبوع ✓");
 }));
 
 // ---------- الأدوات المتقدمة ----------
 $("#advanced-toggle").checked = document.body.classList.contains("advanced");
 $("#advanced-toggle").addEventListener("change", (e) => {
   setAdvanced(e.target.checked);
-  toast(e.target.checked ? "انفتحت الأدوات المتقدمة" : "رجع الموقع للوضع البسيط");
+  toast(e.target.checked ? "فُعّلت الأدوات المتقدمة" : "عاد الموقع إلى الوضع المبسط");
 });
 
 // ---------- النسخ ----------
-async function copyText(text, done = "انسخ ✓") {
+async function copyText(text, done = "نُسخ ✓") {
   try { await navigator.clipboard.writeText(text); toast(done); }
-  catch { toast("ما قدرت أنسخ من هالمتصفح"); }
+  catch { toast("تعذّر النسخ في هذا المتصفح"); }
 }
 
 $("#copy-caption").addEventListener("click", () => {
   const { caption, hashtags } = editorForm.elements;
-  copyText([caption.value, hashtags.value].filter(Boolean).join("\n\n"), "انسخ الكابشن والهاشتاقات ✓");
+  copyText([caption.value, hashtags.value].filter(Boolean).join("\n\n"), "نُسخ الكابشن والهاشتاقات ✓");
 });
 
 // الأسبوع كامل كنص مرتب — تلصقينه بأي محادثة (Claude أو ChatGPT)
@@ -557,14 +557,14 @@ function weekText() {
         if (f.statements?.length) lines.push(`   النص: ${f.statements.join(" / ")}`);
         if (f.ctaKeyword) lines.push(`   الدعوة: ${f.ctaLine || "ارسلوا لي كلمة"} «${f.ctaKeyword}» ${f.ctaSub || "بالخاص"}`);
       });
-      if (s.measure) lines.push(`شنو تقيسين: ${s.measure}`);
+      if (s.measure) lines.push(`مؤشر القياس: ${s.measure}`);
     }
   });
-  if (!any) lines.push("", "(ما فيه منشورات أو ستوري محطوطة هالأسبوع)");
+  if (!any) lines.push("", "(لا توجد منشورات أو ستوري في هذا الأسبوع)");
   return lines.join("\n");
 }
 
-$("#week-copy").addEventListener("click", () => copyText(weekText(), "انسخ الأسبوع ✓ الصقيه بأي محادثة"));
+$("#week-copy").addEventListener("click", () => copyText(weekText(), "نُسخ الأسبوع ✓ يمكن لصقه في أي محادثة"));
 
 $("#week-plan-stories").addEventListener("click", (e) =>
   window.dispatchEvent(new CustomEvent("plan-story-week", { detail: { weekDate: localDateStr(weekStart), btn: e.currentTarget } })));
@@ -578,14 +578,14 @@ $("#quick-pub-form").addEventListener("submit", (e) => {
   fd.delete("when");
   if (when) fd.set("publishAt", new Date(when).toISOString());
   const later = when && new Date(when) > new Date();
-  if (!later && !confirm("بينتشر على الإنستغرام الحين. متأكدة؟")) return;
+  if (!later && !confirm("سيُنشر الآن على إنستغرام. هل تريد المتابعة؟")) return;
   busy($("button", form), async () => {
     const res = await api("/api/quick-publish", { method: "POST", body: fd });
     form.reset();
     await loadIdeas();
     window.dispatchEvent(new Event("stories-changed"));
     window.dispatchEvent(new Event("stories-reload"));
-    toast(later ? "انجدول ✓" : res.status === "failed" ? `فشل: ${res.error}` : "انتشر");
+    toast(later ? "جُدول ✓" : res.status === "failed" ? `فشل: ${res.error}` : "نُشر");
   });
 });
 
@@ -611,15 +611,15 @@ const SARAH_PROFILE = {
 $("#profile-preset").addEventListener("click", () => {
   for (const [k, v] of Object.entries(SARAH_PROFILE)) {
     const el = profileForm.elements[k];
-    if (el && (!el.value.trim() || confirm(`«${el.closest("label")?.firstChild?.textContent.trim()}» فيه كلام. أبدّله؟`))) el.value = v;
+    if (el && (!el.value.trim() || confirm(`«${el.closest("label")?.firstChild?.textContent.trim()}» يحتوي على نص. هل تريد استبداله؟`))) el.value = v;
   }
-  toast("تعبّى ✓ راجعيه وعدّلي اللي تبين، وبعدين اضغطي «حفظ الملف»");
+  toast("تمت التعبئة ✓ راجع البيانات ثم اضغط «حفظ الملف»");
 });
 
 profileForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   await api("/api/profile", { method: "PUT", body: Object.fromEntries(new FormData(profileForm)) });
-  toast("انحفظ ملف الحساب ✓");
+  toast("حُفظ ملف الحساب ✓");
 });
 
 // ---------- البداية ----------
@@ -628,11 +628,11 @@ async function init() {
   await Promise.all([loadIdeas(), loadProfile()]);
   const status = await api("/api/status");
   $("#hook-status").innerHTML = status.uploadKey
-    ? `${icon("check", 14)} مفعّل. بأي محادثة تسوين فيها ريل قولي «ارفعيه ستوري» أو «انشريه ريل»، وعطيها رابط الموقع <b dir="ltr">${esc(status.baseUrl || location.origin)}</b> ومفتاح الرفع (UPLOAD_KEY) أول مرة.`
-    : `مو مفعّل. من Render: الخدمة ← Environment ← ضيفي <b>UPLOAD_KEY</b> واضغطي Generate عشان يطلع مفتاح عشوائي، وبعدين Save.`;
+    ? `${icon("check", 14)} مفعّل. في أي محادثة يُصنع فيها ريل، اطلب «ارفعه ستوري» أو «انشره ريل»، وأعطها رابط الموقع <b dir="ltr">${esc(status.baseUrl || location.origin)}</b> ومفتاح الرفع (UPLOAD_KEY) في المرة الأولى.`
+    : `غير مفعّل. من Render: الخدمة ← Environment ← أضف <b>UPLOAD_KEY</b> واضغط Generate لإنشاء مفتاح عشوائي، ثم Save.`;
   const warnings = [];
-  if (!status.instagram) warnings.push("الإنستغرام مو مربوط، فالنشر ما يشتغل. (IG_USER_ID و IG_ACCESS_TOKEN)");
-  if (!status.publicUrl) warnings.push("رابط الموقع العام مو محدد، فالصور المرفوعة ما تنتشر. (PUBLIC_BASE_URL)");
+  if (!status.instagram) warnings.push("إنستغرام غير مربوط، لذا لا يعمل النشر. (IG_USER_ID و IG_ACCESS_TOKEN)");
+  if (!status.publicUrl) warnings.push("الرابط العام للموقع غير محدد، لذا لا تُنشر الصور المرفوعة. (PUBLIC_BASE_URL)");
   if (warnings.length) {
     $("#banner").innerHTML = warnings.map(esc).join("<br>");
     $("#banner").hidden = false;

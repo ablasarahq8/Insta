@@ -2,9 +2,9 @@
 
 // مرحلة القمع التسويقي
 export const FUNNEL = {
-  tof: { label: "TOF", name: "وعي وانتشار", hint: "محتوى يوصل لناس جدد ما يعرفونك" },
-  mof: { label: "MOF", name: "ثقة واهتمام", hint: "محتوى يبني ثقة المتابع ويخليه يفكر فيك" },
-  bof: { label: "BOF", name: "تحويل وبيع", hint: "محتوى يحوّل المتابع لعميل" },
+  tof: { label: "TOF", name: "وعي وانتشار", hint: "محتوى يصل إلى جمهور جديد لا يعرفك" },
+  mof: { label: "MOF", name: "ثقة واهتمام", hint: "محتوى يبني ثقة المتابع ويجعله يفكر فيك" },
+  bof: { label: "BOF", name: "تحويل وبيع", hint: "محتوى يحوّل المتابع إلى عميل" },
 };
 
 // النسبة المقترحة لكل مرحلة بالأسبوع
@@ -23,17 +23,17 @@ export const GOALS = {
   behind: { name: "خلف الكواليس", emoji: "🎬" },
 };
 
-export const FORMATS = { post: "بوست", carousel: "كاروسيل", reel: "ريل" };
+export const FORMATS = { post: "منشور", carousel: "كاروسيل", reel: "ريل" };
 
 // أهداف الخطة التسويقية
 export const STRATEGY_GOALS = {
-  followers: { name: "زيادة المتابعين", emoji: "📈", placeholder: "مثلاً: من ٢,٠٠٠ إلى ٥,٠٠٠" },
-  engagement: { name: "رفع التفاعل", emoji: "💬", placeholder: "مثلاً: تعليقات وحفظ أكثر" },
-  subscriptions: { name: "زيادة الاشتراكات", emoji: "🔔", placeholder: "مثلاً: ٢٠٠ مشترك جديد" },
-  community: { name: "الانضمام للمجتمع", emoji: "🤝", placeholder: "مثلاً: ١٠٠ عضو بالمجتمع" },
-  courses: { name: "بيع الدورات", emoji: "🎓", placeholder: "مثلاً: ٥٠ تسجيل بالدورة" },
-  sales: { name: "مبيعات منتج/خدمة", emoji: "💰", placeholder: "مثلاً: ٣٠ طلب بالشهر" },
-  brand: { name: "بناء البراند الشخصي", emoji: "⭐", placeholder: "مثلاً: يعرفوني كمرجع بمجالي" },
+  followers: { name: "زيادة المتابعين", emoji: "📈", placeholder: "مثلًا: من ٢٬٠٠٠ إلى ٥٬٠٠٠" },
+  engagement: { name: "رفع التفاعل", emoji: "💬", placeholder: "مثلًا: تعليقات وحفظ أكثر" },
+  subscriptions: { name: "زيادة الاشتراكات", emoji: "🔔", placeholder: "مثلًا: ٢٠٠ مشترك جديد" },
+  community: { name: "الانضمام للمجتمع", emoji: "🤝", placeholder: "مثلًا: ١٠٠ عضو في المجتمع" },
+  courses: { name: "بيع الدورات", emoji: "🎓", placeholder: "مثلًا: ٥٠ تسجيلًا في الدورة" },
+  sales: { name: "مبيعات منتج/خدمة", emoji: "💰", placeholder: "مثلًا: ٣٠ طلبًا شهريًا" },
+  brand: { name: "بناء البراند الشخصي", emoji: "⭐", placeholder: "مثلًا: أن أكون مرجعًا في مجالي" },
 };
 
 // أنواع الإطلاقات
@@ -58,7 +58,7 @@ export const STORY_TYPES = {
 
 export const STORY_ENDINGS = {
   none: "بدون دعوة",
-  dm_keyword: "كلمة بالخاص",
+  dm_keyword: "كلمة في الخاص",
   reply: "طلب رد",
   link: "رابط",
   poll: "تصويت",

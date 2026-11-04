@@ -25,6 +25,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 body {
   margin: 0;
   font-family: "IBM Plex Sans Arabic", system-ui, sans-serif;
@@ -375,3 +376,40 @@ dialog.wide { width: min(1000px, calc(100vw - 32px)); }
 .sc-page { position: absolute; bottom: 70px; right: 80px; z-index: 3; font-size: 24px; font-weight: 700; letter-spacing: 3px; color: #8b6f5c;
   background: #fff; padding: 8px 20px; border-radius: 999px; box-shadow: 0 6px 16px rgba(45, 31, 61, .1); }
 .style-scrap.fmt-reel .sc-label h2 { font-size: 110px; }
+
+/* ---------- الستوري (الثيم الفاتح من مهارة stories-and-scripts) ---------- */
+.story-card b { font-size: .9rem; }
+input.inline { width: auto; padding: 2px 8px; font-weight: 700; }
+.story-phone { width: 332px; max-width: 100%; box-sizing: border-box; padding: 16px; border-radius: 28px; background: #111; display: grid; gap: 8px; justify-items: center; direction: ltr; }
+.st-bars { display: flex; gap: 4px; width: 100%; }
+.st-bars i { flex: 1; height: 3px; border-radius: 2px; background: rgb(255 255 255 / .35); }
+.st-bars i.on { background: #fff; }
+.st-screen { position: relative; overflow: hidden; border-radius: 12px; background: #333; }
+
+.story-frame { position: relative; width: 1080px; height: 1920px; overflow: hidden; direction: rtl; font-family: "IBM Plex Sans Arabic", sans-serif; color: #2d1f3d;
+  background-color: #fdf9fb; background-image: radial-gradient(circle, rgba(125, 87, 155, .14) 3px, transparent 3.5px); background-size: 60px 60px; }
+.story-frame.st-video { background: none; }
+.story-frame.st-video:not(.exporting) { background: linear-gradient(160deg, #4a4155, #2a2433); }
+.st-video-bg { position: absolute; inset: 0; display: grid; place-items: center; padding: 120px; text-align: center; color: rgb(255 255 255 / .35); font-size: 54px; }
+.st-blob { position: absolute; border-radius: 50%; filter: blur(30px); }
+.st-b1 { width: 620px; height: 620px; top: -160px; right: -180px; background: rgba(125, 87, 155, .22); }
+.st-b2 { width: 560px; height: 560px; bottom: -120px; left: -160px; background: rgba(254, 154, 108, .22); }
+.st-b3 { width: 360px; height: 360px; top: 45%; left: 60%; background: rgba(254, 108, 119, .14); }
+/* المنطقة الآمنة: ٢٦٠ من فوق و٣٣٠ من تحت */
+.st-safe { position: absolute; top: 260px; bottom: 330px; left: 90px; right: 90px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 46px; text-align: center; }
+.st-kicker { padding: 14px 34px; border: 3px solid #7d579b; border-radius: 999px; color: #7d579b; font-size: 38px; font-weight: 700; background: rgb(255 255 255 / .7); }
+.st-line { margin: 0; font-size: 66px; font-weight: 700; line-height: 1.55; }
+.st-line:first-of-type:only-of-type { font-size: 80px; }
+.story-frame mark { color: #fff; background: linear-gradient(135deg, #7d579b, #c9617d); padding: 0 18px; border-radius: 16px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.st-quote { position: relative; width: 100%; padding: 50px 54px 44px; border-radius: 32px; background: #fff; box-shadow: 0 18px 40px rgba(45, 31, 61, .1); text-align: right; }
+.st-quote i { position: absolute; top: -30px; right: 40px; font-size: 130px; line-height: 1; color: #c9617d; font-style: normal; }
+.st-quote p { margin: 0; font-size: 50px; line-height: 1.6; font-weight: 500; }
+.st-cta { display: grid; gap: 18px; justify-items: center; font-size: 48px; font-weight: 500; }
+.st-cta b { padding: 22px 64px; border-radius: 24px; background: linear-gradient(135deg, #7d579b, #c9617d); color: #fff; font-size: 76px; }
+.st-sticker { padding: 40px 70px; border: 4px dashed rgba(125, 87, 155, .5); border-radius: 28px; color: rgba(125, 87, 155, .8); font-size: 36px; }
+.story-frame.exporting .st-sticker { color: transparent; }
+.st-card { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 60px 50px; border-radius: 40px; background: rgb(253 249 251 / .94); box-shadow: 0 20px 50px rgba(0, 0, 0, .25); }
+.st-foot { position: absolute; bottom: 200px; left: 0; right: 0; display: grid; justify-items: center; gap: 14px; }
+.st-logo { width: 300px; height: 94px; object-fit: contain; }
+.st-handle { font-size: 34px; font-weight: 700; color: #7d579b; }
+.st-video .st-handle { color: #fff; text-shadow: 0 2px 8px rgba(0, 0, 0, .5); }

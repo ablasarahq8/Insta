@@ -44,3 +44,33 @@ export const LAUNCH_TYPES = {
   product: "منتج",
   event: "فعالية / ورشة",
 };
+
+// أنواع تسلسلات الستوري (من مهارة stories-and-scripts)
+export const STORY_TYPES = {
+  educational: { name: "تعليمي", emoji: "🎓", color: "#1c7ed6" },
+  credibility: { name: "مصداقية", emoji: "🏆", color: "#2b8a3e" },
+  personal: { name: "شخصي", emoji: "🌸", color: "#c9617d" },
+  value: { name: "قيمة", emoji: "🎁", color: "#f08c00" },
+  objection: { name: "سؤال/اعتراض", emoji: "❓", color: "#7048e8" },
+  principle: { name: "مبدأ/وجهة نظر", emoji: "💡", color: "#0c8599" },
+  invitation: { name: "دعوة", emoji: "💌", color: "#d6336c" },
+};
+
+export const STORY_ENDINGS = {
+  none: "بدون دعوة",
+  dm_keyword: "كلمة بالخاص",
+  reply: "طلب رد",
+  link: "رابط",
+  poll: "تصويت",
+};
+
+// الجدول الأسبوعي المقترح (٠ = الأحد)
+export const STORY_SCHEDULE = [
+  { type: "educational", ending: "none" },
+  { type: "credibility", ending: "dm_keyword" },
+  { type: "personal", ending: "none" },
+  { type: "value", ending: "link" },
+  { type: "objection", ending: "reply" },
+  { type: "principle", ending: "none" },
+  { type: "invitation", ending: "dm_keyword" },
+];

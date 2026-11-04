@@ -15,6 +15,7 @@
     <nav>
       <button class="tab" data-view="strategy">الخطة</button>
       <button class="tab active" data-view="week">الأسبوع</button>
+      <button class="tab" data-view="stories">الستوري</button>
       <button class="tab" data-view="ideas">أفكاري</button>
       <button class="tab" data-view="suggest">اقتراحات</button>
       <button class="tab" data-view="shots">اللقطات</button>
@@ -101,6 +102,27 @@
       </div>
 
       <div id="week" class="week"></div>
+    </section>
+
+    <!-- الستوري -->
+    <section id="view-stories" class="view" hidden>
+      <div class="card week-head">
+        <div class="row between">
+          <button id="story-prev" class="ghost">→ اللي طاف</button>
+          <div class="center">
+            <h2 id="story-week-label"></h2>
+            <button id="story-this-week" class="ghost small" hidden>ارجعي لهالأسبوع</button>
+          </div>
+          <button id="story-next" class="ghost">الجاي ←</button>
+        </div>
+        <div id="story-strategy" class="week-strategy" hidden></div>
+        <p class="hint">الريلز تجيب الانتباه ← الستوري تبني الثقة والنية ← الدعوة والخاص يحوّلون. كل يوم له نوع حسب جدولچ، والدعوات ٢-٣ بالأسبوع بالكثير.</p>
+      </div>
+      <form id="story-form" class="card quick">
+        <input name="topic" placeholder="موضوع أو ملاحظة لستوريات هالأسبوع؟ (اختياري)" autocomplete="off">
+        <button class="primary">✨ خطط ستوري الأسبوع</button>
+      </form>
+      <div id="story-week" class="week"></div>
     </section>
 
     <!-- أفكاري -->
@@ -278,6 +300,39 @@
       </div>
     </div>
   </dialog>
+  <!-- محرر تسلسل الستوري -->
+  <dialog id="story-editor" class="wide">
+    <form id="story-edit-form" method="dialog" class="form">
+      <div class="row between">
+        <h2>📱 ستوري <span id="story-edit-date" class="hint"></span></h2>
+        <button type="button" class="ghost" data-close>✕</button>
+      </div>
+      <div class="designer">
+        <div class="story-phone" id="story-preview"></div>
+        <div class="design-side">
+          <label>العنوان <input name="title"></label>
+          <div class="row">
+            <label>النوع <select name="type"></select></label>
+            <label>النهاية <select name="ending"></select></label>
+            <label>الحالة
+              <select name="status"><option value="draft">مسودة</option><option value="ready">جاهزة</option><option value="posted">نزلت</option></select>
+            </label>
+          </div>
+          <label>📊 شنو تقيسين <input name="measure"></label>
+          <div id="story-frames" class="design-slides"></div>
+          <div class="row between">
+            <button type="button" id="story-delete" class="danger">حذف</button>
+            <div class="row">
+              <button type="button" id="story-copy" class="ghost">📋 انسخي السكربت</button>
+              <button type="button" id="story-download" class="ghost">⬇️ نزّلي التصاميم</button>
+              <button type="submit" class="primary">حفظ</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </dialog>
+
   <!-- مكان مخفي نرسم فيه السلايدات بمقاسها الحقيقي وقت التصدير -->
   <div id="design-stage" class="design-stage" aria-hidden="true"></div>
 
@@ -324,5 +379,6 @@
   <script src="app.js" type="module"></script>
   <script src="strategy.js" type="module"></script>
   <script src="shots.js" type="module"></script>
+  <script src="stories.js" type="module"></script>
 </body>
 </html>

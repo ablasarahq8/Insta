@@ -7,7 +7,7 @@ import fs from "node:fs";
 import * as store from "./lib/store.js";
 import * as ai from "./lib/ai.js";
 import * as instagram from "./lib/instagram.js";
-import { strategyWeek } from "./public/planutil.js";
+import { strategyWeek, addDaysStr } from "./public/planutil.js";
 
 const PORT = process.env.PORT || 3000;
 const UPLOAD_DIR = path.join(store.DATA_DIR, "uploads");
@@ -129,6 +129,42 @@ app.post("/api/ai/strategy", wrap(async (req, res) => {
   if (!strategy.goals.length) return res.status(400).json({ error: "اختار هدف واحد على الأقل" });
   const plan = await ai.buildStrategy(store.getProfile(), strategy);
   res.json(store.updateStrategy({ plan: { ...plan, generatedAt: new Date().toISOString() } }));
+}));
+
+// ---------- الستوري ----------
+app.get("/api/stories", (req, res) => res.json(store.listStories()));
+app.put("/api/stories/:id", (req, res) => {
+  const story = store.updateStory(req.params.id, req.body);
+  story ? res.json(story) : res.status(404).json({ error: "الستوري مو موجود" });
+});
+app.delete("/api/stories/:id", (req, res) => {
+  store.deleteStory(req.params.id) ? res.status(204).end() : res.status(404).json({ error: "الستوري مو موجود" });
+});
+
+// weekDate: يوم الأحد بصيغة YYYY-MM-DD، days: الأيام المطلوبة (افتراضي الأسبوع كامل)
+// start/end: حدود الأسبوع بتوقيت المستخدم عشان نجيب منشوراته
+app.post("/api/ai/story-week", wrap(async (req, res) => {
+  const { weekDate, topic = "", start, end } = req.body;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(weekDate || "")) return res.status(400).json({ error: "حدد الأسبوع" });
+  const days = Array.isArray(req.body.days) && req.body.days.length
+    ? req.body.days.map(Number).filter((d) => d >= 0 && d <= 6)
+    : [0, 1, 2, 3, 4, 5, 6];
+  const from = new Date(start), to = new Date(end);
+  const weekPosts = isNaN(from) || isNaN(to) ? [] : store.listIdeas()
+    .filter((i) => i.scheduledAt && new Date(i.scheduledAt) >= from && new Date(i.scheduledAt) < to)
+    .map((i) => ({ ...i, day: Math.floor((new Date(i.scheduledAt) - from) / 86_400_000) }));
+  const sequences = await ai.planStoryWeek(store.getProfile(), {
+    days,
+    topic,
+    strategyWeek: strategyWeek(store.getStrategy(), weekDate),
+    weekPosts,
+  });
+  // نستبدل ستوريات الأيام المطلوبة بالخطة اليديدة
+  const dateOf = (d) => addDaysStr(weekDate, d);
+  for (const d of days) store.deleteStoriesBetween(dateOf(d), dateOf(d));
+  res.json(sequences
+    .filter((s) => days.includes(s.day))
+    .map(({ day, ...s }) => store.createStory({ ...s, date: dateOf(day) })));
 }));
 
 // ---------- مكتبة اللقطات ----------

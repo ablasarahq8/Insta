@@ -1,0 +1,1072 @@
+<title>استوديو أبلة سارة</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+<style>
+/* التخطيط: قائمة علوية ثابتة على الشاشات الكبيرة وشريط سفلي على الجوال، والمحتوى في عمود واحد واسع */
+:root {
+  --bg: #fdf8f5;
+  --surface: #ffffff;
+  --surface-2: #f8efea;
+  --ink: #2d1f3d;
+  --muted: #7f6b79;
+  --line: #eddfd8;
+  --rose: #c9617d;
+  --peach: #fe9a6c;
+  --plum: #7d579b;
+  --ok: #2f8f5b;
+  --warn: #c76a1f;
+  --err: #b8382c;
+  --tof: #5b7fd6;
+  --mof: #7d579b;
+  --bof: #2f8f5b;
+  --grad: linear-gradient(135deg, #fe9a6c 0%, #c9617d 100%);
+  --shadow: 0 1px 2px rgba(45, 31, 61, .05), 0 8px 24px rgba(45, 31, 61, .06);
+  --font: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, system-ui, sans-serif;
+  --radius: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #19111f; --surface: #231a2c; --surface-2: #2c2238; --ink: #f8eff3; --muted: #b5a2b5; --line: #3a2d48;
+    --rose: #e07b97; --peach: #ffad86; --plum: #b590d6; --tof: #8aa6ee; --mof: #b590d6; --bof: #5fbf8a;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .25), 0 8px 24px rgba(0, 0, 0, .3);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #19111f; --surface: #231a2c; --surface-2: #2c2238; --ink: #f8eff3; --muted: #b5a2b5; --line: #3a2d48;
+  --rose: #e07b97; --peach: #ffad86; --plum: #b590d6; --tof: #8aa6ee; --mof: #b590d6; --bof: #5fbf8a;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .25), 0 8px 24px rgba(0, 0, 0, .3);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 15px; line-height: 1.7; direction: rtl; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+h1, h2, h3 { margin: 0; line-height: 1.35; text-wrap: balance; }
+h1 { font-size: 1.55rem; font-weight: 700; }
+h2 { font-size: 1.08rem; font-weight: 700; }
+h3 { font-size: .98rem; font-weight: 600; }
+p { margin: 0; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; border: 0; border-radius: 10px; padding: 8px 14px; background: transparent; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-weight: 500; }
+button:disabled { opacity: .55; cursor: progress; }
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, a:focus-visible { outline: 2px solid var(--rose); outline-offset: 2px; }
+.btn-primary { background: var(--grad); color: #fff; font-weight: 700; box-shadow: 0 6px 16px rgba(201, 97, 125, .25); }
+.btn-dark { background: var(--ink); color: var(--surface); }
+.btn-ghost { color: var(--muted); }
+.btn-ghost:hover { background: var(--surface-2); color: var(--ink); }
+.btn-danger { color: var(--err); }
+.btn-sm { padding: 5px 10px; font-size: .86rem; }
+input, select, textarea { width: 100%; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); }
+textarea { resize: vertical; }
+label { display: grid; gap: 5px; font-weight: 500; font-size: .92rem; }
+.hint { color: var(--muted); font-size: .86rem; font-weight: 400; }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.between { justify-content: space-between; }
+.stack { display: grid; gap: 12px; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); min-width: 0; }
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 1px 9px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface-2); color: var(--muted); font-size: .76rem; white-space: nowrap; }
+.badge.tof { color: var(--tof); border-color: currentColor; background: transparent; }
+.badge.mof { color: var(--mof); border-color: currentColor; background: transparent; }
+.badge.bof { color: var(--bof); border-color: currentColor; background: transparent; }
+.badge.ok { color: var(--ok); border-color: currentColor; background: transparent; }
+.empty { color: var(--muted); text-align: center; padding: 28px 8px; }
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* الهيدر والتنقل */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9; background: var(--surface); border-bottom: 1px solid var(--line);
+  padding-block: 10px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.top-inner { max-width: 1180px; margin: 0 auto; display: flex; align-items: center; gap: 18px; }
+.logo { height: 38px; width: auto; }
+.logo-dark-bg { display: none; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .logo-light-bg { display: none; } :root:not([data-theme="light"]) .logo-dark-bg { display: block; } }
+:root[data-theme="dark"] .logo-light-bg { display: none; }
+:root[data-theme="dark"] .logo-dark-bg { display: block; }
+.nav { display: flex; gap: 2px; }
+.nav a { display: flex; align-items: center; gap: 7px; padding: 8px 12px; border-radius: 10px; color: var(--muted); text-decoration: none; font-weight: 500; white-space: nowrap; }
+.nav a:hover { background: var(--surface-2); color: var(--ink); }
+.nav a[aria-current="page"] { background: color-mix(in srgb, var(--rose) 13%, transparent); color: var(--rose); font-weight: 700; }
+.nav svg { width: 18px; height: 18px; }
+
+main { max-width: 1180px; margin: 0 auto; padding-block: 24px 90px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.page-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+.page-head p { color: var(--muted); margin-top: 4px; }
+.notice { padding: 12px 14px; border-radius: 12px; background: var(--surface-2); color: var(--muted); font-size: .9rem; }
+
+/* الأسبوع */
+.week-nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.week-nav h2 { font-size: 1rem; }
+.plan-strip { display: grid; gap: 4px; padding: 12px 14px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--line); }
+.days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; }
+.day { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px; display: flex; flex-direction: column; gap: 8px; min-height: 150px; min-width: 0; }
+.day.today { border-color: var(--rose); box-shadow: 0 0 0 3px color-mix(in srgb, var(--rose) 14%, transparent); }
+.day-head { display: flex; justify-content: space-between; align-items: baseline; font-size: .86rem; }
+.day-head b { font-size: .95rem; }
+.day-head span { color: var(--muted); }
+.post-chip { text-align: start; display: grid; gap: 4px; padding: 8px 9px; border-radius: 10px; background: var(--surface-2); border: 1px solid var(--line); border-inline-start: 4px solid var(--muted); font-size: .84rem; width: 100%; }
+.post-chip:hover { border-color: var(--rose); }
+.post-chip.tof { border-inline-start-color: var(--tof); }
+.post-chip.mof { border-inline-start-color: var(--mof); }
+.post-chip.bof { border-inline-start-color: var(--bof); }
+.post-chip b { font-size: .88rem; line-height: 1.45; font-weight: 600; }
+.post-chip .meta { display: flex; gap: 4px; flex-wrap: wrap; }
+.post-chip.done { opacity: .6; }
+.add-btn { margin-top: auto; border: 1px dashed var(--line); color: var(--muted); font-size: .85rem; }
+.add-btn:hover { border-color: var(--rose); color: var(--rose); }
+@media (max-width: 1100px) { .days { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); } .day { min-height: 0; } }
+
+/* منشور اليوم */
+.today { border-color: color-mix(in srgb, var(--rose) 45%, var(--line)); }
+.today-item { display: grid; gap: 10px; padding: 14px; border-radius: 12px; background: var(--surface-2); }
+.thumbs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+.thumbs figure { margin: 0; position: relative; flex: 0 0 auto; }
+.thumbs img, .thumbs video { width: 110px; height: 138px; object-fit: cover; border-radius: 10px; display: block; border: 1px solid var(--line); background: var(--surface); }
+.thumbs .rm { position: absolute; top: 4px; left: 4px; background: rgb(25 17 31 / .65); color: #fff; padding: 2px 7px; border-radius: 7px; font-size: .8rem; }
+
+/* الخطة */
+.plan-weeks { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.plan-week { display: grid; gap: 8px; align-content: start; }
+.plan-week.now { border-color: var(--rose); }
+.mix { display: flex; height: 8px; border-radius: 99px; overflow: hidden; background: var(--surface-2); }
+.mix i { display: block; height: 100%; }
+.mix .tof { background: var(--tof); } .mix .mof { background: var(--mof); } .mix .bof { background: var(--bof); }
+.timeline { list-style: none; margin: 0; padding: 0; display: grid; }
+.timeline li { display: grid; grid-template-columns: 120px 1fr; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+.timeline .when { color: var(--muted); font-size: .88rem; }
+.goal-row { display: grid; grid-template-columns: minmax(0, 180px) minmax(0, 1fr); gap: 8px; align-items: center; }
+.check { display: flex; align-items: center; gap: 8px; font-weight: 500; cursor: pointer; }
+.check input { width: 18px; height: 18px; accent-color: var(--rose); }
+.launch-row { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 8px; padding: 8px; border: 1px dashed var(--line); border-radius: 10px; }
+fieldset { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin: 0; display: grid; gap: 10px; min-width: 0; }
+legend { font-weight: 700; padding: 0 6px; }
+
+/* المحرر (لوحة جانبية) */
+.sheet-wrap { position: fixed; inset: 0; z-index: 30; background: rgb(25 17 31 / .45); display: flex; justify-content: flex-start; }
+.sheet { width: min(620px, 100%); height: 100%; background: var(--surface); overflow-y: auto; box-shadow: var(--shadow);
+  padding-block: calc(16px + env(safe-area-inset-top, 0px)) calc(20px + env(safe-area-inset-bottom, 0px)); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(18px, env(safe-area-inset-right, 0px)); display: grid; gap: 14px; align-content: start; }
+.sheet-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.checks { display: flex; gap: 16px; flex-wrap: wrap; padding: 10px 12px; border-radius: 12px; background: var(--surface-2); }
+.label-row { display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap; }
+
+/* المساعد */
+.chat-log { display: grid; gap: 12px; max-height: 60vh; overflow-y: auto; padding: 4px; }
+.msg { max-width: 85%; padding: 11px 15px; border-radius: 16px; line-height: 1.85; white-space: pre-wrap; overflow-wrap: anywhere; }
+.msg.user { justify-self: start; background: var(--grad); color: #fff; border-end-start-radius: 4px; }
+.msg.assistant { justify-self: end; background: var(--surface-2); border: 1px solid var(--line); border-end-end-radius: 4px; white-space: normal; }
+.msg.assistant ul { margin: 4px 0; padding-inline-start: 20px; }
+.msg.assistant p + p { margin-top: 8px; }
+.msg-actions { display: flex; gap: 4px; margin-top: 6px; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip { border: 1px solid var(--line); border-radius: 999px; padding: 5px 13px; background: var(--surface); color: var(--muted); font-size: .86rem; }
+.chip:hover, .chip[aria-pressed="true"] { border-color: var(--rose); color: var(--rose); }
+
+/* الأفكار */
+.ideas { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+.idea { text-align: start; display: grid; gap: 6px; align-content: start; }
+.idea:hover { border-color: var(--rose); }
+
+.toast { position: fixed; bottom: calc(84px + env(safe-area-inset-bottom, 0px)); left: 50%; transform: translateX(-50%); z-index: 40; background: var(--ink); color: var(--surface); padding: 9px 16px; border-radius: 12px; box-shadow: var(--shadow); max-width: calc(100% - 32px); }
+.busy-note { display: flex; align-items: center; gap: 10px; color: var(--muted); }
+.spinner { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--line); border-top-color: var(--rose); animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }
+
+/* الجوال: شريط تنقل سفلي */
+@media (max-width: 860px) {
+  .top-inner { justify-content: center; }
+  .nav { position: fixed; inset: auto 0 0 0; z-index: 20; background: var(--surface); border-top: 1px solid var(--line); justify-content: space-around;
+    padding-block: 6px calc(6px + env(safe-area-inset-bottom, 0px)); padding-left: max(4px, env(safe-area-inset-left, 0px)); padding-right: max(4px, env(safe-area-inset-right, 0px)); }
+  .nav a { flex-direction: column; gap: 1px; padding: 5px 4px; font-size: .7rem; flex: 1; }
+  .nav a[aria-current="page"] { background: none; }
+  .nav svg { width: 21px; height: 21px; }
+  h1 { font-size: 1.3rem; }
+  .goal-row { grid-template-columns: 1fr; }
+  .launch-row { grid-template-columns: 1fr 1fr; }
+  .launch-row .wide { grid-column: 1 / -1; }
+  .timeline li { grid-template-columns: 1fr; gap: 2px; }
+  .msg { max-width: 94%; }
+}
+</style>
+
+<header class="top">
+  <div class="top-inner">
+    <img class="logo logo-light-bg" src="data:image/png;base64,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" alt="أبلة سارة">
+    <img class="logo logo-dark-bg" src="data:image/png;base64,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" alt="أبلة سارة">
+    <nav class="nav" aria-label="الأقسام">
+      <a href="#week" data-view="week"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>هذا الأسبوع</span></a>
+      <a href="#plan" data-view="plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.1 5.55a2 2 0 0 0 1.8 0l3.65-1.83A1 1 0 0 1 21 4.62v12.76a1 1 0 0 1-.55.9l-4.56 2.27a2 2 0 0 1-1.78 0l-4.22-2.1a2 2 0 0 0-1.78 0l-3.66 1.83A1 1 0 0 1 3 19.38V6.62a1 1 0 0 1 .55-.9l4.56-2.27a2 2 0 0 1 1.78 0z"/><path d="M15 5.76v15M9 3.24v15"/></svg><span>الخطة</span></a>
+      <a href="#ideas" data-view="ideas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6M10 22h4"/></svg><span>الأفكار</span></a>
+      <a href="#assistant" data-view="assistant"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z"/></svg><span>المساعد</span></a>
+      <a href="#profile" data-view="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>ملف الحساب</span></a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p id="offline" class="notice" hidden>تُحفظ البيانات عند فتح الصفحة من claude.ai بحسابك. هذه نسخة للعرض فقط.</p>
+
+  <!-- هذا الأسبوع -->
+  <section id="view-week" class="stack">
+    <div class="page-head">
+      <div><h1>هذا الأسبوع</h1><p>منشور كل يوم، ومتابعة التصوير والتعديل والنشر.</p></div>
+      <div class="row">
+        <button id="copy-prompts" class="btn-ghost">نسخ برومبتات التصميم</button>
+        <button id="copy-week" class="btn-ghost">نسخ الأسبوع كاملًا</button>
+      </div>
+    </div>
+
+    <div id="today" class="card today stack" hidden></div>
+
+    <div class="card stack">
+      <div class="week-nav">
+        <button id="prev-week" class="btn-ghost">› السابق</button>
+        <div style="text-align:center"><h2 id="week-label" class="tabular"></h2><button id="this-week" class="btn-ghost btn-sm" hidden>العودة إلى هذا الأسبوع</button></div>
+        <button id="next-week" class="btn-ghost">التالي ‹</button>
+      </div>
+      <div id="plan-strip" class="plan-strip" hidden></div>
+      <form id="week-form" class="row">
+        <input id="week-topic" name="topic" placeholder="مناسبة أو موضوع لهذا الأسبوع (اختياري)" style="flex:1;min-width:200px" autocomplete="off">
+        <select id="week-mix" name="mix" style="width:auto" aria-label="نوع المحتوى">
+          <option value="voiceover">ريلز بتعليق صوتي</option>
+          <option value="mixed">ريلز وكاروسيل</option>
+        </select>
+        <input id="week-time" name="time" type="time" value="19:00" style="width:auto" aria-label="وقت النشر">
+        <button class="btn-primary" id="plan-week-btn">تخطيط الأسبوع</button>
+      </form>
+      <div id="week-busy" class="busy-note" hidden><span class="spinner"></span><span>جارٍ كتابة منشورات الأسبوع… قد يستغرق ذلك دقيقة أو دقيقتين.</span></div>
+      <div id="week-preview" class="stack" hidden></div>
+    </div>
+
+    <div id="days" class="days"></div>
+  </section>
+
+  <!-- الخطة -->
+  <section id="view-plan" class="stack" hidden>
+    <div class="page-head"><div><h1>الخطة الشهرية</h1><p>الأهداف والإطلاقات ومواعيدها، ومنها خطة أسبوعًا بأسبوع.</p></div></div>
+    <form id="plan-form" class="card stack">
+      <div class="grid2">
+        <label for="plan-start">تاريخ البدء <input id="plan-start" name="startDate" type="date" required></label>
+        <label for="plan-weeks">المدة
+          <select id="plan-weeks" name="weeks"><option value="4">شهر</option><option value="8">شهران</option><option value="13">٣ أشهر</option></select>
+        </label>
+      </div>
+      <fieldset><legend>الأهداف</legend><div id="goal-list" class="stack"></div></fieldset>
+      <fieldset><legend>الإطلاقات القادمة</legend>
+        <p class="hint">دورة أو مجتمع أو اشتراك، مع تاريخ الإطلاق، وتحدد الخطة موعد بدء الإعلان عنه.</p>
+        <div id="launch-list" class="stack"></div>
+        <div><button type="button" id="add-launch" class="btn-ghost">+ إضافة إطلاق</button></div>
+      </fieldset>
+      <label for="plan-notes">ملاحظات <textarea id="plan-notes" name="notes" rows="2" placeholder="مناسبات، أمور تريد تجنبها…"></textarea></label>
+      <div class="row">
+        <button type="submit" class="btn-dark">حفظ</button>
+        <button type="button" id="build-plan" class="btn-primary">إنشاء الخطة</button>
+      </div>
+      <div id="plan-busy" class="busy-note" hidden><span class="spinner"></span><span>جارٍ إنشاء الخطة… قد يستغرق ذلك دقيقة أو دقيقتين.</span></div>
+    </form>
+    <div id="plan-out" class="stack"></div>
+  </section>
+
+  <!-- الأفكار -->
+  <section id="view-ideas" class="stack" hidden>
+    <div class="page-head">
+      <div><h1>الأفكار</h1><p>أفكار بلا موعد، تُضاف إلى أي يوم لاحقًا.</p></div>
+      <button id="suggest-btn" class="btn-dark">اقتراح أفكار</button>
+    </div>
+    <form id="idea-form" class="card row">
+      <input id="idea-title" placeholder="فكرة جديدة؟ اكتبها هنا…" style="flex:1;min-width:200px" autocomplete="off" required>
+      <select id="idea-format" style="width:auto" aria-label="النوع"><option value="reel">ريل</option><option value="carousel">كاروسيل</option><option value="post">منشور</option></select>
+      <button class="btn-primary">حفظ</button>
+    </form>
+    <div id="suggest-busy" class="busy-note" hidden><span class="spinner"></span><span>جارٍ كتابة الاقتراحات…</span></div>
+    <div id="suggestions" class="ideas"></div>
+    <div id="ideas" class="ideas"></div>
+  </section>
+
+  <!-- المساعد -->
+  <section id="view-assistant" class="stack" hidden>
+    <div class="page-head">
+      <div><h1>المساعد</h1><p>يفكر معك في المحتوى والمنتجات والدورات، ويعرف خطتك وأسبوعك.</p></div>
+      <button id="chat-reset" class="btn-ghost">محادثة جديدة</button>
+    </div>
+    <div class="card stack">
+      <div id="chat-log" class="chat-log"></div>
+      <div id="chat-chips" class="chips">
+        <button type="button" class="chip">ما المنتج أو الدورة التي يمكن إضافتها لجمهوري؟</button>
+        <button type="button" class="chip">راجع خطتي وأخبرني بما ينقصها</button>
+        <button type="button" class="chip">اقترح ٥ أفكار ريلز تجذب متابعين جددًا</button>
+        <button type="button" class="chip">كيف أعلن عن الدورة القادمة دون بيع مباشر؟</button>
+      </div>
+      <form id="chat-form" class="row" style="align-items:flex-end">
+        <textarea id="chat-input" rows="2" placeholder="اكتب سؤالك أو فكرتك… (Enter للإرسال)" style="flex:1;min-width:200px"></textarea>
+        <button class="btn-primary" id="chat-send">إرسال</button>
+        <button type="button" class="btn-ghost" id="chat-stop" hidden>إيقاف</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ملف الحساب -->
+  <section id="view-profile" class="stack" hidden>
+    <div class="page-head">
+      <div><h1>ملف الحساب</h1><p>تعتمد عليه الخطط والاقتراحات؛ كلما كان أدق، جاءت الأفكار أقرب إلى أسلوبك.</p></div>
+      <button id="profile-preset" class="btn-dark">تعبئة من المهارات</button>
+    </div>
+    <form id="profile-form" class="card stack">
+      <label for="pf-handle">اسم الحساب <input id="pf-handle" name="handle" placeholder="@ablasarahq8"></label>
+      <label for="pf-niche">المجال <input id="pf-niche" name="niche"></label>
+      <label for="pf-audience">الجمهور <textarea id="pf-audience" name="audience" rows="2"></textarea></label>
+      <label for="pf-tone">الأسلوب <textarea id="pf-tone" name="tone" rows="2"></textarea></label>
+      <label for="pf-language">لغة المحتوى ولهجته <textarea id="pf-language" name="language" rows="2"></textarea></label>
+      <label for="pf-goals">الأهداف <textarea id="pf-goals" name="goals" rows="2"></textarea></label>
+      <label for="pf-pillars">محاور المحتوى <textarea id="pf-pillars" name="pillars" rows="2"></textarea></label>
+      <label for="pf-examples">أمثلة من كابشنات سابقة ناجحة <textarea id="pf-examples" name="examples" rows="4"></textarea></label>
+      <div><button class="btn-primary">حفظ الملف</button></div>
+    </form>
+  </section>
+</main>
+
+<!-- محرر المنشور -->
+<div id="sheet" class="sheet-wrap" hidden>
+  <form id="post-form" class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+    <div class="sheet-head"><h2 id="sheet-title">المنشور</h2><button type="button" class="btn-ghost" id="sheet-close">إغلاق</button></div>
+    <label for="ps-title">العنوان <input id="ps-title" name="title" required></label>
+    <div class="grid2">
+      <label for="ps-format">النوع <select id="ps-format" name="format"><option value="reel">ريل</option><option value="carousel">كاروسيل</option><option value="post">منشور</option></select></label>
+      <label for="ps-date">اليوم <input id="ps-date" name="date" type="date"></label>
+      <label for="ps-time">الوقت <input id="ps-time" name="time" type="time"></label>
+      <label for="ps-funnel">مرحلة القمع <select id="ps-funnel" name="funnel"><option value="">—</option><option value="tof">TOF وعي وانتشار</option><option value="mof">MOF ثقة واهتمام</option><option value="bof">BOF تحويل وبيع</option></select></label>
+    </div>
+    <div class="checks">
+      <label class="check"><input type="checkbox" id="ck-shot" data-check="shot"> صُوِّر</label>
+      <label class="check"><input type="checkbox" id="ck-edited" data-check="edited"> عُدِّل</label>
+      <label class="check"><input type="checkbox" id="ck-posted" data-check="posted"> نُشر</label>
+    </div>
+    <label for="ps-notes">الفكرة واللقطات المطلوبة <textarea id="ps-notes" name="notes" rows="4"></textarea></label>
+    <label for="ps-script"><span class="label-row">نص التعليق الصوتي (للتسجيل) <button type="button" class="btn-ghost btn-sm" data-copy-field="script">نسخ</button></span>
+      <textarea id="ps-script" name="script" rows="7"></textarea></label>
+    <label for="ps-caption"><span class="label-row">الكابشن <span class="row" style="gap:4px"><button type="button" class="btn-ghost btn-sm" id="copy-caption">نسخ مع الهاشتاقات</button><button type="button" class="btn-ghost btn-sm" id="ai-caption">كتابة الكابشن</button></span></span>
+      <textarea id="ps-caption" name="caption" rows="5"></textarea></label>
+    <label for="ps-hashtags">الهاشتاقات <input id="ps-hashtags" name="hashtags"></label>
+    <label for="ps-prompt"><span class="label-row">برومبت التصميم <span class="row" style="gap:4px"><button type="button" class="btn-ghost btn-sm" data-copy-field="designPrompt">نسخ</button><button type="button" class="btn-ghost btn-sm" id="ai-prompt">كتابة البرومبت</button></span></span>
+      <textarea id="ps-prompt" name="designPrompt" rows="6" placeholder="يُلصق في محادثة Claude أو ChatGPT لإنشاء التصميم"></textarea></label>
+    <div class="stack">
+      <div class="label-row"><b>التصاميم والفيديو</b>
+        <span class="row" style="gap:4px">
+          <label class="btn-ghost btn-sm" style="display:inline-flex;cursor:pointer" id="upload-label">رفع ملفات<input type="file" id="upload-input" accept="image/*,video/mp4,video/quicktime" multiple hidden></label>
+          <button type="button" class="btn-ghost btn-sm" id="download-all">تنزيل الكل</button>
+        </span>
+      </div>
+      <p class="hint">حد كل ملف ٢٠ ميغابايت؛ صدّر الفيديو بجودة أخف إذا تجاوزه.</p>
+      <div id="sheet-media" class="thumbs"></div>
+    </div>
+    <div class="row between">
+      <span class="row" style="gap:4px"><button type="button" class="btn-danger" id="delete-post">حذف</button><button type="button" class="btn-danger" id="delete-confirm" hidden>تأكيد الحذف</button></span>
+      <button class="btn-primary" type="submit">حفظ</button>
+    </div>
+  </form>
+</div>
+
+<div id="toast" class="toast" role="status" hidden></div>
+
+<script>
+(() => {
+  "use strict";
+  // ---------- أدوات ----------
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const esc = (s = "") => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  const DAYS = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+  const FORMATS = { reel: "ريل", carousel: "كاروسيل", post: "منشور" };
+  const FUNNEL = { tof: "TOF", mof: "MOF", bof: "BOF" };
+  const FUNNEL_NAME = { tof: "وعي وانتشار", mof: "ثقة واهتمام", bof: "تحويل وبيع" };
+  const GOALS = {
+    followers: { name: "زيادة المتابعين", ph: "مثلًا: من ٢٬٠٠٠ إلى ٥٬٠٠٠" },
+    engagement: { name: "رفع التفاعل", ph: "مثلًا: تعليقات وحفظ أكثر" },
+    community: { name: "الانضمام للمجتمع", ph: "مثلًا: ١٠٠ عضو" },
+    courses: { name: "بيع الدورات", ph: "مثلًا: ٥٠ تسجيلًا" },
+    subscriptions: { name: "زيادة الاشتراكات", ph: "مثلًا: ٢٠٠ مشترك" },
+    brand: { name: "بناء العلامة الشخصية", ph: "مثلًا: مرجع في المجال" },
+  };
+  const AR = "٠١٢٣٤٥٦٧٨٩";
+  const arNum = (n) => String(n).replace(/\d/g, (d) => AR[d]);
+  const pad = (n) => String(n).padStart(2, "0");
+  const dateStr = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const fromStr = (s) => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+  const addDays = (s, n) => { const d = fromStr(s); d.setDate(d.getDate() + n); return dateStr(d); };
+  const sundayOf = (s) => addDays(s, -fromStr(s).getDay());
+  const diffDays = (a, b) => Math.round((fromStr(a) - fromStr(b)) / 86400000);
+  const fmt = (s, o) => fromStr(s).toLocaleDateString("ar-KW", o);
+  const today = () => dateStr(new Date());
+
+  function toast(msg) {
+    const el = $("#toast");
+    el.textContent = msg;
+    el.hidden = false;
+    clearTimeout(toast.t);
+    toast.t = setTimeout(() => (el.hidden = true), 3200);
+  }
+
+  async function copy(text, done) {
+    try { await navigator.clipboard.writeText(text); toast(done || "نُسخ"); }
+    catch {
+      const ta = document.createElement("textarea");
+      ta.value = text; document.body.append(ta); ta.select();
+      toast("حدّد النص وانسخه يدويًا");
+      setTimeout(() => ta.remove(), 8000);
+    }
+  }
+
+  const SAMPLE_ERRORS = {
+    not_granted: "لم يُسمح للصفحة باستخدام Claude.",
+    sampling_disabled: "Claude غير متاح لهذا الحساب.",
+    rate_limited: "تم الوصول إلى حد الاستخدام مؤقتًا؛ حاول بعد قليل.",
+    invalid_json: "جاء الرد بصيغة غير متوقعة؛ حاول مرة أخرى.",
+    refused: "تعذّر تنفيذ هذا الطلب؛ جرّب صياغة أخرى.",
+    session_expired: "انتهت الجلسة؛ سجّل الدخول من جديد.",
+  };
+  const sampleError = (e) => SAMPLE_ERRORS[e?.code] || "تعذّر الوصول إلى Claude الآن؛ حاول مرة أخرى.";
+
+  // ---------- الحالة ----------
+  let db = null, assets = null, downloads = null, sample = null;
+  let posts = [];               // كل المنشورات
+  let profile = {};
+  let strategy = { startDate: "", weeks: 4, goals: [], launches: [], notes: "", plan: null };
+  let chat = [];
+  let weekDate = sundayOf(today());
+  let editing = null;           // المنشور المفتوح بالمحرر
+  let draftPlan = null;         // خطة أسبوع مقترحة قبل الاعتماد
+
+  // ---------- التنقل ----------
+  const VIEWS = ["week", "plan", "ideas", "assistant", "profile"];
+  function route() {
+    const v = VIEWS.includes(location.hash.slice(1)) ? location.hash.slice(1) : "week";
+    VIEWS.forEach((x) => ($("#view-" + x).hidden = x !== v));
+    $$(".nav a").forEach((a) => a.setAttribute("aria-current", a.dataset.view === v ? "page" : "false"));
+  }
+  window.addEventListener("hashchange", route);
+  route();
+
+  // ---------- الخطة: حسابات الأسابيع ----------
+  function launchEvents() {
+    const out = [];
+    for (const lp of strategy.plan?.launchPlans || []) {
+      const l = strategy.launches.find((x) => x.name === lp.launchName);
+      if (!l?.date) continue;
+      for (const st of lp.steps || []) out.push({ date: addDays(l.date, st.daysFromLaunch), launch: l.name, title: st.title, action: st.action, isLaunch: st.daysFromLaunch === 0 });
+    }
+    return out.sort((a, b) => a.date.localeCompare(b.date));
+  }
+  function planWeekFor(sunday) {
+    if (!strategy.plan || !strategy.startDate) return null;
+    const n = Math.floor(diffDays(sunday, sundayOf(strategy.startDate)) / 7) + 1;
+    const w = strategy.plan.weeks?.find((x) => x.week === n);
+    if (!w) return null;
+    const end = addDays(sunday, 6);
+    return { ...w, events: launchEvents().filter((e) => e.date >= sunday && e.date <= end) };
+  }
+
+  // ---------- نصوص الذكاء الاصطناعي ----------
+  const LANG_RULES = `قاعدة اللغة: كل نص يُنشر للجمهور (الكابشن، الهوك، نصوص الشرائح، التعليق الصوتي، النص على الشاشة، الدعوة للإجراء) يُكتب باللهجة المحددة في ملف الحساب. أما الشروحات والملاحظات الداخلية (ملخص الخطة، الثيمات، شرح التنفيذ، قائمة اللقطات، البرومبتات) فبالعربية الفصحى المبسطة.`;
+  const profileText = () => `ملف الحساب:
+- اسم الحساب: ${profile.handle || "غير محدد"}
+- المجال: ${profile.niche || "غير محدد"}
+- الجمهور: ${profile.audience || "غير محدد"}
+- الأسلوب: ${profile.tone || "غير محدد"}
+- لغة المحتوى ولهجته: ${profile.language || "عربي"}
+- الأهداف: ${profile.goals || "غير محدد"}
+- محاور المحتوى: ${profile.pillars || "غير محدد"}
+- أمثلة من كابشنات سابقة: ${profile.examples || "لا يوجد"}`;
+  const DESIGN_HINT = `designPrompt: برومبت تنسخه صاحبة الحساب وتلصقه في محادثة Claude (لديها مهارة sarah-instagram-carousel للمنشور والكاروسيل، ومهارة sarah-scrapbook-reel للريل) أو ChatGPT. يبدأ بـ «استخدم مهارة ...» المناسبة، ويذكر نوع التصميم ومقاسه (منشور ١٠٨٠×١٣٥٠، كاروسيل ٥-٧ شرائح ١٠٨٠×١٣٥٠، ريل ٩:١٦)، ونص كل شريحة أو نص الغلاف بالضبط باللهجة، وأي عناصر مطلوبة.`;
+  const VOICEOVER_RULES = `- كل المنشورات ريلز بتعليق صوتي (format = "reel")، بالاعتماد على الصوت والنص على الشاشة، دون تصوير شاشة ودون صور ثابتة.
+- script: نص التعليق الصوتي كاملًا باللهجة، جاهز للتسجيل (٢٠-٤٥ ثانية)، مقسم مشاهد، كل مشهد في سطر بهذا الشكل:
+  المشهد ١ (٠-٣ ث) — اللقطة: ... | الصوت: «...» | على الشاشة: ...
+  أول مشهد هوك قوي في أول ٣ ثوانٍ، وآخر مشهد دعوة للإجراء.
+- notes: قائمة اللقطات المطلوب تصويرها في يوم التصوير (يدان تكتبان، مكتب، دفتر، أدوات، قهوة، أجواء الصف…)، والوجه ليس ضروريًا.
+- designPrompt: يبدأ بـ «استخدم مهارة sarah-scrapbook-reel»، ويذكر أن تسجيلًا صوتيًا بهذا النص ولقطات ستُرسل، ويطلب ريل ٩:١٦ بستايل السكراب بوك مع الكابشن على الشاشة، ونص الغلاف (هوك قصير باللهجة).`;
+
+  function weekContextText(sunday) {
+    const w = planWeekFor(sunday);
+    if (!w) return "";
+    return `هذا الأسبوع رقم ${w.week} من الخطة (${w.phase}):
+- الثيم: ${w.theme} — ${w.focus}
+- الدعوة للإجراء: ${w.cta}
+${w.events.length ? `- أحداث إطلاق هذا الأسبوع: ${w.events.map((e) => `${DAYS[fromStr(e.date).getDay()]}: ${e.launch} — ${e.title}`).join("؛ ")}` : ""}`;
+  }
+
+  // ---------- الاتصال بالقدرات ----------
+  async function init() {
+    const c = window.claude;
+    if (!c?.use) { $("#offline").hidden = false; render(); return; }
+    [db, assets, downloads, sample] = await Promise.all([c.use("db"), c.use("assets"), c.use("downloads"), c.use("sample")]);
+    if (!db) { $("#offline").hidden = false; render(); return; }
+    const offlineTimer = setTimeout(() => { $("#offline").textContent = "تعذّر الوصول إلى البيانات حاليًا؛ قد تكون المعروضة قديمة."; $("#offline").hidden = false; }, 10000);
+    const ok = (snap) => { if (!snap.metadata?.fromCache) { clearTimeout(offlineTimer); $("#offline").hidden = true; } };
+    const fail = () => { $("#offline").textContent = "تعذّر الوصول إلى البيانات؛ أعد فتح الصفحة."; $("#offline").hidden = false; };
+    db.collection("posts").onSnapshot((snap) => {
+      ok(snap);
+      posts = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      render();
+      if (editing) { const fresh = posts.find((p) => p.id === editing.id); if (fresh && !editing.dirty) { editing = { ...structuredClone(fresh) }; fillSheetMedia(); } }
+    }, fail);
+    db.doc("app/profile").onSnapshot((s) => { ok(s); profile = s.exists ? { ...s.data() } : {}; fillProfile(); }, fail);
+    db.doc("app/strategy").onSnapshot((s) => { ok(s); if (s.exists) strategy = { ...strategy, ...s.data() }; fillPlanForm(); renderPlan(); renderWeek(); }, fail);
+    db.doc("app/chat").onSnapshot((s) => { ok(s); chat = s.exists ? [...(s.data().turns || [])] : []; renderChat(); }, fail);
+    $("#upload-label").hidden = !assets;
+  }
+
+  function render() { renderWeek(); renderIdeas(); }
+
+  // ---------- هذا الأسبوع ----------
+  const weekPosts = () => { const end = addDays(weekDate, 6); return posts.filter((p) => p.date && p.date >= weekDate && p.date <= end); };
+  const isDone = (p) => (p.checks || []).includes("posted");
+  const checksBadge = (p) => { const n = (p.checks || []).length; return n ? `<span class="badge ${n === 3 ? "ok" : ""}">✓ ${arNum(n)}/٣</span>` : ""; };
+
+  function renderWeek() {
+    const end = addDays(weekDate, 6);
+    $("#week-label").textContent = `${fmt(weekDate, { day: "numeric", month: "long" })} – ${fmt(end, { day: "numeric", month: "long", year: "numeric" })}`;
+    $("#this-week").hidden = weekDate === sundayOf(today());
+    const w = planWeekFor(weekDate);
+    $("#plan-strip").hidden = !w;
+    if (w) $("#plan-strip").innerHTML = `<b>الأسبوع ${arNum(w.week)} من الخطة · ${esc(w.phase)}</b><span><b>${esc(w.theme)}</b> — ${esc(w.focus)}</span><span class="hint">الدعوة للإجراء: ${esc(w.cta)}</span>${w.events.map((e) => `<span class="hint">إطلاق · ${fmt(e.date, { weekday: "long" })}: ${esc(e.launch)} — ${esc(e.title)}</span>`).join("")}`;
+    const list = weekPosts();
+    $("#days").innerHTML = DAYS.map((name, i) => {
+      const d = addDays(weekDate, i);
+      const dayPosts = list.filter((p) => p.date === d).sort((a, b) => (a.time || "").localeCompare(b.time || ""));
+      return `<div class="day ${d === today() ? "today" : ""}">
+        <div class="day-head"><b>${name}</b><span class="tabular">${fmt(d, { day: "numeric", month: "short" })}</span></div>
+        ${dayPosts.map((p) => `<button class="post-chip ${esc(p.funnel || "")} ${isDone(p) ? "done" : ""}" data-open="${esc(p.id)}">
+          <span class="hint">${esc(FORMATS[p.format] || "")}${p.time ? " · " + esc(p.time) : ""}</span>
+          <b>${esc(p.title)}</b>
+          <span class="meta">${p.funnel ? `<span class="badge ${esc(p.funnel)}">${FUNNEL[p.funnel]}</span>` : ""}${(p.media || []).length ? `<span class="badge">${arNum(p.media.length)} ملف</span>` : ""}${checksBadge(p)}</span>
+        </button>`).join("")}
+        <button class="add-btn" data-add="${d}">+ إضافة</button>
+      </div>`;
+    }).join("");
+    renderToday();
+  }
+
+  function renderToday() {
+    const t = today();
+    const list = posts.filter((p) => p.date === t);
+    const el = $("#today");
+    el.hidden = !list.length;
+    if (!list.length) return;
+    el.innerHTML = `<div class="row between"><h2>منشور اليوم</h2><span class="hint">${fmt(t, { weekday: "long", day: "numeric", month: "long" })}</span></div>
+      ${list.map((p) => `<div class="today-item" data-id="${esc(p.id)}">
+        <div class="row between"><b>${esc(FORMATS[p.format] || "")}: ${esc(p.title)}</b><label class="check"><input type="checkbox" data-posted ${isDone(p) ? "checked" : ""}> نُشر</label></div>
+        ${(p.media || []).length ? `<div class="thumbs">${p.media.map((m) => `<figure>${m.type === "video" ? `<video src="/_blob/${esc(m.id)}" muted playsinline preload="metadata"></video>` : `<img src="/_blob/${esc(m.id)}" alt="">`}</figure>`).join("")}</div>` : `<p class="hint">لم تُرفع التصاميم بعد؛ افتح المنشور وارفعها.</p>`}
+        <div class="row">
+          ${(p.media || []).length ? `<button class="btn-primary btn-sm" data-dl>تنزيل الملفات</button>` : ""}
+          <button class="btn-dark btn-sm" data-cap>نسخ الكابشن</button>
+          <button class="btn-ghost btn-sm" data-open="${esc(p.id)}">فتح المنشور</button>
+        </div>
+      </div>`).join("")}`;
+  }
+
+  $("#today").addEventListener("click", (e) => {
+    const item = e.target.closest(".today-item");
+    if (!item) return;
+    const p = posts.find((x) => x.id === item.dataset.id);
+    if (!p) return;
+    if (e.target.closest("[data-cap]")) copy([p.caption, p.hashtags].filter(Boolean).join("\n\n"), "نُسخ الكابشن والهاشتاقات");
+    if (e.target.closest("[data-dl]")) downloadAll(p);
+  });
+  $("#today").addEventListener("change", async (e) => {
+    if (!e.target.matches("[data-posted]") || !db) return;
+    const p = posts.find((x) => x.id === e.target.closest(".today-item").dataset.id);
+    const checks = new Set(p.checks || []);
+    e.target.checked ? checks.add("posted") : checks.delete("posted");
+    await db.doc("posts/" + p.id).update({ checks: [...checks] });
+    if (e.target.checked) toast("أحسنت، نُشر منشور اليوم");
+  });
+
+  document.addEventListener("click", (e) => {
+    const open = e.target.closest("[data-open]");
+    if (open) return openSheet(posts.find((p) => p.id === open.dataset.open));
+    const add = e.target.closest("[data-add]");
+    if (add) return newPost({ date: add.dataset.add, time: $("#week-time").value || "19:00" });
+  });
+
+  $("#prev-week").onclick = () => { weekDate = addDays(weekDate, -7); renderWeek(); };
+  $("#next-week").onclick = () => { weekDate = addDays(weekDate, 7); renderWeek(); };
+  $("#this-week").onclick = () => { weekDate = sundayOf(today()); renderWeek(); };
+
+  // تخطيط الأسبوع
+  $("#week-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!sample) return toast("الذكاء الاصطناعي غير متاح في هذا العرض");
+    const mix = $("#week-mix").value;
+    const existing = weekPosts().map((p) => `- ${DAYS[fromStr(p.date).getDay()]}: ${p.title}`).join("\n");
+    const recent = posts.slice(-25).map((p) => `- ${p.title}`).join("\n");
+    const prompt = `أنت خبير محتوى إنستغرام تخطط أسبوعًا لصاحبة حساب.
+${LANG_RULES}
+
+${profileText()}
+
+${weekContextText(weekDate)}
+منشورات موجودة في هذا الأسبوع (لا تكررها؛ خطط للأيام الفارغة فقط):
+${existing || "لا يوجد"}
+منشورات سابقة لا تكررها:
+${recent || "لا يوجد"}
+${$("#week-topic").value ? `موضوع أو مناسبة الأسبوع: ${$("#week-topic").value}` : ""}
+
+خطط منشورًا واحدًا لكل يوم فارغ من الأحد (day = 0) إلى السبت (day = 6).
+- نوّع مراحل القمع (أغلبها tof، وبعضها mof، وقليل bof) والأهداف، ولا تكرر هدفًا في يومين متتاليين.
+${mix === "voiceover" ? VOICEOVER_RULES : `- خليط: ٣ ريلز تقريبًا والباقي منشورات وكاروسيل. script للريل فقط، ولغيره نص فارغ.\n- ${DESIGN_HINT}`}
+
+أعد JSON فقط بهذا الشكل:
+{"posts":[{"day":0,"title":"عنوان قصير","format":"reel|carousel|post","funnel":"tof|mof|bof","hook":"...","notes":"...","script":"...","caption":"كابشن كامل باللهجة ينتهي بدعوة للتفاعل","hashtags":"#... #...","designPrompt":"..."}]}`;
+    $("#plan-week-btn").disabled = true;
+    $("#week-busy").hidden = false;
+    try {
+      const res = await sample.json(prompt, { modelTier: "default", cache: false });
+      const list = Array.isArray(res?.posts) ? res.posts.filter((p) => p && p.title && Number.isInteger(p.day) && p.day >= 0 && p.day <= 6) : [];
+      if (!list.length) throw { code: "invalid_json" };
+      draftPlan = { sunday: weekDate, time: $("#week-time").value || "19:00", posts: list.sort((a, b) => a.day - b.day) };
+      renderDraft();
+    } catch (err) { toast(sampleError(err)); }
+    finally { $("#plan-week-btn").disabled = false; $("#week-busy").hidden = true; }
+  });
+
+  function renderDraft() {
+    const el = $("#week-preview");
+    el.hidden = !draftPlan;
+    if (!draftPlan) return;
+    el.innerHTML = `<div class="row between"><h2>الخطة المقترحة</h2><span class="row"><button class="btn-ghost" id="draft-cancel">إلغاء</button><button class="btn-primary" id="draft-accept">اعتماد الخطة</button></span></div>
+      ${draftPlan.posts.map((p) => `<div class="today-item"><b>${DAYS[p.day]} · ${esc(FORMATS[p.format] || "")}: ${esc(p.title)}</b><span class="hint">${esc(p.hook || "")}</span></div>`).join("")}`;
+    $("#draft-cancel").onclick = () => { draftPlan = null; renderDraft(); };
+    $("#draft-accept").onclick = acceptDraft;
+  }
+
+  async function acceptDraft(e) {
+    if (!db) return;
+    e.target.disabled = true;
+    try {
+      for (const p of draftPlan.posts) {
+        await db.collection("posts").add({
+          title: String(p.title), format: ["reel", "carousel", "post"].includes(p.format) ? p.format : "reel",
+          funnel: ["tof", "mof", "bof"].includes(p.funnel) ? p.funnel : "",
+          notes: [p.hook ? `الهوك: ${p.hook}` : "", p.notes || ""].filter(Boolean).join("\n\n"),
+          script: String(p.script || ""), caption: String(p.caption || ""), hashtags: String(p.hashtags || ""),
+          designPrompt: String(p.designPrompt || ""), date: addDays(draftPlan.sunday, p.day), time: draftPlan.time,
+          checks: [], media: [], createdAt: new Date().toISOString(),
+        });
+      }
+      draftPlan = null;
+      renderDraft();
+      toast("حُفظت خطة الأسبوع");
+    } catch { toast("تعذّر الحفظ؛ حاول مرة أخرى"); e.target.disabled = false; }
+  }
+
+  // نسخ الأسبوع والبرومبتات
+  function weekText() {
+    const w = planWeekFor(weekDate);
+    const lines = [`# خطة الأسبوع: ${$("#week-label").textContent}`];
+    if (w) lines.push(`الثيم: ${w.theme} — ${w.focus}`, `الدعوة للإجراء: ${w.cta}`);
+    for (const p of weekPosts().sort((a, b) => a.date.localeCompare(b.date))) {
+      lines.push("", `## ${DAYS[fromStr(p.date).getDay()]} ${fmt(p.date, { day: "numeric", month: "long" })} — ${FORMATS[p.format] || ""}: ${p.title}`);
+      if (p.notes) lines.push(`الفكرة واللقطات:\n${p.notes}`);
+      if (p.script) lines.push(`نص التعليق الصوتي:\n${p.script}`);
+      if (p.caption) lines.push(`الكابشن:\n${p.caption}`);
+      if (p.hashtags) lines.push(`الهاشتاقات: ${p.hashtags}`);
+      if (p.designPrompt) lines.push(`برومبت التصميم:\n${p.designPrompt}`);
+    }
+    return lines.join("\n");
+  }
+  $("#copy-week").onclick = () => weekPosts().length ? copy(weekText(), "نُسخ الأسبوع") : toast("لا توجد منشورات في هذا الأسبوع");
+  $("#copy-prompts").onclick = () => {
+    const list = weekPosts().sort((a, b) => a.date.localeCompare(b.date));
+    if (!list.length) return toast("لا توجد منشورات في هذا الأسبوع");
+    copy(list.map((p) => `## ${DAYS[fromStr(p.date).getDay()]} — ${FORMATS[p.format] || ""}: ${p.title}\n\n${p.script ? `نص التعليق الصوتي:\n${p.script}\n\n` : ""}${p.designPrompt || "(لا يوجد برومبت بعد)"}`).join("\n\n---\n\n"), "نُسخت برومبتات التصميم");
+  };
+
+  // ---------- المحرر ----------
+  const FIELDS = ["title", "format", "date", "time", "funnel", "notes", "script", "caption", "hashtags", "designPrompt"];
+  const form = $("#post-form");
+
+  async function newPost(data) {
+    if (!db) return toast("الحفظ غير متاح في هذا العرض");
+    const ref = await db.collection("posts").add({ title: "منشور جديد", format: "reel", funnel: "", notes: "", script: "", caption: "", hashtags: "", designPrompt: "", date: "", time: "", checks: [], media: [], createdAt: new Date().toISOString(), ...data });
+    openSheet({ id: ref.id, title: "منشور جديد", format: "reel", media: [], checks: [], ...data });
+    form.elements.title.select();
+  }
+
+  function openSheet(p) {
+    if (!p) return;
+    editing = structuredClone(p);
+    for (const f of FIELDS) form.elements[f].value = p[f] || "";
+    $$("[data-check]", form).forEach((c) => (c.checked = (p.checks || []).includes(c.dataset.check)));
+    $("#delete-confirm").hidden = true;
+    fillSheetMedia();
+    $("#sheet").hidden = false;
+    form.scrollTop = 0;
+  }
+  const closeSheet = () => { $("#sheet").hidden = true; editing = null; };
+  $("#sheet-close").onclick = closeSheet;
+  $("#sheet").addEventListener("click", (e) => { if (e.target.id === "sheet") closeSheet(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("#sheet").hidden) closeSheet(); });
+  form.addEventListener("input", () => { if (editing) editing.dirty = true; });
+
+  function fillSheetMedia() {
+    if (!editing) return;
+    $("#sheet-media").innerHTML = (editing.media || []).length
+      ? editing.media.map((m, i) => `<figure>${m.type === "video" ? `<video src="/_blob/${esc(m.id)}" muted playsinline controls preload="metadata"></video>` : `<img src="/_blob/${esc(m.id)}" alt="">`}<button type="button" class="rm" data-rm="${i}" aria-label="إزالة">✕</button></figure>`).join("")
+      : `<p class="hint">لا توجد ملفات بعد.</p>`;
+  }
+
+  function collect() {
+    const data = Object.fromEntries(FIELDS.map((f) => [f, form.elements[f].value.trim()]));
+    data.checks = $$("[data-check]", form).filter((c) => c.checked).map((c) => c.dataset.check);
+    data.media = editing.media || [];
+    return data;
+  }
+  async function save(quiet) {
+    if (!db || !editing) return;
+    const data = collect();
+    await db.doc("posts/" + editing.id).update(data);
+    editing = { ...editing, ...data, dirty: false };
+    if (!quiet) toast("حُفظ");
+  }
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    try { await save(); closeSheet(); } catch { toast("تعذّر الحفظ؛ حاول مرة أخرى"); }
+  });
+
+  $("#delete-post").onclick = () => ($("#delete-confirm").hidden = false);
+  $("#delete-confirm").onclick = async () => {
+    try {
+      for (const m of editing.media || []) await assets?.delete(m.id).catch(() => {});
+      await db.doc("posts/" + editing.id).delete();
+      closeSheet();
+      toast("حُذف المنشور");
+    } catch { toast("تعذّر الحذف"); }
+  };
+
+  $("#copy-caption").onclick = () => copy([form.elements.caption.value, form.elements.hashtags.value].filter(Boolean).join("\n\n"), "نُسخ الكابشن والهاشتاقات");
+  $$("[data-copy-field]").forEach((b) => (b.onclick = () => copy(form.elements[b.dataset.copyField].value, "نُسخ")));
+
+  async function aiFill(btn, prompt, apply) {
+    if (!sample) return toast("الذكاء الاصطناعي غير متاح في هذا العرض");
+    const label = btn.textContent;
+    btn.disabled = true; btn.textContent = "جارٍ الكتابة…";
+    try { apply(await sample.json(prompt, { modelTier: "default", cache: false })); editing.dirty = true; }
+    catch (err) { toast(sampleError(err)); }
+    finally { btn.disabled = false; btn.textContent = label; }
+  }
+  const postBrief = () => { const d = collect(); return `المنشور:\n- العنوان: ${d.title}\n- النوع: ${FORMATS[d.format]}\n- مرحلة القمع: ${d.funnel ? FUNNEL_NAME[d.funnel] : "غير محددة"}\n- الفكرة: ${d.notes || "لا يوجد"}\n${d.script ? `- نص التعليق الصوتي: ${d.script}` : ""}`; };
+  $("#ai-caption").onclick = (e) => aiFill(e.currentTarget, `${LANG_RULES}\n\n${profileText()}\n\n${postBrief()}\n\nاكتب كابشن إنستغرام جاهزًا للنشر باللهجة، يبدأ بهوك قوي وينتهي بدعوة للتفاعل، و٨-١٥ هاشتاق. أعد JSON فقط: {"caption":"...","hashtags":"#... #..."}`,
+    (r) => { if (r?.caption) form.elements.caption.value = r.caption; if (r?.hashtags) form.elements.hashtags.value = r.hashtags; });
+  $("#ai-prompt").onclick = (e) => aiFill(e.currentTarget, `${LANG_RULES}\n\n${profileText()}\n\n${postBrief()}\n\nاكتب ${DESIGN_HINT}\nأعد JSON فقط: {"designPrompt":"..."}`,
+    (r) => { if (r?.designPrompt) form.elements.designPrompt.value = r.designPrompt; });
+
+  // رفع الملفات وتنزيلها
+  $("#upload-input").addEventListener("change", async (e) => {
+    const files = [...e.target.files];
+    e.target.value = "";
+    if (!assets) return toast("رفع الملفات متاح لمالك الصفحة فقط");
+    for (const f of files) {
+      if (f.size > 20 * 1024 * 1024) { toast(`«${f.name}» أكبر من ٢٠ ميغابايت؛ صدّره بجودة أخف`); continue; }
+      try {
+        toast(`جارٍ رفع ${f.name}…`);
+        const a = await assets.upload(f);
+        editing.media = [...(editing.media || []), { id: a.id, type: (a.contentType || f.type).startsWith("video") ? "video" : "image", name: f.name }];
+        fillSheetMedia();
+        await save(true);
+        toast("رُفع الملف");
+      } catch (err) { toast(err?.code === "quota_exceeded" ? "امتلأت مساحة التخزين؛ احذف ملفات قديمة" : "تعذّر رفع الملف"); }
+    }
+  });
+  $("#sheet-media").addEventListener("click", async (e) => {
+    const rm = e.target.closest("[data-rm]");
+    if (!rm) return;
+    const [m] = editing.media.splice(Number(rm.dataset.rm), 1);
+    fillSheetMedia();
+    await save(true);
+    assets?.delete(m.id).catch(() => {});
+  });
+  async function downloadAll(p) {
+    const media = p.media || [];
+    if (!media.length) return toast("لا توجد ملفات");
+    if (!downloads) return toast("التنزيل غير متاح في هذا العرض؛ افتح الملف واضغط عليه مطولًا لحفظه");
+    for (const [i, m] of media.entries()) {
+      try {
+        const blob = await (await fetch("/_blob/" + m.id)).blob();
+        const ext = (m.name?.match(/\.\w+$/) || [m.type === "video" ? ".mp4" : ".png"])[0];
+        await downloads.save({ filename: `post-${p.date || "file"}-${i + 1}${ext}`, data: blob });
+      } catch (err) { if (err?.code !== "declined") toast("تعذّر تنزيل أحد الملفات"); }
+    }
+  }
+  $("#download-all").onclick = () => editing && downloadAll(collect());
+
+  // ---------- الخطة ----------
+  $("#goal-list").innerHTML = Object.entries(GOALS).map(([k, g]) => `<div class="goal-row"><label class="check"><input type="checkbox" id="goal-${k}" data-goal="${k}"> ${g.name}</label><input id="goal-d-${k}" data-goal-detail="${k}" placeholder="${g.ph}" aria-label="${g.name}"></div>`).join("");
+  let launchSeq = 0;
+  function launchRow(l = {}) {
+    const n = ++launchSeq;
+    const div = document.createElement("div");
+    div.className = "launch-row";
+    div.innerHTML = `<input id="ln-${n}" data-f="name" placeholder="اسم الإطلاق" value="${esc(l.name || "")}" aria-label="اسم الإطلاق">
+      <select id="lt-${n}" data-f="type" aria-label="النوع">${["دورة", "مجتمع", "اشتراك", "منتج", "ورشة"].map((t) => `<option ${l.type === t ? "selected" : ""}>${t}</option>`).join("")}</select>
+      <input id="ld-${n}" data-f="date" type="date" value="${esc(l.date || "")}" aria-label="تاريخ الإطلاق">
+      <button type="button" class="btn-ghost" data-rm-launch aria-label="إزالة">✕</button>
+      <input id="lx-${n}" class="wide" data-f="details" placeholder="التفاصيل: الفئة المستهدفة، السعر، ما يميزه" value="${esc(l.details || "")}" style="grid-column:1/-1" aria-label="التفاصيل">`;
+    return div;
+  }
+  $("#add-launch").onclick = () => $("#launch-list").append(launchRow());
+  $("#launch-list").addEventListener("click", (e) => { if (e.target.closest("[data-rm-launch]")) e.target.closest(".launch-row").remove(); });
+
+  function fillPlanForm() {
+    const f = $("#plan-form");
+    if (f.contains(document.activeElement)) return;
+    f.elements.startDate.value = strategy.startDate || addDays(sundayOf(today()), 7);
+    f.elements.weeks.value = String(strategy.weeks || 4);
+    f.elements.notes.value = strategy.notes || "";
+    for (const k of Object.keys(GOALS)) {
+      const g = (strategy.goals || []).find((x) => x.type === k);
+      $(`#goal-${k}`).checked = !!g;
+      $(`#goal-d-${k}`).value = g?.detail || "";
+    }
+    $("#launch-list").replaceChildren(...(strategy.launches || []).map(launchRow));
+  }
+  function collectPlan() {
+    const f = $("#plan-form");
+    return {
+      startDate: sundayOf(f.elements.startDate.value || today()),
+      weeks: Number(f.elements.weeks.value),
+      notes: f.elements.notes.value.trim(),
+      goals: $$("[data-goal]").filter((c) => c.checked).map((c) => ({ type: c.dataset.goal, detail: $(`#goal-d-${c.dataset.goal}`).value.trim() })),
+      launches: $$(".launch-row").map((r) => Object.fromEntries($$("[data-f]", r).map((x) => [x.dataset.f, x.value.trim()]))).filter((l) => l.name),
+    };
+  }
+  async function savePlanInput() {
+    if (!db) throw new Error("no db");
+    strategy = { ...strategy, ...collectPlan() };
+    await db.doc("app/strategy").set(strategy);
+  }
+  $("#plan-form").addEventListener("submit", async (e) => { e.preventDefault(); try { await savePlanInput(); toast("حُفظت"); } catch { toast("تعذّر الحفظ"); } });
+
+  $("#build-plan").onclick = async (e) => {
+    if (!sample) return toast("الذكاء الاصطناعي غير متاح في هذا العرض");
+    const input = collectPlan();
+    if (!input.goals.length) return toast("اختر هدفًا واحدًا على الأقل");
+    e.currentTarget.disabled = true;
+    $("#plan-busy").hidden = false;
+    const btn = e.currentTarget;
+    try {
+      await savePlanInput();
+      const prompt = `أنت مخطط تسويق محتوى على إنستغرام.
+${LANG_RULES}
+
+${profileText()}
+
+بداية الخطة: ${input.startDate} (الأسبوع ١ يبدأ الأحد ${input.startDate})، المدة ${input.weeks} أسابيع.
+الأهداف: ${input.goals.map((g) => `${GOALS[g.type].name}${g.detail ? ` (${g.detail})` : ""}`).join("؛ ")}
+الإطلاقات: ${input.launches.length ? input.launches.map((l) => `"${l.name}" (${l.type}) بتاريخ ${l.date || "غير محدد"}${l.details ? ` — ${l.details}` : ""}`).join("؛ ") : "لا يوجد"}
+ملاحظات: ${input.notes || "لا يوجد"}
+
+اكتب خطة: summary (فقرة)، kpis (مؤشر لكل هدف برقم واقعي)، phases (مراحل بأرقام الأسابيع)، weeks (لكل أسبوع من ١ إلى ${input.weeks}: المرحلة، الثيم، التركيز، نسب tof/mof/bof مجموعها ١٠٠ وتتغير مع المراحل، الدعوة للإجراء)، launchPlans (لكل إطلاق بنفس الاسم بالضبط: خطوات الإعلان بعدد الأيام من يوم الإطلاق، سالب قبل، ٠ يوم الإطلاق، موجب بعده، بدءًا قبل ٣-٤ أسابيع إن أمكن).
+أعد JSON فقط بهذا الشكل:
+{"summary":"...","kpis":[{"goal":"...","metric":"...","target":"..."}],"phases":[{"name":"...","startWeek":1,"endWeek":2,"objective":"..."}],"weeks":[{"week":1,"phase":"...","theme":"...","focus":"...","tof":60,"mof":30,"bof":10,"cta":"..."}],"launchPlans":[{"launchName":"...","steps":[{"daysFromLaunch":-21,"title":"...","action":"..."}]}]}`;
+      const plan = await sample.json(prompt, { modelTier: "complex", cache: false });
+      if (!Array.isArray(plan?.weeks)) throw { code: "invalid_json" };
+      strategy = { ...strategy, plan: { ...plan, generatedAt: new Date().toISOString() } };
+      await db.doc("app/strategy").set(strategy);
+      toast("أُنشئت الخطة");
+    } catch (err) { toast(err?.code ? sampleError(err) : "تعذّر الحفظ"); }
+    finally { btn.disabled = false; $("#plan-busy").hidden = true; }
+  };
+
+  function renderPlan() {
+    const out = $("#plan-out");
+    const plan = strategy.plan;
+    if (!plan) { out.innerHTML = `<p class="notice">لا توجد خطة بعد. اختر الأهداف وأضف الإطلاقات، ثم اضغط «إنشاء الخطة».</p>`; return; }
+    const start = sundayOf(strategy.startDate);
+    const t = today();
+    const events = launchEvents();
+    out.innerHTML = `<div class="card stack"><h2>ملخص الخطة</h2><p>${esc(plan.summary || "")}</p>
+        ${(plan.kpis || []).length ? `<div class="grid2">${plan.kpis.map((k) => `<div class="today-item"><span class="hint">${esc(k.goal)}</span><b>${esc(k.target)}</b><span class="hint">${esc(k.metric)}</span></div>`).join("")}</div>` : ""}
+      </div>
+      ${events.length ? `<div class="card stack"><h2>جدول الإعلان عن الإطلاقات</h2><ul class="timeline">${events.map((e) => `<li><span class="when tabular">${fmt(e.date, { weekday: "short", day: "numeric", month: "short" })}</span><div><b>${esc(e.launch)} — ${esc(e.title)}</b><p class="hint">${esc(e.action)}</p></div></li>`).join("")}</ul></div>` : ""}
+      <div class="plan-weeks">${(plan.weeks || []).map((w) => {
+        const d = addDays(start, (w.week - 1) * 7);
+        const now = t >= d && t <= addDays(d, 6);
+        const count = posts.filter((p) => p.date >= d && p.date <= addDays(d, 6)).length;
+        return `<article class="card plan-week ${now ? "now" : ""}">
+          <div class="row between"><b>الأسبوع ${arNum(w.week)}</b><span class="hint tabular">${fmt(d, { day: "numeric", month: "short" })} – ${fmt(addDays(d, 6), { day: "numeric", month: "short" })}</span></div>
+          <span class="hint">${esc(w.phase || "")}</span>
+          <h3>${esc(w.theme || "")}</h3>
+          <p class="hint">${esc(w.focus || "")}</p>
+          <div class="mix" aria-label="نسب القمع"><i class="tof" style="width:${Number(w.tof) || 0}%"></i><i class="mof" style="width:${Number(w.mof) || 0}%"></i><i class="bof" style="width:${Number(w.bof) || 0}%"></i></div>
+          <p class="hint">الدعوة للإجراء: ${esc(w.cta || "")}</p>
+          <div class="row between"><span class="hint">${arNum(count)} من ٧ منشورات</span><button class="btn-primary btn-sm" data-goto-week="${d}">فتح الأسبوع</button></div>
+        </article>`;
+      }).join("")}</div>`;
+  }
+  $("#plan-out").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-goto-week]");
+    if (!b) return;
+    weekDate = b.dataset.gotoWeek;
+    location.hash = "week";
+    renderWeek();
+    window.scrollTo(0, 0);
+  });
+
+  // ---------- الأفكار ----------
+  function renderIdeas() {
+    const list = posts.filter((p) => !p.date).sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
+    $("#ideas").innerHTML = list.length
+      ? list.map((p) => `<button class="card idea" data-open="${esc(p.id)}"><b>${esc(p.title)}</b>${p.notes ? `<span class="hint">${esc(p.notes.slice(0, 120))}</span>` : ""}<span class="row" style="gap:4px"><span class="badge">${esc(FORMATS[p.format] || "")}</span></span></button>`).join("")
+      : `<p class="empty">لا توجد أفكار محفوظة بعد.</p>`;
+  }
+  $("#idea-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!db) return toast("الحفظ غير متاح في هذا العرض");
+    const title = $("#idea-title").value.trim();
+    if (!title) return;
+    await db.collection("posts").add({ title, format: $("#idea-format").value, funnel: "", notes: "", script: "", caption: "", hashtags: "", designPrompt: "", date: "", time: "", checks: [], media: [], createdAt: new Date().toISOString() });
+    $("#idea-title").value = "";
+    toast("حُفظت الفكرة");
+  });
+  let suggestions = [];
+  $("#suggest-btn").onclick = async (e) => {
+    if (!sample) return toast("الذكاء الاصطناعي غير متاح في هذا العرض");
+    const btn = e.currentTarget;
+    btn.disabled = true; $("#suggest-busy").hidden = false;
+    try {
+      const res = await sample.json(`${LANG_RULES}\n\n${profileText()}\n\nأفكار موجودة لا تكررها:\n${posts.slice(-30).map((p) => "- " + p.title).join("\n") || "لا يوجد"}\n\nاقترح ٦ أفكار منشورات جديدة خاصة بهذا الحساب، أغلبها ريلز بتعليق صوتي. لكل فكرة: عنوان قصير، النوع، هوك باللهجة، وشرح قصير للتنفيذ. أعد JSON فقط: {"ideas":[{"title":"...","format":"reel|carousel|post","hook":"...","notes":"..."}]}`, { modelTier: "default", cache: false });
+      suggestions = Array.isArray(res?.ideas) ? res.ideas.filter((x) => x?.title) : [];
+      renderSuggestions();
+    } catch (err) { toast(sampleError(err)); }
+    finally { btn.disabled = false; $("#suggest-busy").hidden = true; }
+  };
+  function renderSuggestions() {
+    $("#suggestions").innerHTML = suggestions.map((s, i) => `<div class="card idea"><b>${esc(s.title)}</b><span class="hint">${esc(s.hook || "")}</span><span class="hint">${esc(s.notes || "")}</span>
+      <div class="row between"><span class="badge">${esc(FORMATS[s.format] || "")}</span>${s.saved ? `<span class="badge ok">أُضيفت</span>` : `<button class="btn-primary btn-sm" data-keep="${i}">إضافة</button>`}</div></div>`).join("");
+  }
+  $("#suggestions").addEventListener("click", async (e) => {
+    const b = e.target.closest("[data-keep]");
+    if (!b || !db) return;
+    const s = suggestions[b.dataset.keep];
+    await db.collection("posts").add({ title: String(s.title), format: ["reel", "carousel", "post"].includes(s.format) ? s.format : "reel", funnel: "", notes: [s.hook ? `الهوك: ${s.hook}` : "", s.notes || ""].filter(Boolean).join("\n\n"), script: "", caption: "", hashtags: "", designPrompt: "", date: "", time: "", checks: [], media: [], createdAt: new Date().toISOString() });
+    s.saved = true;
+    renderSuggestions();
+  });
+
+  // ---------- المساعد ----------
+  let chatCtl = null, streaming = "";
+  const ASSISTANT_RULES = () => `أنت مساعدة شخصية لصاحبة حساب إنستغرام، تفكرين معها في المحتوى والتسويق والمنتجات والدورات.
+- ردي بالعربية الفصحى المبسطة، بنقاط قصيرة وخطوات واضحة، دون مقدمات طويلة.
+- إذا كتبتِ نصًا للنشر (كابشن، هوك، نص شريحة)، فاكتبيه باللهجة المحددة في ملف الحساب.
+- تقترحين منتجات ودورات وخدمات مع الفئة المستهدفة وسبب نجاحها وطريقة اختبارها سريعًا.
+- لا تخترعين أرقامًا أو نتائج عن حسابها؛ اسألي عنها.
+
+${profileText()}
+
+${strategy.plan ? `ملخص الخطة: ${strategy.plan.summary}` : "لا توجد خطة بعد."}
+${strategy.launches?.length ? `الإطلاقات: ${strategy.launches.map((l) => `${l.name} (${l.date || "بلا تاريخ"})`).join("، ")}` : ""}
+${weekContextText(sundayOf(today()))}
+منشورات قادمة: ${posts.filter((p) => p.date && p.date >= today()).sort((a, b) => a.date.localeCompare(b.date)).slice(0, 10).map((p) => `${p.date}: ${p.title}`).join("؛ ") || "لا يوجد"}
+اليوم: ${today()}`;
+
+  function mdLite(text) {
+    return esc(text).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").split(/\n{2,}/).map((b) => {
+      const ls = b.split("\n");
+      return ls.every((l) => /^\s*([-•*]|\d+[.)])\s+/.test(l))
+        ? `<ul>${ls.map((l) => `<li>${l.replace(/^\s*([-•*]|\d+[.)])\s+/, "")}</li>`).join("")}</ul>`
+        : `<p>${ls.map((l) => l.replace(/^#{1,4}\s*/, "")).join("<br>")}</p>`;
+    }).join("");
+  }
+  function renderChat() {
+    const log = $("#chat-log");
+    $("#chat-chips").hidden = chat.length > 0;
+    const rows = chat.map((m, i) => `<div class="msg ${m.role}">${m.role === "assistant" ? mdLite(m.content) : esc(m.content)}${m.role === "assistant" ? `<div class="msg-actions"><button class="btn-ghost btn-sm" data-copy-msg="${i}">نسخ</button><button class="btn-ghost btn-sm" data-idea-msg="${i}">حفظ كفكرة</button></div>` : ""}</div>`);
+    if (chatCtl) rows.push(`<div class="msg assistant">${streaming ? mdLite(streaming) : `<span class="busy-note"><span class="spinner"></span>جارٍ التفكير…</span>`}</div>`);
+    log.innerHTML = rows.join("") || `<p class="empty">اسأل عن أي شيء يخص محتواك أو منتجاتك، أو اختر سؤالًا أدناه.</p>`;
+    log.scrollTop = log.scrollHeight;
+  }
+  async function send(text) {
+    text = text.trim();
+    if (!text || chatCtl) return;
+    if (!sample) return toast("الذكاء الاصطناعي غير متاح في هذا العرض");
+    const turns = [...chat, { role: "user", content: text }];
+    chat = turns;
+    chatCtl = new AbortController();
+    streaming = "";
+    $("#chat-stop").hidden = false; $("#chat-send").disabled = true;
+    renderChat();
+    try {
+      const history = turns.slice(-20);
+      const input = [{ role: "user", content: ASSISTANT_RULES() }, ...(history[0]?.role === "assistant" ? history.slice(1) : history)];
+      const { text: reply } = await sample(input, { cache: false, signal: chatCtl.signal, onText: ({ text: t }) => { streaming = t; renderChat(); } });
+      chat = [...turns, { role: "assistant", content: reply }].slice(-40);
+      if (db) await db.doc("app/chat").set({ turns: chat });
+    } catch (err) {
+      if (err?.code !== "cancelled") toast(sampleError(err));
+      chat = turns.slice(0, -1);
+      $("#chat-input").value = text;
+    } finally {
+      chatCtl = null; streaming = "";
+      $("#chat-stop").hidden = true; $("#chat-send").disabled = false;
+      renderChat();
+    }
+  }
+  $("#chat-form").addEventListener("submit", (e) => { e.preventDefault(); const t = $("#chat-input").value; $("#chat-input").value = ""; send(t); });
+  $("#chat-input").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); $("#chat-form").requestSubmit(); } });
+  $("#chat-stop").onclick = () => chatCtl?.abort();
+  $$("#chat-chips .chip").forEach((b) => (b.onclick = () => send(b.textContent)));
+  $("#chat-log").addEventListener("click", async (e) => {
+    const c = e.target.closest("[data-copy-msg]");
+    if (c) return copy(chat[c.dataset.copyMsg].content, "نُسخ");
+    const s = e.target.closest("[data-idea-msg]");
+    if (s && db) {
+      const txt = chat[s.dataset.ideaMsg].content;
+      const title = txt.split("\n").map((l) => l.replace(/[#*\-•]/g, "").trim()).find(Boolean)?.slice(0, 80) || "فكرة من المساعد";
+      await db.collection("posts").add({ title, format: "reel", funnel: "", notes: txt, script: "", caption: "", hashtags: "", designPrompt: "", date: "", time: "", checks: [], media: [], createdAt: new Date().toISOString() });
+      toast("حُفظت في الأفكار");
+    }
+  });
+  let resetArmed = false;
+  $("#chat-reset").onclick = async (e) => {
+    if (!chat.length) return;
+    if (!resetArmed) { resetArmed = true; e.currentTarget.textContent = "تأكيد: حذف المحادثة"; setTimeout(() => { resetArmed = false; $("#chat-reset").textContent = "محادثة جديدة"; }, 4000); return; }
+    resetArmed = false; e.currentTarget.textContent = "محادثة جديدة";
+    chat = []; renderChat();
+    if (db) await db.doc("app/chat").set({ turns: [] });
+  };
+
+  // ---------- ملف الحساب ----------
+  const PF = ["handle", "niche", "audience", "tone", "language", "goals", "pillars", "examples"];
+  function fillProfile() {
+    const f = $("#profile-form");
+    if (f.contains(document.activeElement)) return;
+    for (const k of PF) f.elements[k].value = profile[k] || "";
+  }
+  $("#profile-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!db) return toast("الحفظ غير متاح في هذا العرض");
+    const data = Object.fromEntries(PF.map((k) => [k, e.target.elements[k].value.trim()]));
+    try { await db.doc("app/profile").set(data); toast("حُفظ ملف الحساب"); } catch { toast("تعذّر الحفظ"); }
+  });
+  const PRESET = {
+    handle: "@ablasarahq8",
+    niche: "تقنية وذكاء اصطناعي للمعلمات: أدوات، أفكار للصف، يوميات معلمة علوم",
+    audience: "معلمات (٩١٪ إناث، ٢٥–٤٤ سنة) في الكويت وعُمان والسعودية، يرغبن في العمل بذكاء والراحة أكثر والتطور مهنيًا بالتقنية",
+    tone: "أنثوي احترافي: هادئ، واثق، واضح، قريب من المعلمة؛ محتوى عملي يفيد بسرعة ويختصر الوقت بخطوات واضحة",
+    language: "لهجة كويتية خالصة (شلون، شنو، وايد، تنطرين، الحين)، بدون فصحى رسمية، وإيموجي قليل (✨ 🌸 💜 🎯). لا ChatGPT (استخدم Gemini)، ولا ManyChat",
+    goals: "مساعدة المعلمة على العمل بذكاء والراحة أكثر والتطور المهني بالتقنية، مع دعوات ناعمة (هدية مجانية، رابط، تصويت، سؤال) بدل البيع المباشر",
+    pillars: "أدوات الذكاء الاصطناعي للمعلمة، تحضير الدروس، أفكار وأنشطة للصف، يوميات معلمة علوم، التطوير المهني، المجتمع والدورات",
+  };
+  $("#profile-preset").onclick = () => {
+    const f = $("#profile-form");
+    for (const [k, v] of Object.entries(PRESET)) if (!f.elements[k].value.trim()) f.elements[k].value = v;
+    toast("عُبئت الحقول الفارغة؛ راجعها ثم اضغط «حفظ الملف»");
+  };
+
+  render();
+  renderPlan();
+  renderChat();
+  fillPlanForm();
+  init();
+})();
+</script>

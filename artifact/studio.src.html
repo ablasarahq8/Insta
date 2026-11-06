@@ -1,0 +1,1072 @@
+<title>استوديو أبلة سارة</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+<style>
+/* التخطيط: قائمة علوية ثابتة على الشاشات الكبيرة وشريط سفلي على الجوال، والمحتوى في عمود واحد واسع */
+:root {
+  --bg: #fdf8f5;
+  --surface: #ffffff;
+  --surface-2: #f8efea;
+  --ink: #2d1f3d;
+  --muted: #7f6b79;
+  --line: #eddfd8;
+  --rose: #c9617d;
+  --peach: #fe9a6c;
+  --plum: #7d579b;
+  --ok: #2f8f5b;
+  --warn: #c76a1f;
+  --err: #b8382c;
+  --tof: #5b7fd6;
+  --mof: #7d579b;
+  --bof: #2f8f5b;
+  --grad: linear-gradient(135deg, #fe9a6c 0%, #c9617d 100%);
+  --shadow: 0 1px 2px rgba(45, 31, 61, .05), 0 8px 24px rgba(45, 31, 61, .06);
+  --font: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, system-ui, sans-serif;
+  --radius: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #19111f; --surface: #231a2c; --surface-2: #2c2238; --ink: #f8eff3; --muted: #b5a2b5; --line: #3a2d48;
+    --rose: #e07b97; --peach: #ffad86; --plum: #b590d6; --tof: #8aa6ee; --mof: #b590d6; --bof: #5fbf8a;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .25), 0 8px 24px rgba(0, 0, 0, .3);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #19111f; --surface: #231a2c; --surface-2: #2c2238; --ink: #f8eff3; --muted: #b5a2b5; --line: #3a2d48;
+  --rose: #e07b97; --peach: #ffad86; --plum: #b590d6; --tof: #8aa6ee; --mof: #b590d6; --bof: #5fbf8a;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .25), 0 8px 24px rgba(0, 0, 0, .3);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 15px; line-height: 1.7; direction: rtl; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+h1, h2, h3 { margin: 0; line-height: 1.35; text-wrap: balance; }
+h1 { font-size: 1.55rem; font-weight: 700; }
+h2 { font-size: 1.08rem; font-weight: 700; }
+h3 { font-size: .98rem; font-weight: 600; }
+p { margin: 0; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; border: 0; border-radius: 10px; padding: 8px 14px; background: transparent; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-weight: 500; }
+button:disabled { opacity: .55; cursor: progress; }
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, a:focus-visible { outline: 2px solid var(--rose); outline-offset: 2px; }
+.btn-primary { background: var(--grad); color: #fff; font-weight: 700; box-shadow: 0 6px 16px rgba(201, 97, 125, .25); }
+.btn-dark { background: var(--ink); color: var(--surface); }
+.btn-ghost { color: var(--muted); }
+.btn-ghost:hover { background: var(--surface-2); color: var(--ink); }
+.btn-danger { color: var(--err); }
+.btn-sm { padding: 5px 10px; font-size: .86rem; }
+input, select, textarea { width: 100%; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); }
+textarea { resize: vertical; }
+label { display: grid; gap: 5px; font-weight: 500; font-size: .92rem; }
+.hint { color: var(--muted); font-size: .86rem; font-weight: 400; }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.between { justify-content: space-between; }
+.stack { display: grid; gap: 12px; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); min-width: 0; }
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 1px 9px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface-2); color: var(--muted); font-size: .76rem; white-space: nowrap; }
+.badge.tof { color: var(--tof); border-color: currentColor; background: transparent; }
+.badge.mof { color: var(--mof); border-color: currentColor; background: transparent; }
+.badge.bof { color: var(--bof); border-color: currentColor; background: transparent; }
+.badge.ok { color: var(--ok); border-color: currentColor; background: transparent; }
+.empty { color: var(--muted); text-align: center; padding: 28px 8px; }
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* الهيدر والتنقل */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9; background: var(--surface); border-bottom: 1px solid var(--line);
+  padding-block: 10px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.top-inner { max-width: 1180px; margin: 0 auto; display: flex; align-items: center; gap: 18px; }
+.logo { height: 38px; width: auto; }
+.logo-dark-bg { display: none; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .logo-light-bg { display: none; } :root:not([data-theme="light"]) .logo-dark-bg { display: block; } }
+:root[data-theme="dark"] .logo-light-bg { display: none; }
+:root[data-theme="dark"] .logo-dark-bg { display: block; }
+.nav { display: flex; gap: 2px; }
+.nav a { display: flex; align-items: center; gap: 7px; padding: 8px 12px; border-radius: 10px; color: var(--muted); text-decoration: none; font-weight: 500; white-space: nowrap; }
+.nav a:hover { background: var(--surface-2); color: var(--ink); }
+.nav a[aria-current="page"] { background: color-mix(in srgb, var(--rose) 13%, transparent); color: var(--rose); font-weight: 700; }
+.nav svg { width: 18px; height: 18px; }
+
+main { max-width: 1180px; margin: 0 auto; padding-block: 24px 90px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.page-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+.page-head p { color: var(--muted); margin-top: 4px; }
+.notice { padding: 12px 14px; border-radius: 12px; background: var(--surface-2); color: var(--muted); font-size: .9rem; }
+
+/* الأسبوع */
+.week-nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.week-nav h2 { font-size: 1rem; }
+.plan-strip { display: grid; gap: 4px; padding: 12px 14px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--line); }
+.days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; }
+.day { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px; display: flex; flex-direction: column; gap: 8px; min-height: 150px; min-width: 0; }
+.day.today { border-color: var(--rose); box-shadow: 0 0 0 3px color-mix(in srgb, var(--rose) 14%, transparent); }
+.day-head { display: flex; justify-content: space-between; align-items: baseline; font-size: .86rem; }
+.day-head b { font-size: .95rem; }
+.day-head span { color: var(--muted); }
+.post-chip { text-align: start; display: grid; gap: 4px; padding: 8px 9px; border-radius: 10px; background: var(--surface-2); border: 1px solid var(--line); border-inline-start: 4px solid var(--muted); font-size: .84rem; width: 100%; }
+.post-chip:hover { border-color: var(--rose); }
+.post-chip.tof { border-inline-start-color: var(--tof); }
+.post-chip.mof { border-inline-start-color: var(--mof); }
+.post-chip.bof { border-inline-start-color: var(--bof); }
+.post-chip b { font-size: .88rem; line-height: 1.45; font-weight: 600; }
+.post-chip .meta { display: flex; gap: 4px; flex-wrap: wrap; }
+.post-chip.done { opacity: .6; }
+.add-btn { margin-top: auto; border: 1px dashed var(--line); color: var(--muted); font-size: .85rem; }
+.add-btn:hover { border-color: var(--rose); color: var(--rose); }
+@media (max-width: 1100px) { .days { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); } .day { min-height: 0; } }
+
+/* منشور اليوم */
+.today { border-color: color-mix(in srgb, var(--rose) 45%, var(--line)); }
+.today-item { display: grid; gap: 10px; padding: 14px; border-radius: 12px; background: var(--surface-2); }
+.thumbs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+.thumbs figure { margin: 0; position: relative; flex: 0 0 auto; }
+.thumbs img, .thumbs video { width: 110px; height: 138px; object-fit: cover; border-radius: 10px; display: block; border: 1px solid var(--line); background: var(--surface); }
+.thumbs .rm { position: absolute; top: 4px; left: 4px; background: rgb(25 17 31 / .65); color: #fff; padding: 2px 7px; border-radius: 7px; font-size: .8rem; }
+
+/* الخطة */
+.plan-weeks { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.plan-week { display: grid; gap: 8px; align-content: start; }
+.plan-week.now { border-color: var(--rose); }
+.mix { display: flex; height: 8px; border-radius: 99px; overflow: hidden; background: var(--surface-2); }
+.mix i { display: block; height: 100%; }
+.mix .tof { background: var(--tof); } .mix .mof { background: var(--mof); } .mix .bof { background: var(--bof); }
+.timeline { list-style: none; margin: 0; padding: 0; display: grid; }
+.timeline li { display: grid; grid-template-columns: 120px 1fr; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+.timeline .when { color: var(--muted); font-size: .88rem; }
+.goal-row { display: grid; grid-template-columns: minmax(0, 180px) minmax(0, 1fr); gap: 8px; align-items: center; }
+.check { display: flex; align-items: center; gap: 8px; font-weight: 500; cursor: pointer; }
+.check input { width: 18px; height: 18px; accent-color: var(--rose); }
+.launch-row { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 8px; padding: 8px; border: 1px dashed var(--line); border-radius: 10px; }
+fieldset { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin: 0; display: grid; gap: 10px; min-width: 0; }
+legend { font-weight: 700; padding: 0 6px; }
+
+/* المحرر (لوحة جانبية) */
+.sheet-wrap { position: fixed; inset: 0; z-index: 30; background: rgb(25 17 31 / .45); display: flex; justify-content: flex-start; }
+.sheet { width: min(620px, 100%); height: 100%; background: var(--surface); overflow-y: auto; box-shadow: var(--shadow);
+  padding-block: calc(16px + env(safe-area-inset-top, 0px)) calc(20px + env(safe-area-inset-bottom, 0px)); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(18px, env(safe-area-inset-right, 0px)); display: grid; gap: 14px; align-content: start; }
+.sheet-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.checks { display: flex; gap: 16px; flex-wrap: wrap; padding: 10px 12px; border-radius: 12px; background: var(--surface-2); }
+.label-row { display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap; }
+
+/* المساعد */
+.chat-log { display: grid; gap: 12px; max-height: 60vh; overflow-y: auto; padding: 4px; }
+.msg { max-width: 85%; padding: 11px 15px; border-radius: 16px; line-height: 1.85; white-space: pre-wrap; overflow-wrap: anywhere; }
+.msg.user { justify-self: start; background: var(--grad); color: #fff; border-end-start-radius: 4px; }
+.msg.assistant { justify-self: end; background: var(--surface-2); border: 1px solid var(--line); border-end-end-radius: 4px; white-space: normal; }
+.msg.assistant ul { margin: 4px 0; padding-inline-start: 20px; }
+.msg.assistant p + p { margin-top: 8px; }
+.msg-actions { display: flex; gap: 4px; margin-top: 6px; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip { border: 1px solid var(--line); border-radius: 999px; padding: 5px 13px; background: var(--surface); color: var(--muted); font-size: .86rem; }
+.chip:hover, .chip[aria-pressed="true"] { border-color: var(--rose); color: var(--rose); }
+
+/* الأفكار */
+.ideas { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+.idea { text-align: start; display: grid; gap: 6px; align-content: start; }
+.idea:hover { border-color: var(--rose); }
+
+.toast { position: fixed; bottom: calc(84px + env(safe-area-inset-bottom, 0px)); left: 50%; transform: translateX(-50%); z-index: 40; background: var(--ink); color: var(--surface); padding: 9px 16px; border-radius: 12px; box-shadow: var(--shadow); max-width: calc(100% - 32px); }
+.busy-note { display: flex; align-items: center; gap: 10px; color: var(--muted); }
+.spinner { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--line); border-top-color: var(--rose); animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }
+
+/* الجوال: شريط تنقل سفلي */
+@media (max-width: 860px) {
+  .top-inner { justify-content: center; }
+  .nav { position: fixed; inset: auto 0 0 0; z-index: 20; background: var(--surface); border-top: 1px solid var(--line); justify-content: space-around;
+    padding-block: 6px calc(6px + env(safe-area-inset-bottom, 0px)); padding-left: max(4px, env(safe-area-inset-left, 0px)); padding-right: max(4px, env(safe-area-inset-right, 0px)); }
+  .nav a { flex-direction: column; gap: 1px; padding: 5px 4px; font-size: .7rem; flex: 1; }
+  .nav a[aria-current="page"] { background: none; }
+  .nav svg { width: 21px; height: 21px; }
+  h1 { font-size: 1.3rem; }
+  .goal-row { grid-template-columns: 1fr; }
+  .launch-row { grid-template-columns: 1fr 1fr; }
+  .launch-row .wide { grid-column: 1 / -1; }
+  .timeline li { grid-template-columns: 1fr; gap: 2px; }
+  .msg { max-width: 94%; }
+}
+</style>
+
+<header class="top">
+  <div class="top-inner">
+    <img class="logo logo-light-bg" src="data:image/png;base64,__LOGO_DARK__" alt="أبلة سارة">
+    <img class="logo logo-dark-bg" src="data:image/png;base64,__LOGO_LIGHT__" alt="أبلة سارة">
+    <nav class="nav" aria-label="الأقسام">
+      <a href="#week" data-view="week"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>هذا الأسبوع</span></a>
+      <a href="#plan" data-view="plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.1 5.55a2 2 0 0 0 1.8 0l3.65-1.83A1 1 0 0 1 21 4.62v12.76a1 1 0 0 1-.55.9l-4.56 2.27a2 2 0 0 1-1.78 0l-4.22-2.1a2 2 0 0 0-1.78 0l-3.66 1.83A1 1 0 0 1 3 19.38V6.62a1 1 0 0 1 .55-.9l4.56-2.27a2 2 0 0 1 1.78 0z"/><path d="M15 5.76v15M9 3.24v15"/></svg><span>الخطة</span></a>
+      <a href="#ideas" data-view="ideas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6M10 22h4"/></svg><span>الأفكار</span></a>
+      <a href="#assistant" data-view="assistant"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z"/></svg><span>المساعد</span></a>
+      <a href="#profile" data-view="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>ملف الحساب</span></a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p id="offline" class="notice" hidden>تُحفظ البيانات عند فتح الصفحة من claude.ai بحسابك. هذه نسخة للعرض فقط.</p>
+
+  <!-- هذا الأسبوع -->
+  <section id="view-week" class="stack">
+    <div class="page-head">
+      <div><h1>هذا الأسبوع</h1><p>منشور كل يوم، ومتابعة التصوير والتعديل والنشر.</p></div>
+      <div class="row">
+        <button id="copy-prompts" class="btn-ghost">نسخ برومبتات التصميم</button>
+        <button id="copy-week" class="btn-ghost">نسخ الأسبوع كاملًا</button>
+      </div>
+    </div>
+
+    <div id="today" class="card today stack" hidden></div>
+
+    <div class="card stack">
+      <div class="week-nav">
+        <button id="prev-week" class="btn-ghost">› السابق</button>
+        <div style="text-align:center"><h2 id="week-label" class="tabular"></h2><button id="this-week" class="btn-ghost btn-sm" hidden>العودة إلى هذا الأسبوع</button></div>
+        <button id="next-week" class="btn-ghost">التالي ‹</button>
+      </div>
+      <div id="plan-strip" class="plan-strip" hidden></div>
+      <form id="week-form" class="row">
+        <input id="week-topic" name="topic" placeholder="مناسبة أو موضوع لهذا الأسبوع (اختياري)" style="flex:1;min-width:200px" autocomplete="off">
+        <select id="week-mix" name="mix" style="width:auto" aria-label="نوع المحتوى">
+          <option value="voiceover">ريلز بتعليق صوتي</option>
+          <option value="mixed">ريلز وكاروسيل</option>
+        </select>
+        <input id="week-time" name="time" type="time" value="19:00" style="width:auto" aria-label="وقت النشر">
+        <button class="btn-primary" id="plan-week-btn">تخطيط الأسبوع</button>
+      </form>
+      <div id="week-busy" class="busy-note" hidden><span class="spinner"></span><span>جارٍ كتابة منشورات الأسبوع… قد يستغرق ذلك دقيقة أو دقيقتين.</span></div>
+      <div id="week-preview" class="stack" hidden></div>
+    </div>
+
+    <div id="days" class="days"></div>
+  </section>
+
+  <!-- الخطة -->
+  <section id="view-plan" class="stack" hidden>
+    <div class="page-head"><div><h1>الخطة الشهرية</h1><p>الأهداف والإطلاقات ومواعيدها، ومنها خطة أسبوعًا بأسبوع.</p></div></div>
+    <form id="plan-form" class="card stack">
+      <div class="grid2">
+        <label for="plan-start">تاريخ البدء <input id="plan-start" name="startDate" type="date" required></label>
+        <label for="plan-weeks">المدة
+          <select id="plan-weeks" name="weeks"><option value="4">شهر</option><option value="8">شهران</option><option value="13">٣ أشهر</option></select>
+        </label>
+      </div>
+      <fieldset><legend>الأهداف</legend><div id="goal-list" class="stack"></div></fieldset>
+      <fieldset><legend>الإطلاقات القادمة</legend>
+        <p class="hint">دورة أو مجتمع أو اشتراك، مع تاريخ الإطلاق، وتحدد الخطة موعد بدء الإعلان عنه.</p>
+        <div id="launch-list" class="stack"></div>
+        <div><button type="button" id="add-launch" class="btn-ghost">+ إضافة إطلاق</button></div>
+      </fieldset>
+      <label for="plan-notes">ملاحظات <textarea id="plan-notes" name="notes" rows="2" placeholder="مناسبات، أمور تريد تجنبها…"></textarea></label>
+      <div class="row">
+        <button type="submit" class="btn-dark">حفظ</button>
+        <button type="button" id="build-plan" class="btn-primary">إنشاء الخطة</button>
+      </div>
+      <div id="plan-busy" class="busy-note" hidden><span class="spinner"></span><span>جارٍ إنشاء الخطة… قد يستغرق ذلك دقيقة أو دقيقتين.</span></div>
+    </form>
+    <div id="plan-out" class="stack"></div>
+  </section>
+
+  <!-- الأفكار -->
+  <section id="view-ideas" class="stack" hidden>
+    <div class="page-head">
+      <div><h1>الأفكار</h1><p>أفكار بلا موعد، تُضاف إلى أي يوم لاحقًا.</p></div>
+      <button id="suggest-btn" class="btn-dark">اقتراح أفكار</button>
+    </div>
+    <form id="idea-form" class="card row">
+      <input id="idea-title" placeholder="فكرة جديدة؟ اكتبها هنا…" style="flex:1;min-width:200px" autocomplete="off" required>
+      <select id="idea-format" style="width:auto" aria-label="النوع"><option value="reel">ريل</option><option value="carousel">كاروسيل</option><option value="post">منشور</option></select>
+      <button class="btn-primary">حفظ</button>
+    </form>
+    <div id="suggest-busy" class="busy-note" hidden><span class="spinner"></span><span>جارٍ كتابة الاقتراحات…</span></div>
+    <div id="suggestions" class="ideas"></div>
+    <div id="ideas" class="ideas"></div>
+  </section>
+
+  <!-- المساعد -->
+  <section id="view-assistant" class="stack" hidden>
+    <div class="page-head">
+      <div><h1>المساعد</h1><p>يفكر معك في المحتوى والمنتجات والدورات، ويعرف خطتك وأسبوعك.</p></div>
+      <button id="chat-reset" class="btn-ghost">محادثة جديدة</button>
+    </div>
+    <div class="card stack">
+      <div id="chat-log" class="chat-log"></div>
+      <div id="chat-chips" class="chips">
+        <button type="button" class="chip">ما المنتج أو الدورة التي يمكن إضافتها لجمهوري؟</button>
+        <button type="button" class="chip">راجع خطتي وأخبرني بما ينقصها</button>
+        <button type="button" class="chip">اقترح ٥ أفكار ريلز تجذب متابعين جددًا</button>
+        <button type="button" class="chip">كيف أعلن عن الدورة القادمة دون بيع مباشر؟</button>
+      </div>
+      <form id="chat-form" class="row" style="align-items:flex-end">
+        <textarea id="chat-input" rows="2" placeholder="اكتب سؤالك أو فكرتك… (Enter للإرسال)" style="flex:1;min-width:200px"></textarea>
+        <button class="btn-primary" id="chat-send">إرسال</button>
+        <button type="button" class="btn-ghost" id="chat-stop" hidden>إيقاف</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ملف الحساب -->
+  <section id="view-profile" class="stack" hidden>
+    <div class="page-head">
+      <div><h1>ملف الحساب</h1><p>تعتمد عليه الخطط والاقتراحات؛ كلما كان أدق، جاءت الأفكار أقرب إلى أسلوبك.</p></div>
+      <button id="profile-preset" class="btn-dark">تعبئة من المهارات</button>
+    </div>
+    <form id="profile-form" class="card stack">
+      <label for="pf-handle">اسم الحساب <input id="pf-handle" name="handle" placeholder="@ablasarahq8"></label>
+      <label for="pf-niche">المجال <input id="pf-niche" name="niche"></label>
+      <label for="pf-audience">الجمهور <textarea id="pf-audience" name="audience" rows="2"></textarea></label>
+      <label for="pf-tone">الأسلوب <textarea id="pf-tone" name="tone" rows="2"></textarea></label>
+      <label for="pf-language">لغة المحتوى ولهجته <textarea id="pf-language" name="language" rows="2"></textarea></label>
+      <label for="pf-goals">الأهداف <textarea id="pf-goals" name="goals" rows="2"></textarea></label>
+      <label for="pf-pillars">محاور المحتوى <textarea id="pf-pillars" name="pillars" rows="2"></textarea></label>
+      <label for="pf-examples">أمثلة من كابشنات سابقة ناجحة <textarea id="pf-examples" name="examples" rows="4"></textarea></label>
+      <div><button class="btn-primary">حفظ الملف</button></div>
+    </form>
+  </section>
+</main>
+
+<!-- محرر المنشور -->
+<div id="sheet" class="sheet-wrap" hidden>
+  <form id="post-form" class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+    <div class="sheet-head"><h2 id="sheet-title">المنشور</h2><button type="button" class="btn-ghost" id="sheet-close">إغلاق</button></div>
+    <label for="ps-title">العنوان <input id="ps-title" name="title" required></label>
+    <div class="grid2">
+      <label for="ps-format">النوع <select id="ps-format" name="format"><option value="reel">ريل</option><option value="carousel">كاروسيل</option><option value="post">منشور</option></select></label>
+      <label for="ps-date">اليوم <input id="ps-date" name="date" type="date"></label>
+      <label for="ps-time">الوقت <input id="ps-time" name="time" type="time"></label>
+      <label for="ps-funnel">مرحلة القمع <select id="ps-funnel" name="funnel"><option value="">—</option><option value="tof">TOF وعي وانتشار</option><option value="mof">MOF ثقة واهتمام</option><option value="bof">BOF تحويل وبيع</option></select></label>
+    </div>
+    <div class="checks">
+      <label class="check"><input type="checkbox" id="ck-shot" data-check="shot"> صُوِّر</label>
+      <label class="check"><input type="checkbox" id="ck-edited" data-check="edited"> عُدِّل</label>
+      <label class="check"><input type="checkbox" id="ck-posted" data-check="posted"> نُشر</label>
+    </div>
+    <label for="ps-notes">الفكرة واللقطات المطلوبة <textarea id="ps-notes" name="notes" rows="4"></textarea></label>
+    <label for="ps-script"><span class="label-row">نص التعليق الصوتي (للتسجيل) <button type="button" class="btn-ghost btn-sm" data-copy-field="script">نسخ</button></span>
+      <textarea id="ps-script" name="script" rows="7"></textarea></label>
+    <label for="ps-caption"><span class="label-row">الكابشن <span class="row" style="gap:4px"><button type="button" class="btn-ghost btn-sm" id="copy-caption">نسخ مع الهاشتاقات</button><button type="button" class="btn-ghost btn-sm" id="ai-caption">كتابة الكابشن</button></span></span>
+      <textarea id="ps-caption" name="caption" rows="5"></textarea></label>
+    <label for="ps-hashtags">الهاشتاقات <input id="ps-hashtags" name="hashtags"></label>
+    <label for="ps-prompt"><span class="label-row">برومبت التصميم <span class="row" style="gap:4px"><button type="button" class="btn-ghost btn-sm" data-copy-field="designPrompt">نسخ</button><button type="button" class="btn-ghost btn-sm" id="ai-prompt">كتابة البرومبت</button></span></span>
+      <textarea id="ps-prompt" name="designPrompt" rows="6" placeholder="يُلصق في محادثة Claude أو ChatGPT لإنشاء التصميم"></textarea></label>
+    <div class="stack">
+      <div class="label-row"><b>التصاميم والفيديو</b>
+        <span class="row" style="gap:4px">
+          <label class="btn-ghost btn-sm" style="display:inline-flex;cursor:pointer" id="upload-label">رفع ملفات<input type="file" id="upload-input" accept="image/*,video/mp4,video/quicktime" multiple hidden></label>
+          <button type="button" class="btn-ghost btn-sm" id="download-all">تنزيل الكل</button>
+        </span>
+      </div>
+      <p class="hint">حد كل ملف ٢٠ ميغابايت؛ صدّر الفيديو بجودة أخف إذا تجاوزه.</p>
+      <div id="sheet-media" class="thumbs"></div>
+    </div>
+    <div class="row between">
+      <span class="row" style="gap:4px"><button type="button" class="btn-danger" id="delete-post">حذف</button><button type="button" class="btn-danger" id="delete-confirm" hidden>تأكيد الحذف</button></span>
+      <button class="btn-primary" type="submit">حفظ</button>
+    </div>
+  </form>
+</div>
+
+<div id="toast" class="toast" role="status" hidden></div>
+
+<script>
+(() => {
+  "use strict";
+  // ---------- أدوات ----------
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const esc = (s = "") => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  const DAYS = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+  const FORMATS = { reel: "ريل", carousel: "كاروسيل", post: "منشور" };
+  const FUNNEL = { tof: "TOF", mof: "MOF", bof: "BOF" };
+  const FUNNEL_NAME = { tof: "وعي وانتشار", mof: "ثقة واهتمام", bof: "تحويل وبيع" };
+  const GOALS = {
+    followers: { name: "زيادة المتابعين", ph: "مثلًا: من ٢٬٠٠٠ إلى ٥٬٠٠٠" },
+    engagement: { name: "رفع التفاعل", ph: "مثلًا: تعليقات وحفظ أكثر" },
+    community: { name: "الانضمام للمجتمع", ph: "مثلًا: ١٠٠ عضو" },
+    courses: { name: "بيع الدورات", ph: "مثلًا: ٥٠ تسجيلًا" },
+    subscriptions: { name: "زيادة الاشتراكات", ph: "مثلًا: ٢٠٠ مشترك" },
+    brand: { name: "بناء العلامة الشخصية", ph: "مثلًا: مرجع في المجال" },
+  };
+  const AR = "٠١٢٣٤٥٦٧٨٩";
+  const arNum = (n) => String(n).replace(/\d/g, (d) => AR[d]);
+  const pad = (n) => String(n).padStart(2, "0");
+  const dateStr = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const fromStr = (s) => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+  const addDays = (s, n) => { const d = fromStr(s); d.setDate(d.getDate() + n); return dateStr(d); };
+  const sundayOf = (s) => addDays(s, -fromStr(s).getDay());
+  const diffDays = (a, b) => Math.round((fromStr(a) - fromStr(b)) / 86400000);
+  const fmt = (s, o) => fromStr(s).toLocaleDateString("ar-KW", o);
+  const today = () => dateStr(new Date());
+
+  function toast(msg) {
+    const el = $("#toast");
+    el.textContent = msg;
+    el.hidden = false;
+    clearTimeout(toast.t);
+    toast.t = setTimeout(() => (el.hidden = true), 3200);
+  }
+
+  async function copy(text, done) {
+    try { await navigator.clipboard.writeText(text); toast(done || "نُسخ"); }
+    catch {
+      const ta = document.createElement("textarea");
+      ta.value = text; document.body.append(ta); ta.select();
+      toast("حدّد النص وانسخه يدويًا");
+      setTimeout(() => ta.remove(), 8000);
+    }
+  }
+
+  const SAMPLE_ERRORS = {
+    not_granted: "لم يُسمح للصفحة باستخدام Claude.",
+    sampling_disabled: "Claude غير متاح لهذا الحساب.",
+    rate_limited: "تم الوصول إلى حد الاستخدام مؤقتًا؛ حاول بعد قليل.",
+    invalid_json: "جاء الرد بصيغة غير متوقعة؛ حاول مرة أخرى.",
+    refused: "تعذّر تنفيذ هذا الطلب؛ جرّب صياغة أخرى.",
+    session_expired: "انتهت الجلسة؛ سجّل الدخول من جديد.",
+  };
+  const sampleError = (e) => SAMPLE_ERRORS[e?.code] || "تعذّر الوصول إلى Claude الآن؛ حاول مرة أخرى.";
+
+  // ---------- الحالة ----------
+  let db = null, assets = null, downloads = null, sample = null;
+  let posts = [];               // كل المنشورات
+  let profile = {};
+  let strategy = { startDate: "", weeks: 4, goals: [], launches: [], notes: "", plan: null };
+  let chat = [];
+  let weekDate = sundayOf(today());
+  let editing = null;           // المنشور المفتوح بالمحرر
+  let draftPlan = null;         // خطة أسبوع مقترحة قبل الاعتماد
+
+  // ---------- التنقل ----------
+  const VIEWS = ["week", "plan", "ideas", "assistant", "profile"];
+  function route() {
+    const v = VIEWS.includes(location.hash.slice(1)) ? location.hash.slice(1) : "week";
+    VIEWS.forEach((x) => ($("#view-" + x).hidden = x !== v));
+    $$(".nav a").forEach((a) => a.setAttribute("aria-current", a.dataset.view === v ? "page" : "false"));
+  }
+  window.addEventListener("hashchange", route);
+  route();
+
+  // ---------- الخطة: حسابات الأسابيع ----------
+  function launchEvents() {
+    const out = [];
+    for (const lp of strategy.plan?.launchPlans || []) {
+      const l = strategy.launches.find((x) => x.name === lp.launchName);
+      if (!l?.date) continue;
+      for (const st of lp.steps || []) out.push({ date: addDays(l.date, st.daysFromLaunch), launch: l.name, title: st.title, action: st.action, isLaunch: st.daysFromLaunch === 0 });
+    }
+    return out.sort((a, b) => a.date.localeCompare(b.date));
+  }
+  function planWeekFor(sunday) {
+    if (!strategy.plan || !strategy.startDate) return null;
+    const n = Math.floor(diffDays(sunday, sundayOf(strategy.startDate)) / 7) + 1;
+    const w = strategy.plan.weeks?.find((x) => x.week === n);
+    if (!w) return null;
+    const end = addDays(sunday, 6);
+    return { ...w, events: launchEvents().filter((e) => e.date >= sunday && e.date <= end) };
+  }
+
+  // ---------- نصوص الذكاء الاصطناعي ----------
+  const LANG_RULES = `قاعدة اللغة: كل نص يُنشر للجمهور (الكابشن، الهوك، نصوص الشرائح، التعليق الصوتي، النص على الشاشة، الدعوة للإجراء) يُكتب باللهجة المحددة في ملف الحساب. أما الشروحات والملاحظات الداخلية (ملخص الخطة، الثيمات، شرح التنفيذ، قائمة اللقطات، البرومبتات) فبالعربية الفصحى المبسطة.`;
+  const profileText = () => `ملف الحساب:
+- اسم الحساب: ${profile.handle || "غير محدد"}
+- المجال: ${profile.niche || "غير محدد"}
+- الجمهور: ${profile.audience || "غير محدد"}
+- الأسلوب: ${profile.tone || "غير محدد"}
+- لغة المحتوى ولهجته: ${profile.language || "عربي"}
+- الأهداف: ${profile.goals || "غير محدد"}
+- محاور المحتوى: ${profile.pillars || "غير محدد"}
+- أمثلة من كابشنات سابقة: ${profile.examples || "لا يوجد"}`;
+  const DESIGN_HINT = `designPrompt: برومبت تنسخه صاحبة الحساب وتلصقه في محادثة Claude (لديها مهارة sarah-instagram-carousel للمنشور والكاروسيل، ومهارة sarah-scrapbook-reel للريل) أو ChatGPT. يبدأ بـ «استخدم مهارة ...» المناسبة، ويذكر نوع التصميم ومقاسه (منشور ١٠٨٠×١٣٥٠، كاروسيل ٥-٧ شرائح ١٠٨٠×١٣٥٠، ريل ٩:١٦)، ونص كل شريحة أو نص الغلاف بالضبط باللهجة، وأي عناصر مطلوبة.`;
+  const VOICEOVER_RULES = `- كل المنشورات ريلز بتعليق صوتي (format = "reel")، بالاعتماد على الصوت والنص على الشاشة، دون تصوير شاشة ودون صور ثابتة.
+- script: نص التعليق الصوتي كاملًا باللهجة، جاهز للتسجيل (٢٠-٤٥ ثانية)، مقسم مشاهد، كل مشهد في سطر بهذا الشكل:
+  المشهد ١ (٠-٣ ث) — اللقطة: ... | الصوت: «...» | على الشاشة: ...
+  أول مشهد هوك قوي في أول ٣ ثوانٍ، وآخر مشهد دعوة للإجراء.
+- notes: قائمة اللقطات المطلوب تصويرها في يوم التصوير (يدان تكتبان، مكتب، دفتر، أدوات، قهوة، أجواء الصف…)، والوجه ليس ضروريًا.
+- designPrompt: يبدأ بـ «استخدم مهارة sarah-scrapbook-reel»، ويذكر أن تسجيلًا صوتيًا بهذا النص ولقطات ستُرسل، ويطلب ريل ٩:١٦ بستايل السكراب بوك مع الكابشن على الشاشة، ونص الغلاف (هوك قصير باللهجة).`;
+
+  function weekContextText(sunday) {
+    const w = planWeekFor(sunday);
+    if (!w) return "";
+    return `هذا الأسبوع رقم ${w.week} من الخطة (${w.phase}):
+- الثيم: ${w.theme} — ${w.focus}
+- الدعوة للإجراء: ${w.cta}
+${w.events.length ? `- أحداث إطلاق هذا الأسبوع: ${w.events.map((e) => `${DAYS[fromStr(e.date).getDay()]}: ${e.launch} — ${e.title}`).join("؛ ")}` : ""}`;
+  }
+
+  // ---------- الاتصال بالقدرات ----------
+  async function init() {
+    const c = window.claude;
+    if (!c?.use) { $("#offline").hidden = false; render(); return; }
+    [db, assets, downloads, sample] = await Promise.all([c.use("db"), c.use("assets"), c.use("downloads"), c.use("sample")]);
+    if (!db) { $("#offline").hidden = false; render(); return; }
+    const offlineTimer = setTimeout(() => { $("#offline").textContent = "تعذّر الوصول إلى البيانات حاليًا؛ قد تكون المعروضة قديمة."; $("#offline").hidden = false; }, 10000);
+    const ok = (snap) => { if (!snap.metadata?.fromCache) { clearTimeout(offlineTimer); $("#offline").hidden = true; } };
+    const fail = () => { $("#offline").textContent = "تعذّر الوصول إلى البيانات؛ أعد فتح الصفحة."; $("#offline").hidden = false; };
+    db.collection("posts").onSnapshot((snap) => {
+      ok(snap);
+      posts = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      render();
+      if (editing) { const fresh = posts.find((p) => p.id === editing.id); if (fresh && !editing.dirty) { editing = { ...structuredClone(fresh) }; fillSheetMedia(); } }
+    }, fail);
+    db.doc("app/profile").onSnapshot((s) => { ok(s); profile = s.exists ? { ...s.data() } : {}; fillProfile(); }, fail);
+    db.doc("app/strategy").onSnapshot((s) => { ok(s); if (s.exists) strategy = { ...strategy, ...s.data() }; fillPlanForm(); renderPlan(); renderWeek(); }, fail);
+    db.doc("app/chat").onSnapshot((s) => { ok(s); chat = s.exists ? [...(s.data().turns || [])] : []; renderChat(); }, fail);
+    $("#upload-label").hidden = !assets;
+  }
+
+  function render() { renderWeek(); renderIdeas(); }
+
+  // ---------- هذا الأسبوع ----------
+  const weekPosts = () => { const end = addDays(weekDate, 6); return posts.filter((p) => p.date && p.date >= weekDate && p.date <= end); };
+  const isDone = (p) => (p.checks || []).includes("posted");
+  const checksBadge = (p) => { const n = (p.checks || []).length; return n ? `<span class="badge ${n === 3 ? "ok" : ""}">✓ ${arNum(n)}/٣</span>` : ""; };
+
+  function renderWeek() {
+    const end = addDays(weekDate, 6);
+    $("#week-label").textContent = `${fmt(weekDate, { day: "numeric", month: "long" })} – ${fmt(end, { day: "numeric", month: "long", year: "numeric" })}`;
+    $("#this-week").hidden = weekDate === sundayOf(today());
+    const w = planWeekFor(weekDate);
+    $("#plan-strip").hidden = !w;
+    if (w) $("#plan-strip").innerHTML = `<b>الأسبوع ${arNum(w.week)} من الخطة · ${esc(w.phase)}</b><span><b>${esc(w.theme)}</b> — ${esc(w.focus)}</span><span class="hint">الدعوة للإجراء: ${esc(w.cta)}</span>${w.events.map((e) => `<span class="hint">إطلاق · ${fmt(e.date, { weekday: "long" })}: ${esc(e.launch)} — ${esc(e.title)}</span>`).join("")}`;
+    const list = weekPosts();
+    $("#days").innerHTML = DAYS.map((name, i) => {
+      const d = addDays(weekDate, i);
+      const dayPosts = list.filter((p) => p.date === d).sort((a, b) => (a.time || "").localeCompare(b.time || ""));
+      return `<div class="day ${d === today() ? "today" : ""}">
+        <div class="day-head"><b>${name}</b><span class="tabular">${fmt(d, { day: "numeric", month: "short" })}</span></div>
+        ${dayPosts.map((p) => `<button class="post-chip ${esc(p.funnel || "")} ${isDone(p) ? "done" : ""}" data-open="${esc(p.id)}">
+          <span class="hint">${esc(FORMATS[p.format] || "")}${p.time ? " · " + esc(p.time) : ""}</span>
+          <b>${esc(p.title)}</b>
+          <span class="meta">${p.funnel ? `<span class="badge ${esc(p.funnel)}">${FUNNEL[p.funnel]}</span>` : ""}${(p.media || []).length ? `<span class="badge">${arNum(p.media.length)} ملف</span>` : ""}${checksBadge(p)}</span>
+        </button>`).join("")}
+        <button class="add-btn" data-add="${d}">+ إضافة</button>
+      </div>`;
+    }).join("");
+    renderToday();
+  }
+
+  function renderToday() {
+    const t = today();
+    const list = posts.filter((p) => p.date === t);
+    const el = $("#today");
+    el.hidden = !list.length;
+    if (!list.length) return;
+    el.innerHTML = `<div class="row between"><h2>منشور اليوم</h2><span class="hint">${fmt(t, { weekday: "long", day: "numeric", month: "long" })}</span></div>
+      ${list.map((p) => `<div class="today-item" data-id="${esc(p.id)}">
+        <div class="row between"><b>${esc(FORMATS[p.format] || "")}: ${esc(p.title)}</b><label class="check"><input type="checkbox" data-posted ${isDone(p) ? "checked" : ""}> نُشر</label></div>
+        ${(p.media || []).length ? `<div class="thumbs">${p.media.map((m) => `<figure>${m.type === "video" ? `<video src="/_blob/${esc(m.id)}" muted playsinline preload="metadata"></video>` : `<img src="/_blob/${esc(m.id)}" alt="">`}</figure>`).join("")}</div>` : `<p class="hint">لم تُرفع التصاميم بعد؛ افتح المنشور وارفعها.</p>`}
+        <div class="row">
+          ${(p.media || []).length ? `<button class="btn-primary btn-sm" data-dl>تنزيل الملفات</button>` : ""}
+          <button class="btn-dark btn-sm" data-cap>نسخ الكابشن</button>
+          <button class="btn-ghost btn-sm" data-open="${esc(p.id)}">فتح المنشور</button>
+        </div>
+      </div>`).join("")}`;
+  }
+
+  $("#today").addEventListener("click", (e) => {
+    const item = e.target.closest(".today-item");
+    if (!item) return;
+    const p = posts.find((x) => x.id === item.dataset.id);
+    if (!p) return;
+    if (e.target.closest("[data-cap]")) copy([p.caption, p.hashtags].filter(Boolean).join("\n\n"), "نُسخ الكابشن والهاشتاقات");
+    if (e.target.closest("[data-dl]")) downloadAll(p);
+  });
+  $("#today").addEventListener("change", async (e) => {
+    if (!e.target.matches("[data-posted]") || !db) return;
+    const p = posts.find((x) => x.id === e.target.closest(".today-item").dataset.id);
+    const checks = new Set(p.checks || []);
+    e.target.checked ? checks.add("posted") : checks.delete("posted");
+    await db.doc("posts/" + p.id).update({ checks: [...checks] });
+    if (e.target.checked) toast("أحسنت، نُشر منشور اليوم");
+  });
+
+  document.addEventListener("click", (e) => {
+    const open = e.target.closest("[data-open]");
+    if (open) return openSheet(posts.find((p) => p.id === open.dataset.open));
+    const add = e.target.closest("[data-add]");
+    if (add) return newPost({ date: add.dataset.add, time: $("#week-time").value || "19:00" });
+  });
+
+  $("#prev-week").onclick = () => { weekDate = addDays(weekDate, -7); renderWeek(); };
+  $("#next-week").onclick = () => { weekDate = addDays(weekDate, 7); renderWeek(); };
+  $("#this-week").onclick = () => { weekDate = sundayOf(today()); renderWeek(); };
+
+  // تخطيط الأسبوع
+  $("#week-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!sample) return toast("الذكاء الاصطناعي غير متاح في هذا العرض");
+    const mix = $("#week-mix").value;
+    const existing = weekPosts().map((p) => `- ${DAYS[fromStr(p.date).getDay()]}: ${p.title}`).join("\n");
+    const recent = posts.slice(-25).map((p) => `- ${p.title}`).join("\n");
+    const prompt = `أنت خبير محتوى إنستغرام تخطط أسبوعًا لصاحبة حساب.
+${LANG_RULES}
+
+${profileText()}
+
+${weekContextText(weekDate)}
+منشورات موجودة في هذا الأسبوع (لا تكررها؛ خطط للأيام الفارغة فقط):
+${existing || "لا يوجد"}
+منشورات سابقة لا تكررها:
+${recent || "لا يوجد"}
+${$("#week-topic").value ? `موضوع أو مناسبة الأسبوع: ${$("#week-topic").value}` : ""}
+
+خطط منشورًا واحدًا لكل يوم فارغ من الأحد (day = 0) إلى السبت (day = 6).
+- نوّع مراحل القمع (أغلبها tof، وبعضها mof، وقليل bof) والأهداف، ولا تكرر هدفًا في يومين متتاليين.
+${mix === "voiceover" ? VOICEOVER_RULES : `- خليط: ٣ ريلز تقريبًا والباقي منشورات وكاروسيل. script للريل فقط، ولغيره نص فارغ.\n- ${DESIGN_HINT}`}
+
+أعد JSON فقط بهذا الشكل:
+{"posts":[{"day":0,"title":"عنوان قصير","format":"reel|carousel|post","funnel":"tof|mof|bof","hook":"...","notes":"...","script":"...","caption":"كابشن كامل باللهجة ينتهي بدعوة للتفاعل","hashtags":"#... #...","designPrompt":"..."}]}`;
+    $("#plan-week-btn").disabled = true;
+    $("#week-busy").hidden = false;
+    try {
+      const res = await sample.json(prompt, { modelTier: "default", cache: false });
+      const list = Array.isArray(res?.posts) ? res.posts.filter((p) => p && p.title && Number.isInteger(p.day) && p.day >= 0 && p.day <= 6) : [];
+      if (!list.length) throw { code: "invalid_json" };
+      draftPlan = { sunday: weekDate, time: $("#week-time").value || "19:00", posts: list.sort((a, b) => a.day - b.day) };
+      renderDraft();
+    } catch (err) { toast(sampleError(err)); }
+    finally { $("#plan-week-btn").disabled = false; $("#week-busy").hidden = true; }
+  });
+
+  function renderDraft() {
+    const el = $("#week-preview");
+    el.hidden = !draftPlan;
+    if (!draftPlan) return;
+    el.innerHTML = `<div class="row between"><h2>الخطة المقترحة</h2><span class="row"><button class="btn-ghost" id="draft-cancel">إلغاء</button><button class="btn-primary" id="draft-accept">اعتماد الخطة</button></span></div>
+      ${draftPlan.posts.map((p) => `<div class="today-item"><b>${DAYS[p.day]} · ${esc(FORMATS[p.format] || "")}: ${esc(p.title)}</b><span class="hint">${esc(p.hook || "")}</span></div>`).join("")}`;
+    $("#draft-cancel").onclick = () => { draftPlan = null; renderDraft(); };
+    $("#draft-accept").onclick = acceptDraft;
+  }
+
+  async function acceptDraft(e) {
+    if (!db) return;
+    e.target.disabled = true;
+    try {
+      for (const p of draftPlan.posts) {
+        await db.collection("posts").add({
+          title: String(p.title), format: ["reel", "carousel", "post"].includes(p.format) ? p.format : "reel",
+          funnel: ["tof", "mof", "bof"].includes(p.funnel) ? p.funnel : "",
+          notes: [p.hook ? `الهوك: ${p.hook}` : "", p.notes || ""].filter(Boolean).join("\n\n"),
+          script: String(p.script || ""), caption: String(p.caption || ""), hashtags: String(p.hashtags || ""),
+          designPrompt: String(p.designPrompt || ""), date: addDays(draftPlan.sunday, p.day), time: draftPlan.time,
+          checks: [], media: [], createdAt: new Date().toISOString(),
+        });
+      }
+      draftPlan = null;
+      renderDraft();
+      toast("حُفظت خطة الأسبوع");
+    } catch { toast("تعذّر الحفظ؛ حاول مرة أخرى"); e.target.disabled = false; }
+  }
+
+  // نسخ الأسبوع والبرومبتات
+  function weekText() {
+    const w = planWeekFor(weekDate);
+    const lines = [`# خطة الأسبوع: ${$("#week-label").textContent}`];
+    if (w) lines.push(`الثيم: ${w.theme} — ${w.focus}`, `الدعوة للإجراء: ${w.cta}`);
+    for (const p of weekPosts().sort((a, b) => a.date.localeCompare(b.date))) {
+      lines.push("", `## ${DAYS[fromStr(p.date).getDay()]} ${fmt(p.date, { day: "numeric", month: "long" })} — ${FORMATS[p.format] || ""}: ${p.title}`);
+      if (p.notes) lines.push(`الفكرة واللقطات:\n${p.notes}`);
+      if (p.script) lines.push(`نص التعليق الصوتي:\n${p.script}`);
+      if (p.caption) lines.push(`الكابشن:\n${p.caption}`);
+      if (p.hashtags) lines.push(`الهاشتاقات: ${p.hashtags}`);
+      if (p.designPrompt) lines.push(`برومبت التصميم:\n${p.designPrompt}`);
+    }
+    return lines.join("\n");
+  }
+  $("#copy-week").onclick = () => weekPosts().length ? copy(weekText(), "نُسخ الأسبوع") : toast("لا توجد منشورات في هذا الأسبوع");
+  $("#copy-prompts").onclick = () => {
+    const list = weekPosts().sort((a, b) => a.date.localeCompare(b.date));
+    if (!list.length) return toast("لا توجد منشورات في هذا الأسبوع");
+    copy(list.map((p) => `## ${DAYS[fromStr(p.date).getDay()]} — ${FORMATS[p.format] || ""}: ${p.title}\n\n${p.script ? `نص التعليق الصوتي:\n${p.script}\n\n` : ""}${p.designPrompt || "(لا يوجد برومبت بعد)"}`).join("\n\n---\n\n"), "نُسخت برومبتات التصميم");
+  };
+
+  // ---------- المحرر ----------
+  const FIELDS = ["title", "format", "date", "time", "funnel", "notes", "script", "caption", "hashtags", "designPrompt"];
+  const form = $("#post-form");
+
+  async function newPost(data) {
+    if (!db) return toast("الحفظ غير متاح في هذا العرض");
+    const ref = await db.collection("posts").add({ title: "منشور جديد", format: "reel", funnel: "", notes: "", script: "", caption: "", hashtags: "", designPrompt: "", date: "", time: "", checks: [], media: [], createdAt: new Date().toISOString(), ...data });
+    openSheet({ id: ref.id, title: "منشور جديد", format: "reel", media: [], checks: [], ...data });
+    form.elements.title.select();
+  }
+
+  function openSheet(p) {
+    if (!p) return;
+    editing = structuredClone(p);
+    for (const f of FIELDS) form.elements[f].value = p[f] || "";
+    $$("[data-check]", form).forEach((c) => (c.checked = (p.checks || []).includes(c.dataset.check)));
+    $("#delete-confirm").hidden = true;
+    fillSheetMedia();
+    $("#sheet").hidden = false;
+    form.scrollTop = 0;
+  }
+  const closeSheet = () => { $("#sheet").hidden = true; editing = null; };
+  $("#sheet-close").onclick = closeSheet;
+  $("#sheet").addEventListener("click", (e) => { if (e.target.id === "sheet") closeSheet(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("#sheet").hidden) closeSheet(); });
+  form.addEventListener("input", () => { if (editing) editing.dirty = true; });
+
+  function fillSheetMedia() {
+    if (!editing) return;
+    $("#sheet-media").innerHTML = (editing.media || []).length
+      ? editing.media.map((m, i) => `<figure>${m.type === "video" ? `<video src="/_blob/${esc(m.id)}" muted playsinline controls preload="metadata"></video>` : `<img src="/_blob/${esc(m.id)}" alt="">`}<button type="button" class="rm" data-rm="${i}" aria-label="إزالة">✕</button></figure>`).join("")
+      : `<p class="hint">لا توجد ملفات بعد.</p>`;
+  }
+
+  function collect() {
+    const data = Object.fromEntries(FIELDS.map((f) => [f, form.elements[f].value.trim()]));
+    data.checks = $$("[data-check]", form).filter((c) => c.checked).map((c) => c.dataset.check);
+    data.media = editing.media || [];
+    return data;
+  }
+  async function save(quiet) {
+    if (!db || !editing) return;
+    const data = collect();
+    await db.doc("posts/" + editing.id).update(data);
+    editing = { ...editing, ...data, dirty: false };
+    if (!quiet) toast("حُفظ");
+  }
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    try { await save(); closeSheet(); } catch { toast("تعذّر الحفظ؛ حاول مرة أخرى"); }
+  });
+
+  $("#delete-post").onclick = () => ($("#delete-confirm").hidden = false);
+  $("#delete-confirm").onclick = async () => {
+    try {
+      for (const m of editing.media || []) await assets?.delete(m.id).catch(() => {});
+      await db.doc("posts/" + editing.id).delete();
+      closeSheet();
+      toast("حُذف المنشور");
+    } catch { toast("تعذّر الحذف"); }
+  };
+
+  $("#copy-caption").onclick = () => copy([form.elements.caption.value, form.elements.hashtags.value].filter(Boolean).join("\n\n"), "نُسخ الكابشن والهاشتاقات");
+  $$("[data-copy-field]").forEach((b) => (b.onclick = () => copy(form.elements[b.dataset.copyField].value, "نُسخ")));
+
+  async function aiFill(btn, prompt, apply) {
+    if (!sample) return toast("الذكاء الاصطناعي غير متاح في هذا العرض");
+    const label = btn.textContent;
+    btn.disabled = true; btn.textContent = "جارٍ الكتابة…";
+    try { apply(await sample.json(prompt, { modelTier: "default", cache: false })); editing.dirty = true; }
+    catch (err) { toast(sampleError(err)); }
+    finally { btn.disabled = false; btn.textContent = label; }
+  }
+  const postBrief = () => { const d = collect(); return `المنشور:\n- العنوان: ${d.title}\n- النوع: ${FORMATS[d.format]}\n- مرحلة القمع: ${d.funnel ? FUNNEL_NAME[d.funnel] : "غير محددة"}\n- الفكرة: ${d.notes || "لا يوجد"}\n${d.script ? `- نص التعليق الصوتي: ${d.script}` : ""}`; };
+  $("#ai-caption").onclick = (e) => aiFill(e.currentTarget, `${LANG_RULES}\n\n${profileText()}\n\n${postBrief()}\n\nاكتب كابشن إنستغرام جاهزًا للنشر باللهجة، يبدأ بهوك قوي وينتهي بدعوة للتفاعل، و٨-١٥ هاشتاق. أعد JSON فقط: {"caption":"...","hashtags":"#... #..."}`,
+    (r) => { if (r?.caption) form.elements.caption.value = r.caption; if (r?.hashtags) form.elements.hashtags.value = r.hashtags; });
+  $("#ai-prompt").onclick = (e) => aiFill(e.currentTarget, `${LANG_RULES}\n\n${profileText()}\n\n${postBrief()}\n\nاكتب ${DESIGN_HINT}\nأعد JSON فقط: {"designPrompt":"..."}`,
+    (r) => { if (r?.designPrompt) form.elements.designPrompt.value = r.designPrompt; });
+
+  // رفع الملفات وتنزيلها
+  $("#upload-input").addEventListener("change", async (e) => {
+    const files = [...e.target.files];
+    e.target.value = "";
+    if (!assets) return toast("رفع الملفات متاح لمالك الصفحة فقط");
+    for (const f of files) {
+      if (f.size > 20 * 1024 * 1024) { toast(`«${f.name}» أكبر من ٢٠ ميغابايت؛ صدّره بجودة أخف`); continue; }
+      try {
+        toast(`جارٍ رفع ${f.name}…`);
+        const a = await assets.upload(f);
+        editing.media = [...(editing.media || []), { id: a.id, type: (a.contentType || f.type).startsWith("video") ? "video" : "image", name: f.name }];
+        fillSheetMedia();
+        await save(true);
+        toast("رُفع الملف");
+      } catch (err) { toast(err?.code === "quota_exceeded" ? "امتلأت مساحة التخزين؛ احذف ملفات قديمة" : "تعذّر رفع الملف"); }
+    }
+  });
+  $("#sheet-media").addEventListener("click", async (e) => {
+    const rm = e.target.closest("[data-rm]");
+    if (!rm) return;
+    const [m] = editing.media.splice(Number(rm.dataset.rm), 1);
+    fillSheetMedia();
+    await save(true);
+    assets?.delete(m.id).catch(() => {});
+  });
+  async function downloadAll(p) {
+    const media = p.media || [];
+    if (!media.length) return toast("لا توجد ملفات");
+    if (!downloads) return toast("التنزيل غير متاح في هذا العرض؛ افتح الملف واضغط عليه مطولًا لحفظه");
+    for (const [i, m] of media.entries()) {
+      try {
+        const blob = await (await fetch("/_blob/" + m.id)).blob();
+        const ext = (m.name?.match(/\.\w+$/) || [m.type === "video" ? ".mp4" : ".png"])[0];
+        await downloads.save({ filename: `post-${p.date || "file"}-${i + 1}${ext}`, data: blob });
+      } catch (err) { if (err?.code !== "declined") toast("تعذّر تنزيل أحد الملفات"); }
+    }
+  }
+  $("#download-all").onclick = () => editing && downloadAll(collect());
+
+  // ---------- الخطة ----------
+  $("#goal-list").innerHTML = Object.entries(GOALS).map(([k, g]) => `<div class="goal-row"><label class="check"><input type="checkbox" id="goal-${k}" data-goal="${k}"> ${g.name}</label><input id="goal-d-${k}" data-goal-detail="${k}" placeholder="${g.ph}" aria-label="${g.name}"></div>`).join("");
+  let launchSeq = 0;
+  function launchRow(l = {}) {
+    const n = ++launchSeq;
+    const div = document.createElement("div");
+    div.className = "launch-row";
+    div.innerHTML = `<input id="ln-${n}" data-f="name" placeholder="اسم الإطلاق" value="${esc(l.name || "")}" aria-label="اسم الإطلاق">
+      <select id="lt-${n}" data-f="type" aria-label="النوع">${["دورة", "مجتمع", "اشتراك", "منتج", "ورشة"].map((t) => `<option ${l.type === t ? "selected" : ""}>${t}</option>`).join("")}</select>
+      <input id="ld-${n}" data-f="date" type="date" value="${esc(l.date || "")}" aria-label="تاريخ الإطلاق">
+      <button type="button" class="btn-ghost" data-rm-launch aria-label="إزالة">✕</button>
+      <input id="lx-${n}" class="wide" data-f="details" placeholder="التفاصيل: الفئة المستهدفة، السعر، ما يميزه" value="${esc(l.details || "")}" style="grid-column:1/-1" aria-label="التفاصيل">`;
+    return div;
+  }
+  $("#add-launch").onclick = () => $("#launch-list").append(launchRow());
+  $("#launch-list").addEventListener("click", (e) => { if (e.target.closest("[data-rm-launch]")) e.target.closest(".launch-row").remove(); });
+
+  function fillPlanForm() {
+    const f = $("#plan-form");
+    if (f.contains(document.activeElement)) return;
+    f.elements.startDate.value = strategy.startDate || addDays(sundayOf(today()), 7);
+    f.elements.weeks.value = String(strategy.weeks || 4);
+    f.elements.notes.value = strategy.notes || "";
+    for (const k of Object.keys(GOALS)) {
+      const g = (strategy.goals || []).find((x) => x.type === k);
+      $(`#goal-${k}`).checked = !!g;
+      $(`#goal-d-${k}`).value = g?.detail || "";
+    }
+    $("#launch-list").replaceChildren(...(strategy.launches || []).map(launchRow));
+  }
+  function collectPlan() {
+    const f = $("#plan-form");
+    return {
+      startDate: sundayOf(f.elements.startDate.value || today()),
+      weeks: Number(f.elements.weeks.value),
+      notes: f.elements.notes.value.trim(),
+      goals: $$("[data-goal]").filter((c) => c.checked).map((c) => ({ type: c.dataset.goal, detail: $(`#goal-d-${c.dataset.goal}`).value.trim() })),
+      launches: $$(".launch-row").map((r) => Object.fromEntries($$("[data-f]", r).map((x) => [x.dataset.f, x.value.trim()]))).filter((l) => l.name),
+    };
+  }
+  async function savePlanInput() {
+    if (!db) throw new Error("no db");
+    strategy = { ...strategy, ...collectPlan() };
+    await db.doc("app/strategy").set(strategy);
+  }
+  $("#plan-form").addEventListener("submit", async (e) => { e.preventDefault(); try { await savePlanInput(); toast("حُفظت"); } catch { toast("تعذّر الحفظ"); } });
+
+  $("#build-plan").onclick = async (e) => {
+    if (!sample) return toast("الذكاء الاصطناعي غير متاح في هذا العرض");
+    const input = collectPlan();
+    if (!input.goals.length) return toast("اختر هدفًا واحدًا على الأقل");
+    e.currentTarget.disabled = true;
+    $("#plan-busy").hidden = false;
+    const btn = e.currentTarget;
+    try {
+      await savePlanInput();
+      const prompt = `أنت مخطط تسويق محتوى على إنستغرام.
+${LANG_RULES}
+
+${profileText()}
+
+بداية الخطة: ${input.startDate} (الأسبوع ١ يبدأ الأحد ${input.startDate})، المدة ${input.weeks} أسابيع.
+الأهداف: ${input.goals.map((g) => `${GOALS[g.type].name}${g.detail ? ` (${g.detail})` : ""}`).join("؛ ")}
+الإطلاقات: ${input.launches.length ? input.launches.map((l) => `"${l.name}" (${l.type}) بتاريخ ${l.date || "غير محدد"}${l.details ? ` — ${l.details}` : ""}`).join("؛ ") : "لا يوجد"}
+ملاحظات: ${input.notes || "لا يوجد"}
+
+اكتب خطة: summary (فقرة)، kpis (مؤشر لكل هدف برقم واقعي)، phases (مراحل بأرقام الأسابيع)، weeks (لكل أسبوع من ١ إلى ${input.weeks}: المرحلة، الثيم، التركيز، نسب tof/mof/bof مجموعها ١٠٠ وتتغير مع المراحل، الدعوة للإجراء)، launchPlans (لكل إطلاق بنفس الاسم بالضبط: خطوات الإعلان بعدد الأيام من يوم الإطلاق، سالب قبل، ٠ يوم الإطلاق، موجب بعده، بدءًا قبل ٣-٤ أسابيع إن أمكن).
+أعد JSON فقط بهذا الشكل:
+{"summary":"...","kpis":[{"goal":"...","metric":"...","target":"..."}],"phases":[{"name":"...","startWeek":1,"endWeek":2,"objective":"..."}],"weeks":[{"week":1,"phase":"...","theme":"...","focus":"...","tof":60,"mof":30,"bof":10,"cta":"..."}],"launchPlans":[{"launchName":"...","steps":[{"daysFromLaunch":-21,"title":"...","action":"..."}]}]}`;
+      const plan = await sample.json(prompt, { modelTier: "complex", cache: false });
+      if (!Array.isArray(plan?.weeks)) throw { code: "invalid_json" };
+      strategy = { ...strategy, plan: { ...plan, generatedAt: new Date().toISOString() } };
+      await db.doc("app/strategy").set(strategy);
+      toast("أُنشئت الخطة");
+    } catch (err) { toast(err?.code ? sampleError(err) : "تعذّر الحفظ"); }
+    finally { btn.disabled = false; $("#plan-busy").hidden = true; }
+  };
+
+  function renderPlan() {
+    const out = $("#plan-out");
+    const plan = strategy.plan;
+    if (!plan) { out.innerHTML = `<p class="notice">لا توجد خطة بعد. اختر الأهداف وأضف الإطلاقات، ثم اضغط «إنشاء الخطة».</p>`; return; }
+    const start = sundayOf(strategy.startDate);
+    const t = today();
+    const events = launchEvents();
+    out.innerHTML = `<div class="card stack"><h2>ملخص الخطة</h2><p>${esc(plan.summary || "")}</p>
+        ${(plan.kpis || []).length ? `<div class="grid2">${plan.kpis.map((k) => `<div class="today-item"><span class="hint">${esc(k.goal)}</span><b>${esc(k.target)}</b><span class="hint">${esc(k.metric)}</span></div>`).join("")}</div>` : ""}
+      </div>
+      ${events.length ? `<div class="card stack"><h2>جدول الإعلان عن الإطلاقات</h2><ul class="timeline">${events.map((e) => `<li><span class="when tabular">${fmt(e.date, { weekday: "short", day: "numeric", month: "short" })}</span><div><b>${esc(e.launch)} — ${esc(e.title)}</b><p class="hint">${esc(e.action)}</p></div></li>`).join("")}</ul></div>` : ""}
+      <div class="plan-weeks">${(plan.weeks || []).map((w) => {
+        const d = addDays(start, (w.week - 1) * 7);
+        const now = t >= d && t <= addDays(d, 6);
+        const count = posts.filter((p) => p.date >= d && p.date <= addDays(d, 6)).length;
+        return `<article class="card plan-week ${now ? "now" : ""}">
+          <div class="row between"><b>الأسبوع ${arNum(w.week)}</b><span class="hint tabular">${fmt(d, { day: "numeric", month: "short" })} – ${fmt(addDays(d, 6), { day: "numeric", month: "short" })}</span></div>
+          <span class="hint">${esc(w.phase || "")}</span>
+          <h3>${esc(w.theme || "")}</h3>
+          <p class="hint">${esc(w.focus || "")}</p>
+          <div class="mix" aria-label="نسب القمع"><i class="tof" style="width:${Number(w.tof) || 0}%"></i><i class="mof" style="width:${Number(w.mof) || 0}%"></i><i class="bof" style="width:${Number(w.bof) || 0}%"></i></div>
+          <p class="hint">الدعوة للإجراء: ${esc(w.cta || "")}</p>
+          <div class="row between"><span class="hint">${arNum(count)} من ٧ منشورات</span><button class="btn-primary btn-sm" data-goto-week="${d}">فتح الأسبوع</button></div>
+        </article>`;
+      }).join("")}</div>`;
+  }
+  $("#plan-out").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-goto-week]");
+    if (!b) return;
+    weekDate = b.dataset.gotoWeek;
+    location.hash = "week";
+    renderWeek();
+    window.scrollTo(0, 0);
+  });
+
+  // ---------- الأفكار ----------
+  function renderIdeas() {
+    const list = posts.filter((p) => !p.date).sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
+    $("#ideas").innerHTML = list.length
+      ? list.map((p) => `<button class="card idea" data-open="${esc(p.id)}"><b>${esc(p.title)}</b>${p.notes ? `<span class="hint">${esc(p.notes.slice(0, 120))}</span>` : ""}<span class="row" style="gap:4px"><span class="badge">${esc(FORMATS[p.format] || "")}</span></span></button>`).join("")
+      : `<p class="empty">لا توجد أفكار محفوظة بعد.</p>`;
+  }
+  $("#idea-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!db) return toast("الحفظ غير متاح في هذا العرض");
+    const title = $("#idea-title").value.trim();
+    if (!title) return;
+    await db.collection("posts").add({ title, format: $("#idea-format").value, funnel: "", notes: "", script: "", caption: "", hashtags: "", designPrompt: "", date: "", time: "", checks: [], media: [], createdAt: new Date().toISOString() });
+    $("#idea-title").value = "";
+    toast("حُفظت الفكرة");
+  });
+  let suggestions = [];
+  $("#suggest-btn").onclick = async (e) => {
+    if (!sample) return toast("الذكاء الاصطناعي غير متاح في هذا العرض");
+    const btn = e.currentTarget;
+    btn.disabled = true; $("#suggest-busy").hidden = false;
+    try {
+      const res = await sample.json(`${LANG_RULES}\n\n${profileText()}\n\nأفكار موجودة لا تكررها:\n${posts.slice(-30).map((p) => "- " + p.title).join("\n") || "لا يوجد"}\n\nاقترح ٦ أفكار منشورات جديدة خاصة بهذا الحساب، أغلبها ريلز بتعليق صوتي. لكل فكرة: عنوان قصير، النوع، هوك باللهجة، وشرح قصير للتنفيذ. أعد JSON فقط: {"ideas":[{"title":"...","format":"reel|carousel|post","hook":"...","notes":"..."}]}`, { modelTier: "default", cache: false });
+      suggestions = Array.isArray(res?.ideas) ? res.ideas.filter((x) => x?.title) : [];
+      renderSuggestions();
+    } catch (err) { toast(sampleError(err)); }
+    finally { btn.disabled = false; $("#suggest-busy").hidden = true; }
+  };
+  function renderSuggestions() {
+    $("#suggestions").innerHTML = suggestions.map((s, i) => `<div class="card idea"><b>${esc(s.title)}</b><span class="hint">${esc(s.hook || "")}</span><span class="hint">${esc(s.notes || "")}</span>
+      <div class="row between"><span class="badge">${esc(FORMATS[s.format] || "")}</span>${s.saved ? `<span class="badge ok">أُضيفت</span>` : `<button class="btn-primary btn-sm" data-keep="${i}">إضافة</button>`}</div></div>`).join("");
+  }
+  $("#suggestions").addEventListener("click", async (e) => {
+    const b = e.target.closest("[data-keep]");
+    if (!b || !db) return;
+    const s = suggestions[b.dataset.keep];
+    await db.collection("posts").add({ title: String(s.title), format: ["reel", "carousel", "post"].includes(s.format) ? s.format : "reel", funnel: "", notes: [s.hook ? `الهوك: ${s.hook}` : "", s.notes || ""].filter(Boolean).join("\n\n"), script: "", caption: "", hashtags: "", designPrompt: "", date: "", time: "", checks: [], media: [], createdAt: new Date().toISOString() });
+    s.saved = true;
+    renderSuggestions();
+  });
+
+  // ---------- المساعد ----------
+  let chatCtl = null, streaming = "";
+  const ASSISTANT_RULES = () => `أنت مساعدة شخصية لصاحبة حساب إنستغرام، تفكرين معها في المحتوى والتسويق والمنتجات والدورات.
+- ردي بالعربية الفصحى المبسطة، بنقاط قصيرة وخطوات واضحة، دون مقدمات طويلة.
+- إذا كتبتِ نصًا للنشر (كابشن، هوك، نص شريحة)، فاكتبيه باللهجة المحددة في ملف الحساب.
+- تقترحين منتجات ودورات وخدمات مع الفئة المستهدفة وسبب نجاحها وطريقة اختبارها سريعًا.
+- لا تخترعين أرقامًا أو نتائج عن حسابها؛ اسألي عنها.
+
+${profileText()}
+
+${strategy.plan ? `ملخص الخطة: ${strategy.plan.summary}` : "لا توجد خطة بعد."}
+${strategy.launches?.length ? `الإطلاقات: ${strategy.launches.map((l) => `${l.name} (${l.date || "بلا تاريخ"})`).join("، ")}` : ""}
+${weekContextText(sundayOf(today()))}
+منشورات قادمة: ${posts.filter((p) => p.date && p.date >= today()).sort((a, b) => a.date.localeCompare(b.date)).slice(0, 10).map((p) => `${p.date}: ${p.title}`).join("؛ ") || "لا يوجد"}
+اليوم: ${today()}`;
+
+  function mdLite(text) {
+    return esc(text).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").split(/\n{2,}/).map((b) => {
+      const ls = b.split("\n");
+      return ls.every((l) => /^\s*([-•*]|\d+[.)])\s+/.test(l))
+        ? `<ul>${ls.map((l) => `<li>${l.replace(/^\s*([-•*]|\d+[.)])\s+/, "")}</li>`).join("")}</ul>`
+        : `<p>${ls.map((l) => l.replace(/^#{1,4}\s*/, "")).join("<br>")}</p>`;
+    }).join("");
+  }
+  function renderChat() {
+    const log = $("#chat-log");
+    $("#chat-chips").hidden = chat.length > 0;
+    const rows = chat.map((m, i) => `<div class="msg ${m.role}">${m.role === "assistant" ? mdLite(m.content) : esc(m.content)}${m.role === "assistant" ? `<div class="msg-actions"><button class="btn-ghost btn-sm" data-copy-msg="${i}">نسخ</button><button class="btn-ghost btn-sm" data-idea-msg="${i}">حفظ كفكرة</button></div>` : ""}</div>`);
+    if (chatCtl) rows.push(`<div class="msg assistant">${streaming ? mdLite(streaming) : `<span class="busy-note"><span class="spinner"></span>جارٍ التفكير…</span>`}</div>`);
+    log.innerHTML = rows.join("") || `<p class="empty">اسأل عن أي شيء يخص محتواك أو منتجاتك، أو اختر سؤالًا أدناه.</p>`;
+    log.scrollTop = log.scrollHeight;
+  }
+  async function send(text) {
+    text = text.trim();
+    if (!text || chatCtl) return;
+    if (!sample) return toast("الذكاء الاصطناعي غير متاح في هذا العرض");
+    const turns = [...chat, { role: "user", content: text }];
+    chat = turns;
+    chatCtl = new AbortController();
+    streaming = "";
+    $("#chat-stop").hidden = false; $("#chat-send").disabled = true;
+    renderChat();
+    try {
+      const history = turns.slice(-20);
+      const input = [{ role: "user", content: ASSISTANT_RULES() }, ...(history[0]?.role === "assistant" ? history.slice(1) : history)];
+      const { text: reply } = await sample(input, { cache: false, signal: chatCtl.signal, onText: ({ text: t }) => { streaming = t; renderChat(); } });
+      chat = [...turns, { role: "assistant", content: reply }].slice(-40);
+      if (db) await db.doc("app/chat").set({ turns: chat });
+    } catch (err) {
+      if (err?.code !== "cancelled") toast(sampleError(err));
+      chat = turns.slice(0, -1);
+      $("#chat-input").value = text;
+    } finally {
+      chatCtl = null; streaming = "";
+      $("#chat-stop").hidden = true; $("#chat-send").disabled = false;
+      renderChat();
+    }
+  }
+  $("#chat-form").addEventListener("submit", (e) => { e.preventDefault(); const t = $("#chat-input").value; $("#chat-input").value = ""; send(t); });
+  $("#chat-input").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); $("#chat-form").requestSubmit(); } });
+  $("#chat-stop").onclick = () => chatCtl?.abort();
+  $$("#chat-chips .chip").forEach((b) => (b.onclick = () => send(b.textContent)));
+  $("#chat-log").addEventListener("click", async (e) => {
+    const c = e.target.closest("[data-copy-msg]");
+    if (c) return copy(chat[c.dataset.copyMsg].content, "نُسخ");
+    const s = e.target.closest("[data-idea-msg]");
+    if (s && db) {
+      const txt = chat[s.dataset.ideaMsg].content;
+      const title = txt.split("\n").map((l) => l.replace(/[#*\-•]/g, "").trim()).find(Boolean)?.slice(0, 80) || "فكرة من المساعد";
+      await db.collection("posts").add({ title, format: "reel", funnel: "", notes: txt, script: "", caption: "", hashtags: "", designPrompt: "", date: "", time: "", checks: [], media: [], createdAt: new Date().toISOString() });
+      toast("حُفظت في الأفكار");
+    }
+  });
+  let resetArmed = false;
+  $("#chat-reset").onclick = async (e) => {
+    if (!chat.length) return;
+    if (!resetArmed) { resetArmed = true; e.currentTarget.textContent = "تأكيد: حذف المحادثة"; setTimeout(() => { resetArmed = false; $("#chat-reset").textContent = "محادثة جديدة"; }, 4000); return; }
+    resetArmed = false; e.currentTarget.textContent = "محادثة جديدة";
+    chat = []; renderChat();
+    if (db) await db.doc("app/chat").set({ turns: [] });
+  };
+
+  // ---------- ملف الحساب ----------
+  const PF = ["handle", "niche", "audience", "tone", "language", "goals", "pillars", "examples"];
+  function fillProfile() {
+    const f = $("#profile-form");
+    if (f.contains(document.activeElement)) return;
+    for (const k of PF) f.elements[k].value = profile[k] || "";
+  }
+  $("#profile-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!db) return toast("الحفظ غير متاح في هذا العرض");
+    const data = Object.fromEntries(PF.map((k) => [k, e.target.elements[k].value.trim()]));
+    try { await db.doc("app/profile").set(data); toast("حُفظ ملف الحساب"); } catch { toast("تعذّر الحفظ"); }
+  });
+  const PRESET = {
+    handle: "@ablasarahq8",
+    niche: "تقنية وذكاء اصطناعي للمعلمات: أدوات، أفكار للصف، يوميات معلمة علوم",
+    audience: "معلمات (٩١٪ إناث، ٢٥–٤٤ سنة) في الكويت وعُمان والسعودية، يرغبن في العمل بذكاء والراحة أكثر والتطور مهنيًا بالتقنية",
+    tone: "أنثوي احترافي: هادئ، واثق، واضح، قريب من المعلمة؛ محتوى عملي يفيد بسرعة ويختصر الوقت بخطوات واضحة",
+    language: "لهجة كويتية خالصة (شلون، شنو، وايد، تنطرين، الحين)، بدون فصحى رسمية، وإيموجي قليل (✨ 🌸 💜 🎯). لا ChatGPT (استخدم Gemini)، ولا ManyChat",
+    goals: "مساعدة المعلمة على العمل بذكاء والراحة أكثر والتطور المهني بالتقنية، مع دعوات ناعمة (هدية مجانية، رابط، تصويت، سؤال) بدل البيع المباشر",
+    pillars: "أدوات الذكاء الاصطناعي للمعلمة، تحضير الدروس، أفكار وأنشطة للصف، يوميات معلمة علوم، التطوير المهني، المجتمع والدورات",
+  };
+  $("#profile-preset").onclick = () => {
+    const f = $("#profile-form");
+    for (const [k, v] of Object.entries(PRESET)) if (!f.elements[k].value.trim()) f.elements[k].value = v;
+    toast("عُبئت الحقول الفارغة؛ راجعها ثم اضغط «حفظ الملف»");
+  };
+
+  render();
+  renderPlan();
+  renderChat();
+  fillPlanForm();
+  init();
+})();
+</script>

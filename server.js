@@ -119,6 +119,7 @@ app.post("/api/ai/plan-week", wrap(async (req, res) => {
   res.json(await ai.planWeek(store.getProfile(), store.listIdeas(), weekPosts, {
     count,
     topic: req.body.topic || "",
+    mix: req.body.mix === "mixed" ? "mixed" : "voiceover",
     strategyWeek: sw,
   }));
 }));
@@ -238,6 +239,14 @@ app.post("/api/ideas/:id/design", wrap(async (req, res) => {
   if (!idea) return res.status(404).json({ error: "الفكرة غير موجودة" });
   const format = ["post", "carousel", "reel"].includes(req.body?.format) ? req.body.format : idea.format;
   res.json(await ai.designSlides(store.getProfile(), { ...idea, format }, req.body?.style));
+}));
+
+// برومبت التصميم لمنشور (يتنسخ لمحادثة Claude أو ChatGPT)
+app.post("/api/ideas/:id/design-prompt", wrap(async (req, res) => {
+  const idea = store.getIdea(req.params.id);
+  if (!idea) return res.status(404).json({ error: "الفكرة غير موجودة" });
+  const designPrompt = await ai.designPromptFor(store.getProfile(), idea);
+  res.json(store.updateIdea(idea.id, { designPrompt }));
 }));
 
 // سكربت فويس اوفر لريل مبني على مكتبة اللقطات

@@ -538,3 +538,11 @@ body:not(.advanced) .adv { display: none !important; }
   .chat-log { max-height: calc(100vh - 420px); }
   .msg { max-width: 92%; }
 }
+
+/* ---------- منشور اليوم ---------- */
+.today-card { display: grid; gap: 12px; margin-bottom: 14px; border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
+.today-post { display: grid; gap: 10px; padding: 14px; border-radius: 14px; background: var(--surface-2); }
+.today-post.done { opacity: .65; }
+.today-media { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+.today-media img, .today-media video { width: 120px; height: 150px; object-fit: cover; border-radius: 10px; display: block; border: 1px solid var(--border); }
+.today-post .row { flex-wrap: wrap; }

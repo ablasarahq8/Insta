@@ -73,9 +73,11 @@
         <div><h1>هذا الأسبوع</h1><p>منشورات كل يوم في الصفحة والستوري، مع متابعة ما تم إنجازه.</p></div>
         <div class="row">
           <button id="week-plan-stories" class="secondary"><i data-icon="phone"></i> تخطيط ستوري الأسبوع</button>
+          <button id="week-prompts" class="ghost"><i data-icon="palette"></i> نسخ برومبتات التصميم</button>
           <button id="week-copy" class="ghost"><i data-icon="copy"></i> نسخ الأسبوع كاملًا</button>
         </div>
       </header>
+      <div id="today" class="card today-card" hidden></div>
       <div class="card week-head">
         <div class="row between">
           <button id="prev-week" class="ghost"><i data-icon="prev"></i> السابق</button>
@@ -97,6 +99,10 @@
           <option value="7" selected>٧ منشورات</option>
           <option value="10">١٠ منشورات</option>
           <option value="14">١٤ منشور</option>
+        </select>
+        <select name="mix" title="نوع المحتوى">
+          <option value="voiceover" selected>ريلز بتعليق صوتي</option>
+          <option value="mixed">ريلز وكاروسيل</option>
         </select>
         <input type="time" name="time" value="19:00" title="وقت النشر">
         <button class="primary"><i data-icon="sparkles"></i> تخطيط الأسبوع</button>
@@ -329,10 +335,18 @@
         <span class="row between">سكربت التعليق الصوتي <button type="button" id="ai-voiceover" class="ghost small"><i data-icon="mic"></i> كتابة السكربت من اللقطات</button></span>
         <textarea name="script" rows="8" placeholder="المشاهد واللقطات ونص التعليق الصوتي"></textarea>
       </label>
-      <button type="button" id="open-designer" class="design-btn adv"><i data-icon="palette"></i> تصميم المنشور ومعاينته على إنستغرام</button>
-      <div class="adv">
+      <label>
+        <span class="row between">برومبت التصميم <span class="row">
+          <button type="button" id="copy-design-prompt" class="ghost small"><i data-icon="copy"></i> نسخ</button>
+          <button type="button" id="ai-design-prompt" class="ghost small"><i data-icon="sparkles"></i> كتابة البرومبت</button>
+        </span></span>
+        <textarea name="designPrompt" rows="6" placeholder="يُنسخ ويُلصق في محادثة Claude أو ChatGPT لإنشاء التصميم"></textarea>
+      </label>
+      <button type="button" id="open-designer" class="design-btn"><i data-icon="palette"></i> تصميم المنشور ومعاينته على إنستغرام</button>
+      <div>
         <div class="row between">
-          <span>الصور / الفيديو</span>
+          <span>الصور / الفيديو <span class="hint">(ارفع التصاميم الجاهزة هنا)</span></span>
+          <button type="button" id="download-media" class="ghost small"><i data-icon="download" data-size="14"></i> تنزيل الصور</button>
           <label class="ghost small file-btn"><i data-icon="upload" data-size="14"></i> رفع ملفات<input type="file" id="files" accept="image/jpeg,image/png,video/mp4,video/quicktime" multiple hidden></label>
         </div>
         <div id="media" class="media"></div>

@@ -79,7 +79,7 @@ const toLocalInput = (iso) => {
 
 function openEditor(idea) {
   editing = structuredClone(idea);
-  for (const name of ["title", "format", "funnel", "goal", "status", "notes", "caption", "hashtags", "script"]) {
+  for (const name of ["title", "format", "funnel", "goal", "status", "notes", "caption", "hashtags", "script", "designPrompt"]) {
     editorForm.elements[name].value = editing[name] || "";
   }
   editorForm.elements.scheduledAt.value = toLocalInput(editing.scheduledAt);
@@ -343,6 +343,90 @@ function renderWeek() {
 
   renderStrategyWeek();
   renderBalance(posts);
+  renderToday();
+}
+
+// ---------- منشور اليوم: كل اللي يحتاجه يوم النشر بمكان واحد ----------
+function renderToday() {
+  const el = $("#today");
+  const today = new Date();
+  const posts = ideas.filter((i) => i.scheduledAt && sameDay(new Date(i.scheduledAt), today));
+  const stories = weekStories(today);
+  el.hidden = !posts.length && !stories.length;
+  if (el.hidden) return;
+  el.innerHTML = `
+    <div class="row between"><h2>${icon("send")} منشور اليوم</h2><span class="hint">${fmtDate(today, { weekday: "long", day: "numeric", month: "long" })}</span></div>
+    ${posts.map((p) => {
+      const posted = (p.checks || []).includes("posted");
+      return `
+      <div class="today-post ${posted ? "done" : ""}" data-id="${p.id}">
+        <div class="row between">
+          <b>${FORMATS[p.format] || ""}: ${esc(p.title)}</b>
+          <label class="check"><input type="checkbox" data-today-posted ${posted ? "checked" : ""}> نُشر</label>
+        </div>
+        ${p.media.length ? `<div class="today-media">${p.media.map((m) => `
+          <a href="${esc(m.url)}" target="_blank" rel="noopener" title="فتح بالحجم الكامل">
+            ${m.type === "video" ? `<video src="${esc(m.url)}" muted></video>` : `<img src="${esc(m.url)}" alt="">`}
+          </a>`).join("")}</div>`
+          : `<p class="hint">لم تُرفع تصاميم بعد. افتح المنشور وارفعها، أو انسخ برومبت التصميم.</p>`}
+        <div class="row">
+          ${p.media.length ? `<button class="primary small" data-today-download>${icon("download", 14)} تنزيل الصور</button>` : ""}
+          <button class="secondary small" data-today-caption>${icon("copy", 14)} نسخ الكابشن</button>
+          <button class="ghost small" data-today-open>فتح المنشور</button>
+        </div>
+      </div>`;
+    }).join("")}
+    ${stories.map((s) => `
+      <div class="today-post story" data-story="${s.id}">
+        <div class="row between"><b>${icon("phone", 14)} ستوري: ${esc(s.title)}</b>${checksBadge(s.checks)}</div>
+        <button class="ghost small" data-today-story>فتح الستوري</button>
+      </div>`).join("")}`;
+}
+
+$("#today").addEventListener("click", async (e) => {
+  const card = e.target.closest(".today-post");
+  if (!card) return;
+  if (e.target.closest("[data-today-story]")) return window.dispatchEvent(new CustomEvent("open-story", { detail: card.dataset.story }));
+  const idea = ideas.find((i) => i.id === card.dataset.id);
+  if (!idea) return;
+  if (e.target.closest("[data-today-open]")) return openEditor(idea);
+  if (e.target.closest("[data-today-caption]")) return copyText([idea.caption, idea.hashtags].filter(Boolean).join("\n\n"), "نُسخ الكابشن والهاشتاقات ✓");
+  if (e.target.closest("[data-today-download]")) return downloadMedia(idea.media, idea.scheduledAt);
+});
+
+$("#today").addEventListener("change", async (e) => {
+  if (!e.target.matches("[data-today-posted]")) return;
+  const idea = ideas.find((i) => i.id === e.target.closest(".today-post").dataset.id);
+  const checks = new Set(idea.checks || []);
+  e.target.checked ? checks.add("posted") : checks.delete("posted");
+  await api(`/api/ideas/${idea.id}`, {
+    method: "PUT",
+    body: { checks: [...checks], status: e.target.checked ? "published" : "draft" },
+  });
+  await loadIdeas();
+  if (e.target.checked) toast("أحسنت ✓ نُشر منشور اليوم");
+});
+
+// ينزّل كل الصور والفيديوهات بالترتيب
+async function downloadMedia(media, when = null) {
+  // أسماء إنجليزية بالتاريخ، لأن بعض المتصفحات تبدّل الأسماء العربية بـ «download»
+  const stamp = localDateStr(when ? new Date(when) : new Date());
+  if (!media?.length) return toast("لا توجد صور مرفوعة");
+  for (const [i, m] of media.entries()) {
+    try {
+      const blob = await (await fetch(m.url)).blob();
+      const ext = (m.url.split("?")[0].match(/\.\w+$/) || [m.type === "video" ? ".mp4" : ".png"])[0];
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `post-${stamp}-${i + 1}${ext}`;
+      document.body.append(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    } catch {
+      window.open(m.url, "_blank");
+    }
+  }
 }
 
 // ملخص هالأسبوع من الخطة التسويقية
@@ -456,12 +540,12 @@ $("#picker-list").addEventListener("click", async (e) => {
 
 $("#plan-form").addEventListener("submit", (e) => {
   e.preventDefault();
-  const { topic, count, time } = Object.fromEntries(new FormData(e.target));
+  const { topic, count, time, mix } = Object.fromEntries(new FormData(e.target));
   const start = new Date(weekStart);
   busy($("button", e.target), async () => {
     const posts = await api("/api/ai/plan-week", {
       method: "POST",
-      body: { topic, count, start: start.toISOString(), end: addDays(start, 7).toISOString(), weekDate: localDateStr(start) },
+      body: { topic, count, mix, start: start.toISOString(), end: addDays(start, 7).toISOString(), weekDate: localDateStr(start) },
     });
     planDraft = { posts, time, start };
     renderPlan();
@@ -496,6 +580,8 @@ $("#plan-accept").addEventListener("click", (e) => busy(e.target, async () => {
         notes: `الهوك: ${p.hook}\n\n${p.notes}`,
         caption: p.caption,
         hashtags: p.hashtags,
+        designPrompt: p.designPrompt || "",
+        script: p.script || "",
         status: "draft",
         source: "ai",
         scheduledAt: atTime(addDays(planDraft.start, p.day), planDraft.time),
@@ -526,6 +612,31 @@ $("#copy-caption").addEventListener("click", () => {
   copyText([caption.value, hashtags.value].filter(Boolean).join("\n\n"), "نُسخ الكابشن والهاشتاقات ✓");
 });
 
+// برومبت التصميم بالمحرر
+$("#copy-design-prompt").addEventListener("click", () =>
+  copyText(editorForm.elements.designPrompt.value, "نُسخ برومبت التصميم ✓"));
+
+$("#ai-design-prompt").addEventListener("click", (e) => busy(e.target, async () => {
+  await saveEditor();
+  const saved = await api(`/api/ideas/${editing.id}/design-prompt`, { method: "POST" });
+  editing.designPrompt = saved.designPrompt;
+  editorForm.elements.designPrompt.value = saved.designPrompt;
+  await loadIdeas();
+}));
+
+$("#download-media").addEventListener("click", () => downloadMedia(editing.media, editing.scheduledAt));
+
+// برومبتات تصميم الأسبوع كلها مرة وحدة
+$("#week-prompts").addEventListener("click", () => {
+  const posts = weekPosts();
+  if (!posts.length) return toast("لا توجد منشورات في هذا الأسبوع");
+  const text = posts.map((p) => {
+    const day = new Date(p.scheduledAt);
+    return `## ${DAYS[day.getDay()]} ${fmtDate(day, { day: "numeric", month: "long" })} — ${FORMATS[p.format] || ""}: ${p.title}\n\n${p.designPrompt || "(لم يُكتب برومبت لهذا المنشور بعد؛ افتحه واضغط «كتابة البرومبت»)"}`;
+  }).join("\n\n---\n\n");
+  copyText(text, "نُسخت برومبتات التصميم ✓ الصقها في المحادثة");
+});
+
 // الأسبوع كامل كنص مرتب — تلصقينه بأي محادثة (Claude أو ChatGPT)
 function weekText() {
   const sw = currentStrategyWeek();
@@ -549,6 +660,7 @@ function weekText() {
       if (p.script) lines.push(`السكربت:\n${p.script}`);
       if (p.caption) lines.push(`الكابشن:\n${p.caption}`);
       if (p.hashtags) lines.push(`الهاشتاقات: ${p.hashtags}`);
+      if (p.designPrompt) lines.push(`برومبت التصميم:\n${p.designPrompt}`);
     }
     for (const s of dayStories) {
       lines.push("", `### ستوري (${STORY_TYPES[s.type]?.name || ""} · ${STORY_ENDINGS[s.ending] || ""}): ${s.title}`);

@@ -113,6 +113,12 @@ main { max-width: 1180px; margin: 0 auto; padding-block: 24px 90px; padding-left
 .post-chip b { font-size: .88rem; line-height: 1.45; font-weight: 600; }
 .post-chip .meta { display: flex; gap: 4px; flex-wrap: wrap; }
 .post-chip.done { opacity: .6; }
+.stage { display: inline-flex; align-items: center; gap: 5px; font-size: .74rem; font-weight: 700; letter-spacing: .02em; padding: 2px 8px; border-radius: 6px; color: #fff; background: var(--muted); justify-self: start; }
+.stage.tof { background: var(--tof); } .stage.mof { background: var(--mof); } .stage.bof { background: var(--bof); }
+.stage small { font-weight: 500; opacity: .92; }
+.week-sum { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; padding: 10px 14px; border-radius: 12px; border: 1px dashed var(--line); font-size: .85rem; }
+.week-sum .mix { flex: 1; min-width: 140px; height: 10px; }
+.why { font-size: .8rem; color: var(--muted); border-inline-start: 3px solid var(--line); padding-inline-start: 8px; }
 .add-btn { margin-top: auto; border: 1px dashed var(--line); color: var(--muted); font-size: .85rem; }
 .add-btn:hover { border-color: var(--rose); color: var(--rose); }
 @media (max-width: 1100px) { .days { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); } .day { min-height: 0; } }
@@ -143,6 +149,7 @@ fieldset { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14p
 legend { font-weight: 700; padding: 0 6px; }
 
 /* المحرر (لوحة جانبية) */
+[hidden] { display: none !important; }
 .sheet-wrap { position: fixed; inset: 0; z-index: 30; background: rgb(25 17 31 / .45); display: flex; justify-content: flex-start; }
 .sheet { width: min(620px, 100%); height: 100%; background: var(--surface); overflow-y: auto; box-shadow: var(--shadow);
   padding-block: calc(16px + env(safe-area-inset-top, 0px)) calc(20px + env(safe-area-inset-bottom, 0px)); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(18px, env(safe-area-inset-right, 0px)); display: grid; gap: 14px; align-content: start; }
@@ -226,12 +233,9 @@ legend { font-weight: 700; padding: 0 6px; }
         <button id="next-week" class="btn-ghost">التالي ‹</button>
       </div>
       <div id="plan-strip" class="plan-strip" hidden></div>
+      <div id="week-sum" class="week-sum" hidden></div>
       <form id="week-form" class="row">
         <input id="week-topic" name="topic" placeholder="مناسبة أو موضوع لهذا الأسبوع (اختياري)" style="flex:1;min-width:200px" autocomplete="off">
-        <select id="week-mix" name="mix" style="width:auto" aria-label="نوع المحتوى">
-          <option value="voiceover">ريلز بتعليق صوتي</option>
-          <option value="mixed">ريلز وكاروسيل</option>
-        </select>
         <input id="week-time" name="time" type="time" value="19:00" style="width:auto" aria-label="وقت النشر">
         <button class="btn-primary" id="plan-week-btn">تخطيط الأسبوع</button>
       </form>
@@ -336,7 +340,9 @@ legend { font-weight: 700; padding: 0 6px; }
       <label for="ps-date">اليوم <input id="ps-date" name="date" type="date"></label>
       <label for="ps-time">الوقت <input id="ps-time" name="time" type="time"></label>
       <label for="ps-funnel">مرحلة القمع <select id="ps-funnel" name="funnel"><option value="">—</option><option value="tof">TOF وعي وانتشار</option><option value="mof">MOF ثقة واهتمام</option><option value="bof">BOF تحويل وبيع</option></select></label>
+      <label for="ps-goal">الهدف <select id="ps-goal" name="goal"><option value="">—</option></select></label>
     </div>
+    <p id="ps-why" class="why" hidden></p>
     <div class="checks">
       <label class="check"><input type="checkbox" id="ck-shot" data-check="shot"> صُوِّر</label>
       <label class="check"><input type="checkbox" id="ck-edited" data-check="edited"> عُدِّل</label>
@@ -380,6 +386,7 @@ legend { font-weight: 700; padding: 0 6px; }
   const FORMATS = { reel: "ريل", carousel: "كاروسيل", post: "منشور" };
   const FUNNEL = { tof: "TOF", mof: "MOF", bof: "BOF" };
   const FUNNEL_NAME = { tof: "وعي وانتشار", mof: "ثقة واهتمام", bof: "تحويل وبيع" };
+  const POST_GOALS = { sales: "مبيعات", marketing: "تسويق", leads: "عملاء محتملون", fun: "ترفيه وضحك", news: "أخبار", tech: "تقنية" };
   const GOALS = {
     followers: { name: "زيادة المتابعين", ph: "مثلًا: من ٢٬٠٠٠ إلى ٥٬٠٠٠" },
     engagement: { name: "رفع التفاعل", ph: "مثلًا: تعليقات وحفظ أكثر" },
@@ -478,12 +485,27 @@ legend { font-weight: 700; padding: 0 6px; }
 - محاور المحتوى: ${profile.pillars || "غير محدد"}
 - أمثلة من كابشنات سابقة: ${profile.examples || "لا يوجد"}`;
   const DESIGN_HINT = `designPrompt: برومبت تنسخه صاحبة الحساب وتلصقه في محادثة Claude (لديها مهارة sarah-instagram-carousel للمنشور والكاروسيل، ومهارة sarah-scrapbook-reel للريل) أو ChatGPT. يبدأ بـ «استخدم مهارة ...» المناسبة، ويذكر نوع التصميم ومقاسه (منشور ١٠٨٠×١٣٥٠، كاروسيل ٥-٧ شرائح ١٠٨٠×١٣٥٠، ريل ٩:١٦)، ونص كل شريحة أو نص الغلاف بالضبط باللهجة، وأي عناصر مطلوبة.`;
-  const VOICEOVER_RULES = `- كل المنشورات ريلز بتعليق صوتي (format = "reel")، بالاعتماد على الصوت والنص على الشاشة، دون تصوير شاشة ودون صور ثابتة.
+  const FORMAT_RULES = `اختيار النوع (format) قرارك أنت كخبير تسويق، لا تسأل عنه:
+- اختر لكل يوم النوع الأنسب تسويقيًا لهدف المنشور ومرحلة القمع ولاحتياج هذا الأسبوع في الخطة، لا بنسبة ثابتة.
+- الريل (reel) أقوى للوصول والانتشار وجذب متابعين جدد (غالبًا TOF)، وللهوكات العاطفية والقصص والترفيه.
+- الكاروسيل (carousel) أقوى للحفظ والمشاركة وبناء الثقة والتعليم خطوة بخطوة والقوائم والمقارنات وشرح عرض أو دورة بالتفصيل (غالبًا MOF وBOF).
+- المنشور الواحد (post) نادر: إعلان قصير، اقتباس، تذكير بموعد.
+- إذا كان الأسبوع أسبوع انتشار فزد الريلز، وإذا كان أسبوع ثقة أو تمهيد لإطلاق فزد الكاروسيل، وفي أسبوع البيع اجمع بينهما حسب الحاجة. لا تجعل الأسبوع كله نوعًا واحدًا إلا لسبب واضح.
+- why: جملة أو جملتان بالفصحى تشرح لماذا اخترت هذا النوع وهذه المرحلة لهذا اليوم.
+- weekWhy: جملة أو جملتان بالفصحى تشرح توزيع الأسبوع (عدد الريلز والكاروسيل ومراحل القمع) ولماذا.
+
+قواعد الريل (format = "reel"):
+- ريل بتعليق صوتي، بالاعتماد على الصوت والنص على الشاشة، دون تصوير شاشة ودون صور ثابتة.
 - script: نص التعليق الصوتي كاملًا باللهجة، جاهز للتسجيل (٢٠-٤٥ ثانية)، مقسم مشاهد، كل مشهد في سطر بهذا الشكل:
   المشهد ١ (٠-٣ ث) — اللقطة: ... | الصوت: «...» | على الشاشة: ...
   أول مشهد هوك قوي في أول ٣ ثوانٍ، وآخر مشهد دعوة للإجراء.
 - notes: قائمة اللقطات المطلوب تصويرها في يوم التصوير (يدان تكتبان، مكتب، دفتر، أدوات، قهوة، أجواء الصف…)، والوجه ليس ضروريًا.
-- designPrompt: يبدأ بـ «استخدم مهارة sarah-scrapbook-reel»، ويذكر أن تسجيلًا صوتيًا بهذا النص ولقطات ستُرسل، ويطلب ريل ٩:١٦ بستايل السكراب بوك مع الكابشن على الشاشة، ونص الغلاف (هوك قصير باللهجة).`;
+- designPrompt: يبدأ بـ «استخدم مهارة sarah-scrapbook-reel»، ويذكر أن تسجيلًا صوتيًا بهذا النص ولقطات ستُرسل، ويطلب ريل ٩:١٦ بستايل السكراب بوك مع الكابشن على الشاشة، ونص الغلاف (هوك قصير باللهجة).
+
+قواعد الكاروسيل والمنشور:
+- script نص فارغ.
+- notes: فكرة المنشور ومحتوى كل شريحة باختصار.
+- designPrompt: يبدأ بـ «استخدم مهارة sarah-instagram-carousel»، ويذكر المقاس ١٠٨٠×١٣٥٠ وعدد الشرائح (٥-٧ للكاروسيل، ١ للمنشور)، ونص كل شريحة بالضبط باللهجة: الغلاف هوك قوي، والأخيرة دعوة للإجراء.`;
 
   function weekContextText(sunday) {
     const w = planWeekFor(sunday);
@@ -530,20 +552,40 @@ ${w.events.length ? `- أحداث إطلاق هذا الأسبوع: ${w.events.m
     $("#plan-strip").hidden = !w;
     if (w) $("#plan-strip").innerHTML = `<b>الأسبوع ${arNum(w.week)} من الخطة · ${esc(w.phase)}</b><span><b>${esc(w.theme)}</b> — ${esc(w.focus)}</span><span class="hint">الدعوة للإجراء: ${esc(w.cta)}</span>${w.events.map((e) => `<span class="hint">إطلاق · ${fmt(e.date, { weekday: "long" })}: ${esc(e.launch)} — ${esc(e.title)}</span>`).join("")}`;
     const list = weekPosts();
+    renderWeekSum(list);
     $("#days").innerHTML = DAYS.map((name, i) => {
       const d = addDays(weekDate, i);
       const dayPosts = list.filter((p) => p.date === d).sort((a, b) => (a.time || "").localeCompare(b.time || ""));
       return `<div class="day ${d === today() ? "today" : ""}">
         <div class="day-head"><b>${name}</b><span class="tabular">${fmt(d, { day: "numeric", month: "short" })}</span></div>
         ${dayPosts.map((p) => `<button class="post-chip ${esc(p.funnel || "")} ${isDone(p) ? "done" : ""}" data-open="${esc(p.id)}">
+          ${stageTag(p.funnel)}
           <span class="hint">${esc(FORMATS[p.format] || "")}${p.time ? " · " + esc(p.time) : ""}</span>
           <b>${esc(p.title)}</b>
-          <span class="meta">${p.funnel ? `<span class="badge ${esc(p.funnel)}">${FUNNEL[p.funnel]}</span>` : ""}${(p.media || []).length ? `<span class="badge">${arNum(p.media.length)} ملف</span>` : ""}${checksBadge(p)}</span>
+          <span class="meta">${POST_GOALS[p.goal] ? `<span class="badge">${POST_GOALS[p.goal]}</span>` : ""}${(p.media || []).length ? `<span class="badge">${arNum(p.media.length)} ملف</span>` : ""}${checksBadge(p)}</span>
         </button>`).join("")}
         <button class="add-btn" data-add="${d}">+ إضافة</button>
       </div>`;
     }).join("");
     renderToday();
+  }
+
+  function stageTag(f) {
+    return FUNNEL[f] ? `<span class="stage ${f}">${FUNNEL[f]} <small>${FUNNEL_NAME[f]}</small></span>` : `<span class="stage">بلا مرحلة</span>`;
+  }
+  function renderWeekSum(list) {
+    const el = $("#week-sum");
+    el.hidden = !list.length;
+    if (!list.length) return;
+    const cnt = (k, v) => list.filter((p) => p[k] === v).length;
+    const n = list.length;
+    const pct = (v) => Math.round((cnt("funnel", v) / n) * 100);
+    const fmtCounts = ["reel", "carousel", "post"].filter((f) => cnt("format", f)).map((f) => `${FORMATS[f]} ${arNum(cnt("format", f))}`).join(" · ");
+    el.innerHTML = `<b>توزيع الأسبوع</b>
+      <span>${["tof", "mof", "bof"].map((f) => `<span class="badge ${f}">${FUNNEL[f]} ${arNum(cnt("funnel", f))}</span>`).join(" ")}</span>
+      <div class="mix" aria-label="نسب القمع"><i class="tof" style="width:${pct("tof")}%"></i><i class="mof" style="width:${pct("mof")}%"></i><i class="bof" style="width:${pct("bof")}%"></i></div>
+      <span class="hint">${fmtCounts}</span>
+      ${strategy.weekWhy?.[weekDate] ? `<p class="why" style="flex-basis:100%;margin:0">${esc(strategy.weekWhy[weekDate])}</p>` : ""}`;
   }
 
   function renderToday() {
@@ -593,10 +635,16 @@ ${w.events.length ? `- أحداث إطلاق هذا الأسبوع: ${w.events.m
   $("#this-week").onclick = () => { weekDate = sundayOf(today()); renderWeek(); };
 
   // تخطيط الأسبوع
+  // الأيام القابلة للتخطيط: من اليوم ومن تاريخ بدء الخطة فصاعدًا، وغير المشغولة
+  function openDays() {
+    const min = [today(), strategy.startDate || ""].sort().pop();
+    const taken = new Set(weekPosts().map((p) => p.date));
+    return [0, 1, 2, 3, 4, 5, 6].filter((i) => { const d = addDays(weekDate, i); return d >= min && !taken.has(d); });
+  }
   $("#week-form").addEventListener("submit", async (e) => {
     e.preventDefault();
     if (!sample) return toast("الذكاء الاصطناعي غير متاح في هذا العرض");
-    const mix = $("#week-mix").value;
+    if (!openDays().length) return toast("لا توجد أيام فارغة قادمة في هذا الأسبوع");
     const existing = weekPosts().map((p) => `- ${DAYS[fromStr(p.date).getDay()]}: ${p.title}`).join("\n");
     const recent = posts.slice(-25).map((p) => `- ${p.title}`).join("\n");
     const prompt = `أنت خبير محتوى إنستغرام تخطط أسبوعًا لصاحبة حساب.
@@ -611,19 +659,20 @@ ${existing || "لا يوجد"}
 ${recent || "لا يوجد"}
 ${$("#week-topic").value ? `موضوع أو مناسبة الأسبوع: ${$("#week-topic").value}` : ""}
 
-خطط منشورًا واحدًا لكل يوم فارغ من الأحد (day = 0) إلى السبت (day = 6).
-- نوّع مراحل القمع (أغلبها tof، وبعضها mof، وقليل bof) والأهداف، ولا تكرر هدفًا في يومين متتاليين.
-${mix === "voiceover" ? VOICEOVER_RULES : `- خليط: ٣ ريلز تقريبًا والباقي منشورات وكاروسيل. script للريل فقط، ولغيره نص فارغ.\n- ${DESIGN_HINT}`}
+خطط منشورًا واحدًا لكل يوم فارغ من هذه الأيام فقط (day رقم اليوم: الأحد ٠ … السبت ٦): ${openDays().map((i) => `${DAYS[i]} (${i})`).join("، ") || "لا يوجد"}. لا تخطط لأي يوم غيرها.
+- لكل منشور مرحلة قمع واضحة (funnel) إلزاميًا: tof وعي وانتشار، mof ثقة واهتمام، bof تحويل وبيع. وزّعها حسب نسب هذا الأسبوع في الخطة إن وجدت، وإلا فأغلبها tof وبعضها mof وقليل bof، ويزيد bof قرب الإطلاقات.
+- لكل منشور هدف (goal) من: sales مبيعات، marketing تسويق، leads عملاء محتملون، fun ترفيه وضحك، news أخبار، tech تقنية. نوّع الأهداف ولا تكرر هدفًا في يومين متتاليين.
+${FORMAT_RULES}
 
 أعد JSON فقط بهذا الشكل:
-{"posts":[{"day":0,"title":"عنوان قصير","format":"reel|carousel|post","funnel":"tof|mof|bof","hook":"...","notes":"...","script":"...","caption":"كابشن كامل باللهجة ينتهي بدعوة للتفاعل","hashtags":"#... #...","designPrompt":"..."}]}`;
+{"weekWhy":"...","posts":[{"day":0,"title":"عنوان قصير","format":"reel|carousel|post","funnel":"tof|mof|bof","goal":"sales|marketing|leads|fun|news|tech","why":"...","hook":"...","notes":"...","script":"...","caption":"كابشن كامل باللهجة ينتهي بدعوة للتفاعل","hashtags":"#... #...","designPrompt":"..."}]}`;
     $("#plan-week-btn").disabled = true;
     $("#week-busy").hidden = false;
     try {
       const res = await sample.json(prompt, { modelTier: "default", cache: false });
-      const list = Array.isArray(res?.posts) ? res.posts.filter((p) => p && p.title && Number.isInteger(p.day) && p.day >= 0 && p.day <= 6) : [];
+      const list = Array.isArray(res?.posts) ? res.posts.filter((p) => p && p.title && Number.isInteger(p.day) && openDays().includes(p.day)) : [];
       if (!list.length) throw { code: "invalid_json" };
-      draftPlan = { sunday: weekDate, time: $("#week-time").value || "19:00", posts: list.sort((a, b) => a.day - b.day) };
+      draftPlan = { sunday: weekDate, time: $("#week-time").value || "19:00", weekWhy: String(res.weekWhy || ""), posts: list.sort((a, b) => a.day - b.day) };
       renderDraft();
     } catch (err) { toast(sampleError(err)); }
     finally { $("#plan-week-btn").disabled = false; $("#week-busy").hidden = true; }
@@ -634,7 +683,8 @@ ${mix === "voiceover" ? VOICEOVER_RULES : `- خليط: ٣ ريلز تقريبً�
     el.hidden = !draftPlan;
     if (!draftPlan) return;
     el.innerHTML = `<div class="row between"><h2>الخطة المقترحة</h2><span class="row"><button class="btn-ghost" id="draft-cancel">إلغاء</button><button class="btn-primary" id="draft-accept">اعتماد الخطة</button></span></div>
-      ${draftPlan.posts.map((p) => `<div class="today-item"><b>${DAYS[p.day]} · ${esc(FORMATS[p.format] || "")}: ${esc(p.title)}</b><span class="hint">${esc(p.hook || "")}</span></div>`).join("")}`;
+      ${draftPlan.weekWhy ? `<p class="why">${esc(draftPlan.weekWhy)}</p>` : ""}
+      ${draftPlan.posts.map((p) => `<div class="today-item"><div class="row">${stageTag(p.funnel)}<span class="badge">${esc(FORMATS[p.format] || "")}</span>${POST_GOALS[p.goal] ? `<span class="badge">${POST_GOALS[p.goal]}</span>` : ""}</div><b>${DAYS[p.day]}: ${esc(p.title)}</b><span class="hint">${esc(p.hook || "")}</span>${p.why ? `<span class="why">${esc(p.why)}</span>` : ""}</div>`).join("")}`;
     $("#draft-cancel").onclick = () => { draftPlan = null; renderDraft(); };
     $("#draft-accept").onclick = acceptDraft;
   }
@@ -647,12 +697,14 @@ ${mix === "voiceover" ? VOICEOVER_RULES : `- خليط: ٣ ريلز تقريبً�
         await db.collection("posts").add({
           title: String(p.title), format: ["reel", "carousel", "post"].includes(p.format) ? p.format : "reel",
           funnel: ["tof", "mof", "bof"].includes(p.funnel) ? p.funnel : "",
+          goal: POST_GOALS[p.goal] ? p.goal : "", why: String(p.why || ""),
           notes: [p.hook ? `الهوك: ${p.hook}` : "", p.notes || ""].filter(Boolean).join("\n\n"),
           script: String(p.script || ""), caption: String(p.caption || ""), hashtags: String(p.hashtags || ""),
           designPrompt: String(p.designPrompt || ""), date: addDays(draftPlan.sunday, p.day), time: draftPlan.time,
           checks: [], media: [], createdAt: new Date().toISOString(),
         });
       }
+      if (draftPlan.weekWhy) await db.doc("app/strategy").set({ ...strategy, weekWhy: { ...(strategy.weekWhy || {}), [draftPlan.sunday]: draftPlan.weekWhy } });
       draftPlan = null;
       renderDraft();
       toast("حُفظت خطة الأسبوع");
@@ -665,7 +717,7 @@ ${mix === "voiceover" ? VOICEOVER_RULES : `- خليط: ٣ ريلز تقريبً�
     const lines = [`# خطة الأسبوع: ${$("#week-label").textContent}`];
     if (w) lines.push(`الثيم: ${w.theme} — ${w.focus}`, `الدعوة للإجراء: ${w.cta}`);
     for (const p of weekPosts().sort((a, b) => a.date.localeCompare(b.date))) {
-      lines.push("", `## ${DAYS[fromStr(p.date).getDay()]} ${fmt(p.date, { day: "numeric", month: "long" })} — ${FORMATS[p.format] || ""}: ${p.title}`);
+      lines.push("", `## ${DAYS[fromStr(p.date).getDay()]} ${fmt(p.date, { day: "numeric", month: "long" })} — ${FORMATS[p.format] || ""}: ${p.title}`, `المرحلة: ${FUNNEL[p.funnel] ? `${FUNNEL[p.funnel]} (${FUNNEL_NAME[p.funnel]})` : "—"}${POST_GOALS[p.goal] ? ` · الهدف: ${POST_GOALS[p.goal]}` : ""}`);
       if (p.notes) lines.push(`الفكرة واللقطات:\n${p.notes}`);
       if (p.script) lines.push(`نص التعليق الصوتي:\n${p.script}`);
       if (p.caption) lines.push(`الكابشن:\n${p.caption}`);
@@ -682,8 +734,9 @@ ${mix === "voiceover" ? VOICEOVER_RULES : `- خليط: ٣ ريلز تقريبً�
   };
 
   // ---------- المحرر ----------
-  const FIELDS = ["title", "format", "date", "time", "funnel", "notes", "script", "caption", "hashtags", "designPrompt"];
+  const FIELDS = ["title", "format", "date", "time", "funnel", "goal", "notes", "script", "caption", "hashtags", "designPrompt"];
   const form = $("#post-form");
+  $("#ps-goal").insertAdjacentHTML("beforeend", Object.entries(POST_GOALS).map(([k, v]) => `<option value="${k}">${v}</option>`).join(""));
 
   async function newPost(data) {
     if (!db) return toast("الحفظ غير متاح في هذا العرض");
@@ -698,6 +751,8 @@ ${mix === "voiceover" ? VOICEOVER_RULES : `- خليط: ٣ ريلز تقريبً�
     for (const f of FIELDS) form.elements[f].value = p[f] || "";
     $$("[data-check]", form).forEach((c) => (c.checked = (p.checks || []).includes(c.dataset.check)));
     $("#delete-confirm").hidden = true;
+    $("#ps-why").hidden = !p.why;
+    $("#ps-why").textContent = p.why ? `لماذا هذا النوع والمرحلة: ${p.why}` : "";
     fillSheetMedia();
     $("#sheet").hidden = false;
     form.scrollTop = 0;
@@ -754,7 +809,7 @@ ${mix === "voiceover" ? VOICEOVER_RULES : `- خليط: ٣ ريلز تقريبً�
     catch (err) { toast(sampleError(err)); }
     finally { btn.disabled = false; btn.textContent = label; }
   }
-  const postBrief = () => { const d = collect(); return `المنشور:\n- العنوان: ${d.title}\n- النوع: ${FORMATS[d.format]}\n- مرحلة القمع: ${d.funnel ? FUNNEL_NAME[d.funnel] : "غير محددة"}\n- الفكرة: ${d.notes || "لا يوجد"}\n${d.script ? `- نص التعليق الصوتي: ${d.script}` : ""}`; };
+  const postBrief = () => { const d = collect(); return `المنشور:\n- العنوان: ${d.title}\n- النوع: ${FORMATS[d.format]}\n- مرحلة القمع: ${d.funnel ? FUNNEL_NAME[d.funnel] : "غير محددة"}\n- الهدف: ${POST_GOALS[d.goal] || "غير محدد"}\n- الفكرة: ${d.notes || "لا يوجد"}\n${d.script ? `- نص التعليق الصوتي: ${d.script}` : ""}`; };
   $("#ai-caption").onclick = (e) => aiFill(e.currentTarget, `${LANG_RULES}\n\n${profileText()}\n\n${postBrief()}\n\nاكتب كابشن إنستغرام جاهزًا للنشر باللهجة، يبدأ بهوك قوي وينتهي بدعوة للتفاعل، و٨-١٥ هاشتاق. أعد JSON فقط: {"caption":"...","hashtags":"#... #..."}`,
     (r) => { if (r?.caption) form.elements.caption.value = r.caption; if (r?.hashtags) form.elements.hashtags.value = r.hashtags; });
   $("#ai-prompt").onclick = (e) => aiFill(e.currentTarget, `${LANG_RULES}\n\n${profileText()}\n\n${postBrief()}\n\nاكتب ${DESIGN_HINT}\nأعد JSON فقط: {"designPrompt":"..."}`,
@@ -819,7 +874,7 @@ ${mix === "voiceover" ? VOICEOVER_RULES : `- خليط: ٣ ريلز تقريبً�
   function fillPlanForm() {
     const f = $("#plan-form");
     if (f.contains(document.activeElement)) return;
-    f.elements.startDate.value = strategy.startDate || addDays(sundayOf(today()), 7);
+    f.elements.startDate.value = strategy.startDate || today();
     f.elements.weeks.value = String(strategy.weeks || 4);
     f.elements.notes.value = strategy.notes || "";
     for (const k of Object.keys(GOALS)) {
@@ -832,7 +887,7 @@ ${mix === "voiceover" ? VOICEOVER_RULES : `- خليط: ٣ ريلز تقريبً�
   function collectPlan() {
     const f = $("#plan-form");
     return {
-      startDate: sundayOf(f.elements.startDate.value || today()),
+      startDate: f.elements.startDate.value || today(),
       weeks: Number(f.elements.weeks.value),
       notes: f.elements.notes.value.trim(),
       goals: $$("[data-goal]").filter((c) => c.checked).map((c) => ({ type: c.dataset.goal, detail: $(`#goal-d-${c.dataset.goal}`).value.trim() })),
@@ -860,7 +915,7 @@ ${LANG_RULES}
 
 ${profileText()}
 
-بداية الخطة: ${input.startDate} (الأسبوع ١ يبدأ الأحد ${input.startDate})، المدة ${input.weeks} أسابيع.
+بداية الخطة: ${input.startDate} (${DAYS[fromStr(input.startDate).getDay()]}). الأسابيع تبدأ يوم الأحد وتنتهي السبت؛ الأسبوع ١ يبدأ من تاريخ البدء نفسه وينتهي يوم السبت ${addDays(sundayOf(input.startDate), 6)} (قد يكون أسبوعًا جزئيًا). لا تخطط لأي شيء قبل تاريخ البدء. المدة ${input.weeks} أسابيع.
 الأهداف: ${input.goals.map((g) => `${GOALS[g.type].name}${g.detail ? ` (${g.detail})` : ""}`).join("؛ ")}
 الإطلاقات: ${input.launches.length ? input.launches.map((l) => `"${l.name}" (${l.type}) بتاريخ ${l.date || "غير محدد"}${l.details ? ` — ${l.details}` : ""}`).join("؛ ") : "لا يوجد"}
 ملاحظات: ${input.notes || "لا يوجد"}
@@ -890,16 +945,18 @@ ${profileText()}
       ${events.length ? `<div class="card stack"><h2>جدول الإعلان عن الإطلاقات</h2><ul class="timeline">${events.map((e) => `<li><span class="when tabular">${fmt(e.date, { weekday: "short", day: "numeric", month: "short" })}</span><div><b>${esc(e.launch)} — ${esc(e.title)}</b><p class="hint">${esc(e.action)}</p></div></li>`).join("")}</ul></div>` : ""}
       <div class="plan-weeks">${(plan.weeks || []).map((w) => {
         const d = addDays(start, (w.week - 1) * 7);
+        const from = d < strategy.startDate ? strategy.startDate : d;
+        const days = diffDays(addDays(d, 6), from) + 1;
         const now = t >= d && t <= addDays(d, 6);
-        const count = posts.filter((p) => p.date >= d && p.date <= addDays(d, 6)).length;
+        const count = posts.filter((p) => p.date >= from && p.date <= addDays(d, 6)).length;
         return `<article class="card plan-week ${now ? "now" : ""}">
-          <div class="row between"><b>الأسبوع ${arNum(w.week)}</b><span class="hint tabular">${fmt(d, { day: "numeric", month: "short" })} – ${fmt(addDays(d, 6), { day: "numeric", month: "short" })}</span></div>
+          <div class="row between"><b>الأسبوع ${arNum(w.week)}</b><span class="hint tabular">${fmt(from, { day: "numeric", month: "short" })} – ${fmt(addDays(d, 6), { day: "numeric", month: "short" })}</span></div>
           <span class="hint">${esc(w.phase || "")}</span>
           <h3>${esc(w.theme || "")}</h3>
           <p class="hint">${esc(w.focus || "")}</p>
           <div class="mix" aria-label="نسب القمع"><i class="tof" style="width:${Number(w.tof) || 0}%"></i><i class="mof" style="width:${Number(w.mof) || 0}%"></i><i class="bof" style="width:${Number(w.bof) || 0}%"></i></div>
           <p class="hint">الدعوة للإجراء: ${esc(w.cta || "")}</p>
-          <div class="row between"><span class="hint">${arNum(count)} من ٧ منشورات</span><button class="btn-primary btn-sm" data-goto-week="${d}">فتح الأسبوع</button></div>
+          <div class="row between"><span class="hint">${arNum(count)} من ${arNum(days)} منشورات</span><button class="btn-primary btn-sm" data-goto-week="${d}">فتح الأسبوع</button></div>
         </article>`;
       }).join("")}</div>`;
   }

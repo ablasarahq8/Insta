@@ -1,0 +1,18 @@
+{
+  "brand": "ablasarahq8",
+  "theme": "light",
+  "slug": "story-thursday-where-to-start",
+  "title": "الأدوات وايد.. من وين أبدي؟",
+  "category": "سؤال واعتراض",
+  "measure": "ردود ملصق السؤال بالشريحة ٦ + الضغط على ملصق البوست بالشريحة ٥",
+  "frames": [
+    {
+      "role": "الاعتراض",
+      "media": "photo",
+      "kicker": "أكثر سؤال يوصلني",
+      "quotes": true,
+      "statements": ["الأدوات وايد.. [[من وين]] أبدي؟", "كل وحدة تقول إنها [[الأفضل]]"],
+      "handle": true
+    }
+  ]
+}

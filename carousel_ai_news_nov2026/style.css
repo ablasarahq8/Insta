@@ -1,0 +1,200 @@
+/* ========= الستايل المشترك بين كل الشرائح ========= */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  background: #1a1a1a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.slide {
+  width: 1080px;
+  height: 1350px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 70px 80px;
+}
+
+/* ========= الخلفية البيج الفاتح ========= */
+.bg-light {
+  background: #fef8f5;
+}
+
+/* ========= الخلفية البنفسجية الداكنة ========= */
+.bg-dark {
+  background: #2d1f3d;
+  color: #fef8f5;
+}
+
+.bg-dark::before {
+  content: "";
+  position: absolute;
+  top: -200px;
+  right: -200px;
+  width: 700px;
+  height: 700px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(232, 180, 160, 0.35) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.bg-dark::after {
+  content: "";
+  position: absolute;
+  bottom: -150px;
+  left: -150px;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(180, 140, 200, 0.25) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* ========= الرأس (الاسم + اللوجو) ========= */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 10;
+}
+
+.handle {
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  color: #c9a08a;
+}
+
+.bg-light .handle {
+  color: #b8745a;
+}
+
+.logo {
+  width: 240px;
+  height: 75px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.9;
+}
+
+.bg-light .logo {
+  background-image: url("logo_dark.png");
+}
+
+.bg-dark .logo {
+  background-image: url("logo_light.png");
+}
+
+.logo-main, .logo-sub {
+  display: none;
+}
+
+/* ========= الـ pre-title (المؤشر قبل العنوان) ========= */
+.pre-title {
+  font-size: 28px;
+  font-weight: 500;
+  text-align: center;
+  color: #e07a5f;
+}
+
+.bg-dark .pre-title {
+  color: #e8a598;
+}
+
+.pre-title::before,
+.pre-title::after {
+  content: "—";
+  margin: 0 15px;
+  opacity: 0.8;
+}
+
+/* ========= العنوان الرئيسي ========= */
+.title {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 110px;
+  font-weight: 900;
+  line-height: 1.25;
+  letter-spacing: -2px;
+  text-align: center;
+  color: #2d1f3d;
+}
+
+.bg-dark .title {
+  color: #fef8f5;
+}
+
+/* التدرج الوردي-الأحمر المميز للكلمات الملونة */
+.gradient-text {
+  background: linear-gradient(135deg, #e07a5f 0%, #c85a7f 50%, #8e4a8e 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+/* ========= النص التوضيحي ========= */
+.subtitle {
+  font-size: 34px;
+  font-weight: 500;
+  line-height: 1.6;
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+  color: #4a3529;
+}
+
+.bg-dark .subtitle {
+  color: #e8d5c4;
+}
+
+/* ========= المحتوى الأوسط ========= */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  position: relative;
+  z-index: 2;
+}
+
+/* ========= ترقيم الصفحة ========= */
+.page-number {
+  position: absolute;
+  bottom: 70px;
+  right: 80px;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 3px;
+  opacity: 0.4;
+  z-index: 10;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+}
+
+.bg-light .page-number {
+  color: #8b6f5c;
+}
+
+.bg-dark .page-number {
+  color: #fef8f5;
+}
+
+/* ========= عناصر مساعدة ========= */
+.highlight-box {
+  background: linear-gradient(135deg, #e07a5f 0%, #c85a7f 100%);
+  color: #fff;
+  padding: 8px 24px;
+  border-radius: 12px;
+  display: inline-block;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-weight: 700;
+}

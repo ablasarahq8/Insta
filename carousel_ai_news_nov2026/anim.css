@@ -1,0 +1,94 @@
+/* ========= حركات الكاروسيل المتحرك ========= */
+body { padding: 0; background: #1a1a1a; }
+.slide { padding: 70px 80px; }
+.title { font-weight: 700; }
+
+/* دخول العناصر بالتتابع */
+.a {
+  opacity: 0;
+  animation: rise 0.8s cubic-bezier(.2,.8,.2,1) forwards;
+  animation-delay: var(--d, 0s);
+}
+.a.pop { animation-name: pop; }
+.a.side { animation-name: side; }
+@keyframes rise { from { opacity: 0; transform: translateY(45px); } to { opacity: 1; transform: none; } }
+@keyframes pop  { 0% { opacity: 0; transform: scale(.6); } 70% { opacity: 1; transform: scale(1.06); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes side { from { opacity: 0; transform: translateX(-60px); } to { opacity: 1; transform: none; } }
+
+/* كلمة التدرج تلمع */
+.shine {
+  background: linear-gradient(110deg, #e07a5f 0%, #c85a7f 30%, #8e4a8e 50%, #c85a7f 70%, #e07a5f 100%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block; padding: 0 .05em .18em; margin-bottom: -.18em;
+  animation: shine 3s linear infinite;
+}
+@keyframes shine { from { background-position: 100% 0; } to { background-position: -150% 0; } }
+
+/* زخارف تطفو */
+.float { animation: float 4s ease-in-out infinite; }
+.float.slow { animation-duration: 6s; }
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-22px); } }
+
+/* سهم السحب ينبض */
+.nudge { animation: nudge 1.2s ease-in-out infinite; }
+@keyframes nudge { 0%,100% { transform: translateX(0); } 50% { transform: translateX(-10px); } }
+
+/* خط التسطير يرسم نفسه */
+.underline-draw {
+  position: relative; display: inline-block;
+}
+.underline-draw::after {
+  content: ""; position: absolute; right: 0; bottom: 6px; height: 14px; width: 0;
+  background: rgba(254,154,108,.35); border-radius: 8px; z-index: -1;
+  animation: draw .9s ease-out forwards; animation-delay: var(--u, 1s);
+}
+@keyframes draw { to { width: 100%; } }
+
+/* ========= عناصر مشتركة لشرائح الأدوات ========= */
+.tool-header { display: flex; align-items: center; gap: 24px; }
+.tool-logo {
+  width: 130px; height: 130px; border-radius: 34px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 68px; box-shadow: 0 15px 35px rgba(254,154,108,.35);
+  background: linear-gradient(135deg, #fe9a6c 0%, #c9617d 100%);
+}
+.tool-logo.g2 { background: linear-gradient(135deg, #7d579b 0%, #c9617d 100%); box-shadow: 0 15px 35px rgba(125,87,155,.35); }
+.tool-logo.g3 { background: linear-gradient(135deg, #fe6c77 0%, #7d579b 100%); }
+.tool-info { text-align: right; }
+.tool-number-label { font-size: 24px; color: #fe9a6c; font-weight: 700; letter-spacing: 2px; }
+.tool-name-big { font-size: 78px; font-weight: 700; line-height: 1.15; color: #2d1f3d; }
+.bg-dark .tool-name-big { color: #fef8f5; }
+.tool-tagline { font-size: 48px; font-weight: 700; text-align: center; line-height: 1.45; color: #2d1f3d; }
+.bg-dark .tool-tagline { color: #fef8f5; }
+.tool-tagline small { display: block; font-size: 31px; font-weight: 500; color: #8b6f5c; margin-top: 8px; }
+.bg-dark .tool-tagline small { color: #e8a598; }
+
+.use-cases {
+  background: #fff; border-radius: 30px; padding: 40px 44px; width: 100%; max-width: 920px;
+  box-shadow: 0 15px 40px rgba(45,31,61,.08);
+}
+.bg-dark .use-cases { background: rgba(254,248,245,.08); border: 1px solid rgba(254,248,245,.15); box-shadow: none; }
+.use-label {
+  display: flex; align-items: center; gap: 12px; font-size: 29px; color: #c9617d; font-weight: 700;
+  margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px dashed rgba(201,97,125,.3);
+}
+.bg-dark .use-label { color: #fe9a6c; border-bottom-color: rgba(254,154,108,.3); }
+.use-label::before { content: ""; width: 8px; height: 30px; border-radius: 4px; background: linear-gradient(135deg, #fe9a6c 0%, #c9617d 100%); }
+.use-items { display: flex; flex-direction: column; gap: 24px; }
+.use-item { display: flex; align-items: flex-start; gap: 16px; font-size: 33px; line-height: 1.5; font-weight: 500; color: #2d1f3d; }
+.bg-dark .use-item { color: #fef8f5; }
+.use-item .check {
+  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0; margin-top: 6px;
+  background: linear-gradient(135deg, #fe9a6c 0%, #c9617d 100%);
+  display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 18px;
+}
+.best-for-tag {
+  background: linear-gradient(135deg, #fe9a6c 0%, #c9617d 100%); color: #fff;
+  padding: 18px 38px; border-radius: 50px; font-size: 30px; font-weight: 700;
+  display: inline-flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(254,108,119,.3);
+}
+.best-for-tag.warn { background: rgba(254,248,245,.1); border: 2px solid #fe9a6c; color: #fef8f5; box-shadow: none; }
+
+.main { gap: 46px; }

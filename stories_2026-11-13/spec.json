@@ -23,10 +23,11 @@
       "kicker": "من وين تبدون؟",
       "statements": [
         "قربت [[الاختبارات]]؟",
-        "[[NotebookLM]] يساعدكم تلخصون المحتوى للمتعلمين",
+        "[[Gemini Notebook]] يساعدكم تلخصون المحتوى للمتعلمين",
         "تبون فيديو سريع؟ جربوا [[Vids]]"
       ],
-      "handle": true
+      "handle": true,
+      "small": "ترا NotebookLM تغيّر اسمه وصار Gemini Notebook"
     }
   ]
 }

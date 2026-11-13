@@ -28,6 +28,16 @@
       ],
       "handle": true,
       "small": "ترا NotebookLM تغيّر اسمه وصار Gemini Notebook"
+    },
+    {
+      "role": "طلب الرد",
+      "media": "photo",
+      "position": "top",
+      "statements": [
+        "قولوا لي: شنو أكثر شي [[يتعبكم]] هالأسبوع؟"
+      ],
+      "sticker": "ملصق سؤال (تضيفه سارة)",
+      "logo": true
     }
   ]
 }

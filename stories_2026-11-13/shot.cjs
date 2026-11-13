@@ -8,7 +8,7 @@ const { chromium } = require('playwright');
   await p.evaluate(() => document.fonts.ready);
   await p.waitForTimeout(2500);
   const fr = await p.$$('.frame');
-  const names = ['story_02.png', 'story_04.png'];
+  const names = ['story_02.png', 'story_04.png', 'story_06.png'];
   for (let i = 0; i < fr.length; i++) await fr[i].screenshot({ path: __dirname + '/' + names[i] });
   await b.close();
 })();

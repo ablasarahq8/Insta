@@ -113,6 +113,12 @@ main { max-width: 1180px; margin: 0 auto; padding-block: 24px 90px; padding-left
 .post-chip b { font-size: .88rem; line-height: 1.45; font-weight: 600; }
 .post-chip .meta { display: flex; gap: 4px; flex-wrap: wrap; }
 .post-chip.done { opacity: .6; }
+.post-chip.story { border-style: dashed; background: transparent; }
+.voice { display: inline-flex; align-items: center; gap: 4px; font-size: .74rem; font-weight: 600; padding: 1px 8px; border-radius: 99px; background: var(--surface); border: 1px solid var(--line); justify-self: start; }
+.voice.teacher { color: #2f8a5b; } .voice.trainer { color: var(--mof); } .voice.creator { color: var(--rose); }
+.stories { display: grid; gap: 8px; }
+.story-row { display: grid; grid-template-columns: 74px 1fr auto; gap: 8px; align-items: start; font-size: .88rem; }
+.story-row b { font-size: .8rem; color: var(--muted); padding-top: 2px; }
 .stage { display: inline-flex; align-items: center; gap: 5px; font-size: .74rem; font-weight: 700; letter-spacing: .02em; padding: 2px 8px; border-radius: 6px; color: #fff; background: var(--muted); justify-self: start; }
 .stage.tof { background: var(--tof); } .stage.mof { background: var(--mof); } .stage.bof { background: var(--bof); }
 .stage small { font-weight: 500; opacity: .92; }
@@ -217,7 +223,7 @@ legend { font-weight: 700; padding: 0 6px; }
   <!-- هذا الأسبوع -->
   <section id="view-week" class="stack">
     <div class="page-head">
-      <div><h1>هذا الأسبوع</h1><p>منشور كل يوم، ومتابعة التصوير والتعديل والنشر.</p></div>
+      <div><h1>هذا الأسبوع</h1><p>٤–٥ منشورات بالأسبوع وستوري كل يوم، بصوت أبلة سارة المعلمة والمدربة وصانعة المحتوى.</p></div>
       <div class="row">
         <button id="copy-prompts" class="btn-ghost">نسخ برومبتات التصميم</button>
         <button id="copy-week" class="btn-ghost">نسخ الأسبوع كاملًا</button>
@@ -324,6 +330,7 @@ legend { font-weight: 700; padding: 0 6px; }
       <label for="pf-language">لغة المحتوى ولهجته <textarea id="pf-language" name="language" rows="2"></textarea></label>
       <label for="pf-goals">الأهداف <textarea id="pf-goals" name="goals" rows="2"></textarea></label>
       <label for="pf-pillars">محاور المحتوى <textarea id="pf-pillars" name="pillars" rows="2"></textarea></label>
+      <label for="pf-exp">تجاربي الحقيقية <span class="hint">(مواقف وتجارب صارت فعلًا؛ المساعد يبني الأفكار الشخصية منها فقط)</span><textarea id="pf-exp" name="experiences" rows="6" placeholder="مثال: سويت ألعاب مراجعة بـ Gemini وجربتها بالصف…"></textarea></label>
       <label for="pf-examples">أمثلة من كابشنات سابقة ناجحة <textarea id="pf-examples" name="examples" rows="4"></textarea></label>
       <div><button class="btn-primary">حفظ الملف</button></div>
     </form>
@@ -336,13 +343,15 @@ legend { font-weight: 700; padding: 0 6px; }
     <div class="sheet-head"><h2 id="sheet-title">المنشور</h2><button type="button" class="btn-ghost" id="sheet-close">إغلاق</button></div>
     <label for="ps-title">العنوان <input id="ps-title" name="title" required></label>
     <div class="grid2">
-      <label for="ps-format">النوع <select id="ps-format" name="format"><option value="reel">ريل</option><option value="carousel">كاروسيل</option><option value="post">منشور</option></select></label>
+      <label for="ps-format">النوع <select id="ps-format" name="format"><option value="reel">ريل</option><option value="carousel">كاروسيل</option><option value="post">منشور</option><option value="story">ستوري فقط</option></select></label>
       <label for="ps-date">اليوم <input id="ps-date" name="date" type="date"></label>
       <label for="ps-time">الوقت <input id="ps-time" name="time" type="time"></label>
       <label for="ps-funnel">مرحلة القمع <select id="ps-funnel" name="funnel"><option value="">—</option><option value="tof">TOF وعي وانتشار</option><option value="mof">MOF ثقة واهتمام</option><option value="bof">BOF تحويل وبيع</option></select></label>
       <label for="ps-goal">الهدف <select id="ps-goal" name="goal"><option value="">—</option></select></label>
+      <label for="ps-voice">الهوية <select id="ps-voice" name="voice"><option value="">—</option><option value="teacher">أبلة سارة المعلمة</option><option value="trainer">أبلة سارة المدربة</option><option value="creator">أبلة سارة صانعة المحتوى</option></select></label>
     </div>
     <p id="ps-why" class="why" hidden></p>
+    <div class="row"><button type="button" class="btn-ghost btn-sm" id="ai-swap">بدّلي الفكرة</button><span class="hint">فكرة بديلة بنفس الهدف والمرحلة؛ احفظي إذا عجبتج.</span></div>
     <div class="checks">
       <label class="check"><input type="checkbox" id="ck-shot" data-check="shot"> صُوِّر</label>
       <label class="check"><input type="checkbox" id="ck-edited" data-check="edited"> عُدِّل</label>
@@ -354,6 +363,12 @@ legend { font-weight: 700; padding: 0 6px; }
     <label for="ps-caption"><span class="label-row">الكابشن <span class="row" style="gap:4px"><button type="button" class="btn-ghost btn-sm" id="copy-caption">نسخ مع الهاشتاقات</button><button type="button" class="btn-ghost btn-sm" id="ai-caption">كتابة الكابشن</button></span></span>
       <textarea id="ps-caption" name="caption" rows="5"></textarea></label>
     <label for="ps-hashtags">الهاشتاقات <input id="ps-hashtags" name="hashtags"></label>
+    <fieldset class="stack" style="border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:0">
+      <legend class="label-row" style="padding:0 6px"><b>خطة الستوري</b></legend>
+      <label for="ps-sam">صباحًا (تواصل) <textarea id="ps-sam" name="storyAM" rows="2"></textarea></label>
+      <label for="ps-spm">عصرًا (قيمة) <textarea id="ps-spm" name="storyPM" rows="2"></textarea></label>
+      <label for="ps-sev">مساءً (تفاعل) <textarea id="ps-sev" name="storyEve" rows="2"></textarea></label>
+    </fieldset>
     <label for="ps-prompt"><span class="label-row">برومبت التصميم <span class="row" style="gap:4px"><button type="button" class="btn-ghost btn-sm" data-copy-field="designPrompt">نسخ</button><button type="button" class="btn-ghost btn-sm" id="ai-prompt">كتابة البرومبت</button></span></span>
       <textarea id="ps-prompt" name="designPrompt" rows="6" placeholder="يُلصق في محادثة Claude أو ChatGPT لإنشاء التصميم"></textarea></label>
     <div class="stack">
@@ -383,7 +398,8 @@ legend { font-weight: 700; padding: 0 6px; }
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const esc = (s = "") => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
   const DAYS = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
-  const FORMATS = { reel: "ريل", carousel: "كاروسيل", post: "منشور" };
+  const FORMATS = { reel: "ريل", carousel: "كاروسيل", post: "منشور", story: "ستوري فقط" };
+  const VOICES = { teacher: "المعلمة", trainer: "المدربة", creator: "صانعة المحتوى" };
   const FUNNEL = { tof: "TOF", mof: "MOF", bof: "BOF" };
   const FUNNEL_NAME = { tof: "وعي وانتشار", mof: "ثقة واهتمام", bof: "تحويل وبيع" };
   const POST_GOALS = { sales: "مبيعات", marketing: "تسويق", leads: "عملاء محتملون", fun: "ترفيه وضحك", news: "أخبار", tech: "تقنية" };
@@ -483,7 +499,23 @@ legend { font-weight: 700; padding: 0 6px; }
 - لغة المحتوى ولهجته: ${profile.language || "عربي"}
 - الأهداف: ${profile.goals || "غير محدد"}
 - محاور المحتوى: ${profile.pillars || "غير محدد"}
+- تجاربها الحقيقية: ${profile.experiences || "لم تُذكر بعد"}
 - أمثلة من كابشنات سابقة: ${profile.examples || "لا يوجد"}`;
+  const AUTH_RULES = `قواعد الأصالة (إلزامية):
+- لا تخترع تجارب أو مواقف أو نتائج أو أرقام أو ردود فعل وتنسبها لصاحبة الحساب. استخدم فقط ما في «تجاربها الحقيقية». إذا احتاجت الفكرة تجربة غير مذكورة فاكتب مكانها [ضيفي تجربتج هني] بدل اختراعها.
+- كل فكرة تكون بصوت واحدة من ثلاث هويات (voice): teacher «أبلة سارة المعلمة» (تجاربها بالصف، ألعابها، تحضيرها، مواقف المدرسة)، trainer «أبلة سارة المدربة» (شرح عملي لأحدث الأدوات، برومبتات، مخرجات الدورات)، creator «أبلة سارة صانعة المحتوى» (آراؤها، كواليسها، اكتشافاتها، أسئلة تفتح نقاش).
+- مو كل منشور يبيع، ومو كل ستوري تعليمي؛ المتابعة لازم تحس إن وراء الحساب معلمة حقيقية بشخصية وخبرة.
+- الحداثة: سارة سابقة السوق بخطوة؛ لا تقترح أساسيات صارت معروفة إلا إذا فيها تحديث جديد فعلي.`;
+  const WEEK_RHYTHM = `إيقاع الأسبوع (٤–٥ منشورات أساسية، والباقي أيام ستوري فقط، وستوري كل يوم):
+- الأحد: تجربة حقيقية من شغلها (بناء ثقة) — غالبًا teacher.
+- الاثنين: أداة أو برومبت مفيد جديد (حفظ ومشاركة) — trainer.
+- الثلاثاء: رأي أو مشكلة تواجه المعلمات (تعليقات) — creator.
+- الأربعاء: تطبيق عملي أو قبل وبعد (إظهار الخبرة) — trainer أو teacher.
+- الخميس: محتوى خفيف أو كواليس، ويصلح يكون ستوري فقط (تقوية العلاقة) — creator.
+- الجمعة: محتوى متعمق أو تسويق هادئ (مرجعية وبيع).
+- السبت: تفاعلي أو مراجعة الأسبوع، ويصلح يكون ستوري فقط (معرفة احتياج الجمهور).
+- أيام الستوري فقط: format = "story" بدون script ولا designPrompt ولا caption.
+- خطة الستوري لكل يوم (حتى أيام المنشورات): storyAM صباحًا للتواصل (لقطة تحضير، سؤال، موقف بدون تكلف)، storyPM عصرًا للقيمة (مثال، جزء من تصميم، نصيحة من واقع شغلها)، storyEve مساءً للتفاعل (تصويت، صندوق أسئلة، دعوة لبوست اليوم). نص مقترح قصير باللهجة لكل ستوري. في أيام محطات الإطلاق استبدل واحدة منها بستوري تسويقي.`;
   const DESIGN_HINT = `designPrompt: برومبت تنسخه صاحبة الحساب وتلصقه في محادثة Claude (لديها مهارة sarah-instagram-carousel للمنشور والكاروسيل، ومهارة sarah-scrapbook-reel للريل) أو ChatGPT. يبدأ بـ «استخدم مهارة ...» المناسبة، ويذكر نوع التصميم ومقاسه (منشور ١٠٨٠×١٣٥٠، كاروسيل ٥-٧ شرائح ١٠٨٠×١٣٥٠، ريل ٩:١٦)، ونص كل شريحة أو نص الغلاف بالضبط باللهجة، وأي عناصر مطلوبة.`;
   const FORMAT_RULES = `اختيار النوع (format) قرارك أنت كخبير تسويق، لا تسأل عنه:
 - اختر لكل يوم النوع الأنسب تسويقيًا لهدف المنشور ومرحلة القمع ولاحتياج هذا الأسبوع في الخطة، لا بنسبة ثابتة.
@@ -558,8 +590,8 @@ ${w.events.length ? `- أحداث إطلاق هذا الأسبوع: ${w.events.m
       const dayPosts = list.filter((p) => p.date === d).sort((a, b) => (a.time || "").localeCompare(b.time || ""));
       return `<div class="day ${d === today() ? "today" : ""}">
         <div class="day-head"><b>${name}</b><span class="tabular">${fmt(d, { day: "numeric", month: "short" })}</span></div>
-        ${dayPosts.map((p) => `<button class="post-chip ${esc(p.funnel || "")} ${isDone(p) ? "done" : ""}" data-open="${esc(p.id)}">
-          ${stageTag(p.funnel)}
+        ${dayPosts.map((p) => `<button class="post-chip ${esc(p.funnel || "")} ${p.format === "story" ? "story" : ""} ${isDone(p) ? "done" : ""}" data-open="${esc(p.id)}">
+          ${p.format === "story" ? "" : stageTag(p.funnel)}${VOICES[p.voice] ? `<span class="voice ${esc(p.voice)}">${VOICES[p.voice]}</span>` : ""}
           <span class="hint">${esc(FORMATS[p.format] || "")}${p.time ? " · " + esc(p.time) : ""}</span>
           <b>${esc(p.title)}</b>
           <span class="meta">${POST_GOALS[p.goal] ? `<span class="badge">${POST_GOALS[p.goal]}</span>` : ""}${(p.media || []).length ? `<span class="badge">${arNum(p.media.length)} ملف</span>` : ""}${checksBadge(p)}</span>
@@ -580,7 +612,7 @@ ${w.events.length ? `- أحداث إطلاق هذا الأسبوع: ${w.events.m
     const cnt = (k, v) => list.filter((p) => p[k] === v).length;
     const n = list.length;
     const pct = (v) => Math.round((cnt("funnel", v) / n) * 100);
-    const fmtCounts = ["reel", "carousel", "post"].filter((f) => cnt("format", f)).map((f) => `${FORMATS[f]} ${arNum(cnt("format", f))}`).join(" · ");
+    const fmtCounts = ["reel", "carousel", "post", "story"].filter((f) => cnt("format", f)).map((f) => `${FORMATS[f]} ${arNum(cnt("format", f))}`).join(" · ");
     el.innerHTML = `<b>توزيع الأسبوع</b>
       <span>${["tof", "mof", "bof"].map((f) => `<span class="badge ${f}">${FUNNEL[f]} ${arNum(cnt("funnel", f))}</span>`).join(" ")}</span>
       <div class="mix" aria-label="نسب القمع"><i class="tof" style="width:${pct("tof")}%"></i><i class="mof" style="width:${pct("mof")}%"></i><i class="bof" style="width:${pct("bof")}%"></i></div>
@@ -594,19 +626,27 @@ ${w.events.length ? `- أحداث إطلاق هذا الأسبوع: ${w.events.m
     const el = $("#today");
     el.hidden = !list.length;
     if (!list.length) return;
-    el.innerHTML = `<div class="row between"><h2>منشور اليوم</h2><span class="hint">${fmt(t, { weekday: "long", day: "numeric", month: "long" })}</span></div>
+    el.innerHTML = `<div class="row between"><h2>اليوم</h2><span class="hint">${fmt(t, { weekday: "long", day: "numeric", month: "long" })}</span></div>
       ${list.map((p) => `<div class="today-item" data-id="${esc(p.id)}">
         <div class="row between"><b>${esc(FORMATS[p.format] || "")}: ${esc(p.title)}</b><label class="check"><input type="checkbox" data-posted ${isDone(p) ? "checked" : ""}> نُشر</label></div>
-        ${(p.media || []).length ? `<div class="thumbs">${p.media.map((m) => `<figure>${m.type === "video" ? `<video src="/_blob/${esc(m.id)}" muted playsinline preload="metadata"></video>` : `<img src="/_blob/${esc(m.id)}" alt="">`}</figure>`).join("")}</div>` : `<p class="hint">لم تُرفع التصاميم بعد؛ افتح المنشور وارفعها.</p>`}
+        ${(p.media || []).length ? `<div class="thumbs">${p.media.map((m) => `<figure>${m.type === "video" ? `<video src="/_blob/${esc(m.id)}" muted playsinline preload="metadata"></video>` : `<img src="/_blob/${esc(m.id)}" alt="">`}</figure>`).join("")}</div>` : (p.format === "story" ? "" : `<p class="hint">لم تُرفع التصاميم بعد؛ افتح المنشور وارفعها.</p>`)}
         <div class="row">
           ${(p.media || []).length ? `<button class="btn-primary btn-sm" data-dl>تنزيل الملفات</button>` : ""}
-          <button class="btn-dark btn-sm" data-cap>نسخ الكابشن</button>
+          ${p.caption ? `<button class="btn-dark btn-sm" data-cap>نسخ الكابشن</button>` : ""}
           <button class="btn-ghost btn-sm" data-open="${esc(p.id)}">فتح المنشور</button>
         </div>
+        ${storiesHtml(p)}
       </div>`).join("")}`;
   }
 
+  function storiesHtml(p) {
+    const rows = [["صباحًا", p.storyAM], ["عصرًا", p.storyPM], ["مساءً", p.storyEve]].filter((r) => r[1]);
+    if (!rows.length) return "";
+    return `<div class="stories"><b>ستوري اليوم</b>${rows.map(([k, v]) => `<div class="story-row"><b>${k}</b><span>${esc(v)}</span><button class="btn-ghost btn-sm" data-copy-text="${esc(v)}">نسخ</button></div>`).join("")}</div>`;
+  }
   $("#today").addEventListener("click", (e) => {
+    const ct = e.target.closest("[data-copy-text]");
+    if (ct) return copy(ct.dataset.copyText, "نُسخ");
     const item = e.target.closest(".today-item");
     if (!item) return;
     const p = posts.find((x) => x.id === item.dataset.id);
@@ -649,6 +689,7 @@ ${w.events.length ? `- أحداث إطلاق هذا الأسبوع: ${w.events.m
     const recent = posts.slice(-25).map((p) => `- ${p.title}`).join("\n");
     const prompt = `أنت خبير محتوى إنستغرام تخطط أسبوعًا لصاحبة حساب.
 ${LANG_RULES}
+${AUTH_RULES}
 
 ${profileText()}
 
@@ -659,13 +700,15 @@ ${existing || "لا يوجد"}
 ${recent || "لا يوجد"}
 ${$("#week-topic").value ? `موضوع أو مناسبة الأسبوع: ${$("#week-topic").value}` : ""}
 
-خطط منشورًا واحدًا لكل يوم فارغ من هذه الأيام فقط (day رقم اليوم: الأحد ٠ … السبت ٦): ${openDays().map((i) => `${DAYS[i]} (${i})`).join("، ") || "لا يوجد"}. لا تخطط لأي يوم غيرها.
+${WEEK_RHYTHM}
+
+خطط عنصرًا واحدًا (منشور أساسي أو يوم ستوري فقط) لكل يوم فارغ من هذه الأيام فقط (day رقم اليوم: الأحد ٠ … السبت ٦): ${openDays().map((i) => `${DAYS[i]} (${i})`).join("، ") || "لا يوجد"}. لا تخطط لأي يوم غيرها.
 - لكل منشور مرحلة قمع واضحة (funnel) إلزاميًا: tof وعي وانتشار، mof ثقة واهتمام، bof تحويل وبيع. وزّعها حسب نسب هذا الأسبوع في الخطة إن وجدت، وإلا فأغلبها tof وبعضها mof وقليل bof، ويزيد bof قرب الإطلاقات.
 - لكل منشور هدف (goal) من: sales مبيعات، marketing تسويق، leads عملاء محتملون، fun ترفيه وضحك، news أخبار، tech تقنية. نوّع الأهداف ولا تكرر هدفًا في يومين متتاليين.
 ${FORMAT_RULES}
 
 أعد JSON فقط بهذا الشكل:
-{"weekWhy":"...","posts":[{"day":0,"title":"عنوان قصير","format":"reel|carousel|post","funnel":"tof|mof|bof","goal":"sales|marketing|leads|fun|news|tech","why":"...","hook":"...","notes":"...","script":"...","caption":"كابشن كامل باللهجة ينتهي بدعوة للتفاعل","hashtags":"#... #...","designPrompt":"..."}]}`;
+{"weekWhy":"...","posts":[{"day":0,"title":"عنوان قصير","format":"reel|carousel|post|story","voice":"teacher|trainer|creator","funnel":"tof|mof|bof","goal":"sales|marketing|leads|fun|news|tech","why":"...","storyAM":"...","storyPM":"...","storyEve":"...","hook":"...","notes":"...","script":"...","caption":"كابشن كامل باللهجة ينتهي بدعوة للتفاعل","hashtags":"#... #...","designPrompt":"..."}]}`;
     $("#plan-week-btn").disabled = true;
     $("#week-busy").hidden = false;
     try {
@@ -684,7 +727,7 @@ ${FORMAT_RULES}
     if (!draftPlan) return;
     el.innerHTML = `<div class="row between"><h2>الخطة المقترحة</h2><span class="row"><button class="btn-ghost" id="draft-cancel">إلغاء</button><button class="btn-primary" id="draft-accept">اعتماد الخطة</button></span></div>
       ${draftPlan.weekWhy ? `<p class="why">${esc(draftPlan.weekWhy)}</p>` : ""}
-      ${draftPlan.posts.map((p) => `<div class="today-item"><div class="row">${stageTag(p.funnel)}<span class="badge">${esc(FORMATS[p.format] || "")}</span>${POST_GOALS[p.goal] ? `<span class="badge">${POST_GOALS[p.goal]}</span>` : ""}</div><b>${DAYS[p.day]}: ${esc(p.title)}</b><span class="hint">${esc(p.hook || "")}</span>${p.why ? `<span class="why">${esc(p.why)}</span>` : ""}</div>`).join("")}`;
+      ${draftPlan.posts.map((p) => `<div class="today-item"><div class="row">${stageTag(p.funnel)}<span class="badge">${esc(FORMATS[p.format] || "")}</span>${VOICES[p.voice] ? `<span class="voice ${esc(p.voice)}">${VOICES[p.voice]}</span>` : ""}${POST_GOALS[p.goal] ? `<span class="badge">${POST_GOALS[p.goal]}</span>` : ""}</div><b>${DAYS[p.day]}: ${esc(p.title)}</b><span class="hint">${esc(p.hook || "")}</span>${p.why ? `<span class="why">${esc(p.why)}</span>` : ""}</div>`).join("")}`;
     $("#draft-cancel").onclick = () => { draftPlan = null; renderDraft(); };
     $("#draft-accept").onclick = acceptDraft;
   }
@@ -695,7 +738,8 @@ ${FORMAT_RULES}
     try {
       for (const p of draftPlan.posts) {
         await db.collection("posts").add({
-          title: String(p.title), format: ["reel", "carousel", "post"].includes(p.format) ? p.format : "reel",
+          title: String(p.title), format: ["reel", "carousel", "post", "story"].includes(p.format) ? p.format : "reel",
+          voice: VOICES[p.voice] ? p.voice : "", storyAM: String(p.storyAM || ""), storyPM: String(p.storyPM || ""), storyEve: String(p.storyEve || ""),
           funnel: ["tof", "mof", "bof"].includes(p.funnel) ? p.funnel : "",
           goal: POST_GOALS[p.goal] ? p.goal : "", why: String(p.why || ""),
           notes: [p.hook ? `الهوك: ${p.hook}` : "", p.notes || ""].filter(Boolean).join("\n\n"),
@@ -723,18 +767,20 @@ ${FORMAT_RULES}
       if (p.caption) lines.push(`الكابشن:\n${p.caption}`);
       if (p.hashtags) lines.push(`الهاشتاقات: ${p.hashtags}`);
       if (p.designPrompt) lines.push(`برومبت التصميم:\n${p.designPrompt}`);
+      const st = [["صباحًا", p.storyAM], ["عصرًا", p.storyPM], ["مساءً", p.storyEve]].filter((r) => r[1]);
+      if (st.length) lines.push(`الستوري:\n${st.map(([k, v]) => `- ${k}: ${v}`).join("\n")}`);
     }
     return lines.join("\n");
   }
   $("#copy-week").onclick = () => weekPosts().length ? copy(weekText(), "نُسخ الأسبوع") : toast("لا توجد منشورات في هذا الأسبوع");
   $("#copy-prompts").onclick = () => {
-    const list = weekPosts().sort((a, b) => a.date.localeCompare(b.date));
+    const list = weekPosts().filter((p) => p.format !== "story").sort((a, b) => a.date.localeCompare(b.date));
     if (!list.length) return toast("لا توجد منشورات في هذا الأسبوع");
     copy(list.map((p) => `## ${DAYS[fromStr(p.date).getDay()]} — ${FORMATS[p.format] || ""}: ${p.title}\n\n${p.script ? `نص التعليق الصوتي:\n${p.script}\n\n` : ""}${p.designPrompt || "(لا يوجد برومبت بعد)"}`).join("\n\n---\n\n"), "نُسخت برومبتات التصميم");
   };
 
   // ---------- المحرر ----------
-  const FIELDS = ["title", "format", "date", "time", "funnel", "goal", "notes", "script", "caption", "hashtags", "designPrompt"];
+  const FIELDS = ["title", "format", "date", "time", "funnel", "goal", "voice", "notes", "script", "caption", "hashtags", "designPrompt", "storyAM", "storyPM", "storyEve"];
   const form = $("#post-form");
   $("#ps-goal").insertAdjacentHTML("beforeend", Object.entries(POST_GOALS).map(([k, v]) => `<option value="${k}">${v}</option>`).join(""));
 
@@ -809,11 +855,36 @@ ${FORMAT_RULES}
     catch (err) { toast(sampleError(err)); }
     finally { btn.disabled = false; btn.textContent = label; }
   }
-  const postBrief = () => { const d = collect(); return `المنشور:\n- العنوان: ${d.title}\n- النوع: ${FORMATS[d.format]}\n- مرحلة القمع: ${d.funnel ? FUNNEL_NAME[d.funnel] : "غير محددة"}\n- الهدف: ${POST_GOALS[d.goal] || "غير محدد"}\n- الفكرة: ${d.notes || "لا يوجد"}\n${d.script ? `- نص التعليق الصوتي: ${d.script}` : ""}`; };
-  $("#ai-caption").onclick = (e) => aiFill(e.currentTarget, `${LANG_RULES}\n\n${profileText()}\n\n${postBrief()}\n\nاكتب كابشن إنستغرام جاهزًا للنشر باللهجة، يبدأ بهوك قوي وينتهي بدعوة للتفاعل، و٨-١٥ هاشتاق. أعد JSON فقط: {"caption":"...","hashtags":"#... #..."}`,
+  const postBrief = () => { const d = collect(); return `المنشور:\n- العنوان: ${d.title}\n- النوع: ${FORMATS[d.format]}\n- مرحلة القمع: ${d.funnel ? FUNNEL_NAME[d.funnel] : "غير محددة"}\n- الهدف: ${POST_GOALS[d.goal] || "غير محدد"}\n- الهوية: ${VOICES[d.voice] || "غير محددة"}\n- الفكرة: ${d.notes || "لا يوجد"}\n${d.script ? `- نص التعليق الصوتي: ${d.script}` : ""}`; };
+  $("#ai-caption").onclick = (e) => aiFill(e.currentTarget, `${LANG_RULES}\n${AUTH_RULES}\n\n${profileText()}\n\n${postBrief()}\n\nاكتب كابشن إنستغرام جاهزًا للنشر باللهجة، يبدأ بهوك قوي وينتهي بدعوة للتفاعل، و٨-١٥ هاشتاق. أعد JSON فقط: {"caption":"...","hashtags":"#... #..."}`,
     (r) => { if (r?.caption) form.elements.caption.value = r.caption; if (r?.hashtags) form.elements.hashtags.value = r.hashtags; });
-  $("#ai-prompt").onclick = (e) => aiFill(e.currentTarget, `${LANG_RULES}\n\n${profileText()}\n\n${postBrief()}\n\nاكتب ${DESIGN_HINT}\nأعد JSON فقط: {"designPrompt":"..."}`,
+  $("#ai-prompt").onclick = (e) => aiFill(e.currentTarget, `${LANG_RULES}\n${AUTH_RULES}\n\n${profileText()}\n\n${postBrief()}\n\nاكتب ${DESIGN_HINT}\nأعد JSON فقط: {"designPrompt":"..."}`,
     (r) => { if (r?.designPrompt) form.elements.designPrompt.value = r.designPrompt; });
+
+  $("#ai-swap").onclick = (e) => {
+    const d = collect();
+    aiFill(e.currentTarget, `${LANG_RULES}
+${AUTH_RULES}
+
+${profileText()}
+
+${weekContextText(sundayOf(d.date || today()))}
+${postBrief()}
+
+صاحبة الحساب ما حبت هالفكرة (حستها مو من شخصيتها أو قديمة). اقترح فكرة بديلة مختلفة تمامًا في الزاوية، بنفس مرحلة القمع والهدف التسويقي، وبصوت هوية مناسبة. لا تكرر هذه المنشورات: ${posts.slice(-25).map((p) => p.title).join("، ")}.
+${FORMAT_RULES}
+لو كانت بديلة ليوم ستوري فقط فاجعل format = "story".
+أعد JSON فقط: {"title":"...","format":"reel|carousel|post|story","voice":"teacher|trainer|creator","why":"...","hook":"...","notes":"...","script":"...","caption":"...","hashtags":"...","designPrompt":"...","storyAM":"...","storyPM":"...","storyEve":"..."}`,
+      (r) => {
+        if (!r?.title) return;
+        for (const k of ["title", "script", "caption", "hashtags", "designPrompt", "storyAM", "storyPM", "storyEve"]) form.elements[k].value = String(r[k] || "");
+        if (FORMATS[r.format]) form.elements.format.value = r.format;
+        if (VOICES[r.voice]) form.elements.voice.value = r.voice;
+        form.elements.notes.value = [r.hook ? `الهوك: ${r.hook}` : "", r.notes || ""].filter(Boolean).join("\n\n");
+        if (r.why) { $("#ps-why").hidden = false; $("#ps-why").textContent = `لماذا هذه الفكرة: ${r.why}`; }
+        toast("فكرة بديلة؛ احفظي إذا عجبتج أو سكري بدون حفظ");
+      });
+  };
 
   // رفع الملفات وتنزيلها
   $("#upload-input").addEventListener("change", async (e) => {
@@ -991,7 +1062,7 @@ ${profileText()}
     const btn = e.currentTarget;
     btn.disabled = true; $("#suggest-busy").hidden = false;
     try {
-      const res = await sample.json(`${LANG_RULES}\n\n${profileText()}\n\nأفكار موجودة لا تكررها:\n${posts.slice(-30).map((p) => "- " + p.title).join("\n") || "لا يوجد"}\n\nاقترح ٦ أفكار منشورات جديدة خاصة بهذا الحساب، أغلبها ريلز بتعليق صوتي. لكل فكرة: عنوان قصير، النوع، هوك باللهجة، وشرح قصير للتنفيذ. أعد JSON فقط: {"ideas":[{"title":"...","format":"reel|carousel|post","hook":"...","notes":"..."}]}`, { modelTier: "default", cache: false });
+      const res = await sample.json(`${LANG_RULES}\n${AUTH_RULES}\n\n${profileText()}\n\nأفكار موجودة لا تكررها:\n${posts.slice(-30).map((p) => "- " + p.title).join("\n") || "لا يوجد"}\n\nاقترح ٦ أفكار منشورات جديدة خاصة بهذا الحساب، أغلبها ريلز بتعليق صوتي. لكل فكرة: عنوان قصير، النوع، هوك باللهجة، وشرح قصير للتنفيذ. أعد JSON فقط: {"ideas":[{"title":"...","format":"reel|carousel|post","hook":"...","notes":"..."}]}`, { modelTier: "default", cache: false });
       suggestions = Array.isArray(res?.ideas) ? res.ideas.filter((x) => x?.title) : [];
       renderSuggestions();
     } catch (err) { toast(sampleError(err)); }
@@ -1017,6 +1088,7 @@ ${profileText()}
 - إذا كتبتِ نصًا للنشر (كابشن، هوك، نص شريحة)، فاكتبيه باللهجة المحددة في ملف الحساب.
 - تقترحين منتجات ودورات وخدمات مع الفئة المستهدفة وسبب نجاحها وطريقة اختبارها سريعًا.
 - لا تخترعين أرقامًا أو نتائج عن حسابها؛ اسألي عنها.
+${AUTH_RULES}
 
 ${profileText()}
 
@@ -1093,7 +1165,7 @@ ${weekContextText(sundayOf(today()))}
   };
 
   // ---------- ملف الحساب ----------
-  const PF = ["handle", "niche", "audience", "tone", "language", "goals", "pillars", "examples"];
+  const PF = ["handle", "niche", "audience", "tone", "language", "goals", "pillars", "experiences", "examples"];
   function fillProfile() {
     const f = $("#profile-form");
     if (f.contains(document.activeElement)) return;

@@ -1,0 +1,23 @@
+{
+  "bg": "#fef8f5",
+  "ink": "#2d1f3d",
+  "acc": "#FE6C77",
+  "clay": "#C9617D",
+  "mut": "#7D579B",
+  "peach": "#FE9A6C",
+  "font": "IBM Plex Sans Arabic",
+  "handle": "@ABLASARAHQ8",
+  "logo": "logo.png",
+  "grade": false,
+  "faceAnchor": 0.3,
+  "badgeUntil": 0,
+  "capStyle": "card",
+  "outro": {
+    "l1": "استخدميه..",
+    "l2": "بس لا تسلمينه عقلج",
+    "cta": "قولوا لي شنو رايكم؟",
+    "word": "",
+    "sub": "@ABLASARAHQ8"
+  },
+  "onAcc": "#2D1F3D"
+}
